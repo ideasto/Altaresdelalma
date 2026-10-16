@@ -1,0 +1,27 @@
+{
+  "summary": "E2E frontend testing of 'Mensajes Ancestrales' SPA (no backend). Tested across 3 Playwright runs on the public preview URL. All critical flows pass: avatar CRUD + photo editor open/close + backup download, dashboard with 5 portals, Oráculo CRUD + consult flow (question-shown -> shuffling ~3s -> result-card with user card text), Oráculo PDF, Cartas CRUD + per-letter PDF + all-letters PDF + confirm-accept delete, Timeline create + export modal + generate PDF, Galería create folder (chip + file input present) + delete-modal with both options (move-general and delete-all) once folder is activated, Libro cover + create page (auto-jumps to new page) + next -> back navigation + libro-pdf, and full persistence after reload (localStorage key ma_data_v1).",
+  "backend_issues": {"critical": [], "minor": []},
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": [
+      {"screen": "Galeria", "issues": ["Folder delete/rename pencil only render when the folder chip is active (clicked). This is intentional UX but may surprise users; consider a hover affordance so users discover it. The flow still works: click folder chip -> delete button appears -> opens galeria-folder-delete-modal with galeria-folder-move-general and galeria-folder-delete-all."]}
+    ]
+  },
+  "test_report_links": [],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "Libro.jsx line 47: setTimeout(..., 60) uses the stale 'pages' closure (pages.length+1) to jump to the newly created page. Works today because the state update to avatar.book is already enqueued and views[] recomputes before the timeout fires, but it is fragile. Prefer computing the next index inside the state updater or using views.length directly after the update to avoid any race if React batches differently.",
+    "Oráculo message input: maxlength=90 attribute verified at the DOM. Good.",
+    "Modal overlay z-index: avatar-form-modal z=100 (and children up the tree). brand-footer renders at a lower stacking context, so modals do cover it. Behavior correct and the footer reappears after modal close.",
+    "crypto.randomUUID is used throughout; the preview URL is https so it is safe. For local http dev, consider a fallback to avoid runtime errors.",
+    "Each portal page re-reads avatar from the store on every render via getAvatar(id); fine for current data sizes, but if gallery grows close to 100 photos consider memoizing to avoid re-renders during modal interactions."
+  ],
+  "updated_files": [],
+  "success_rate": {"backend": "N/A (no backend)", "frontend": "100% of requested flows"},
+  "seed_data_creation": "During tests created avatar 'Abuela Rosa' (persona), 2 oráculo cards, 1 carta (then deleted), 1 timeline event, 1 galeria folder 'Viajes', 1 libro page. Note: each Playwright run uses a fresh browser context so localStorage is wiped between runs; the preview user's own browser localStorage is untouched.",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "Playwright uses an isolated browser context per run, so localStorage does not persist between runs — any persistence verification must happen within a single script via page.reload() or a goto() to the same origin in the same session. The galeria delete trash for a folder is only mounted when that folder chip is the active one (click the chip first). The Libro save handler auto-advances to the newly created page via setIndex(pages.length+1) with a 60ms timeout; account for that when scripting next/prev navigation. For PDFs, we only validated no runtime error (jsPDF client-side).",
+  "rca of the issue": "No functional issues reproduced."
+}

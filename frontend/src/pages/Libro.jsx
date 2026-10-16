@@ -42,9 +42,11 @@ export default function Libro() {
       toast.success("Página actualizada.");
     } else {
       const np = { id: crypto.randomUUID(), ...draft };
+      const newIndex = pages.length + 1; // cover(0) + existing pages -> new page sits at end
       updateAvatar(id, (a) => ({ book: [...a.book, np] }));
       toast.success("Página guardada.");
-      setTimeout(() => { setDir(1); setIndex(pages.length + 1); }, 60); // jump to the new page (go to end)
+      setDir(1);
+      setIndex(newIndex); // go to the end (the new page)
     }
     setFormOpen(false);
   };

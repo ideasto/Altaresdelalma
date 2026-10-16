@@ -133,12 +133,10 @@ export default function Galeria() {
                 label={`${f.name} (${photos.filter((p) => p.folderId === f.id).length})`}
                 testId={`galeria-folder-${f.id}`}
               />
-              {active === f.id && (
-                <div className="absolute -top-2 -right-2 flex gap-0.5 bg-[#0b1a2f] rounded-full border border-[#d4af37]/40">
-                  <EditPencil onClick={() => setFolderForm({ mode: "rename", name: f.name, id: f.id })} testId={`galeria-folder-rename-${f.id}`} />
-                  <TrashButton onClick={() => setDelFolder(f)} testId={`galeria-folder-delete-${f.id}`} />
-                </div>
-              )}
+              <div className={`absolute -top-2 -right-2 flex gap-0.5 bg-[#0b1a2f] rounded-full border border-[#d4af37]/40 transition-opacity ${active === f.id ? "opacity-100" : "opacity-0 group-hover:opacity-100"}`}>
+                <EditPencil onClick={() => setFolderForm({ mode: "rename", name: f.name, id: f.id })} testId={`galeria-folder-rename-${f.id}`} />
+                <TrashButton onClick={() => setDelFolder(f)} testId={`galeria-folder-delete-${f.id}`} />
+              </div>
             </div>
           ))}
           {folders.length < MAX_FOLDERS && (
