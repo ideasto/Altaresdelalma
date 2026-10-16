@@ -1,0 +1,137 @@
+{
+  "project_name": "Mensajes Ancestrales",
+  "brand_identity": {
+    "brand_name": "La Gata y la Magia",
+    "concept": "A mystical-modern memorial and grief honoring web application designed to help people process loss with warmth, beauty, and celestial elegance. It transforms grief into a living archive of love.",
+    "aesthetic_archetype": "Mystical Celestial Modernist (Deep Navy + Sculpted Gold + Electric Sky Blue + Warm Cream Paper)",
+    "tone": "Warm, uplifting, mystical, highly aesthetic, intuitive, and deeply emotive (never depressing, cold, or clinical)."
+  },
+  "color_system": {
+    "theme": "Dark Celestial Navy base with glowing gold and bright sky blue highlights",
+    "css_variables": {
+      "--bg-deep-navy": "#0b1a2f",
+      "--bg-navy-surface": "#112240",
+      "--bg-navy-elevated": "#1a365d",
+      "--gold-primary": "#d4af37",
+      "--gold-light": "#fef08a",
+      "--gold-hover": "#f59e0b",
+      "--gold-glow": "rgba(212, 175, 55, 0.4)",
+      "--sky-bright": "#38bdf8",
+      "--sky-vibrant": "#0ea5e9",
+      "--sky-glow": "rgba(56, 189, 248, 0.3)",
+      "--paper-cream": "#fdfbf7",
+      "--paper-border": "#e2d9c8",
+      "--text-heading": "#f8fafc",
+      "--text-body": "#cbd5e1",
+      "--text-muted": "#94a3b8",
+      "--glass-bg": "rgba(11, 26, 47, 0.65)",
+      "--glass-border": "rgba(212, 175, 55, 0.25)"
+    },
+    "tailwind_mappings": {
+      "bg_deep": "bg-[#0b1a2f]",
+      "bg_surface": "bg-[#112240]/80",
+      "text_gold": "text-[#d4af37]",
+      "border_gold": "border-[#d4af37]/40",
+      "gold_btn": "bg-gradient-to-r from-[#d4af37] via-[#f59e0b] to-[#d4af37] text-[#0b1a2f] font-semibold hover:shadow-[0_0_20px_rgba(212,175,55,0.6)] transition-all duration-300"
+    },
+    "glassmorphism": {
+      "card_modal_style": "backdrop-blur-xl bg-[#0b1a2f]/70 border border-[#d4af37]/30 shadow-[0_8px_32px_0_rgba(0,0,0,0.37)]",
+      "hover_glow": "hover:border-[#d4af37] hover:shadow-[0_0_25px_rgba(212,175,55,0.35)] transition-all duration-300"
+    }
+  },
+  "typography": {
+    "google_fonts_import": "@import url('https://fonts.googleapis.com/css2?family=Caveat:wght@400;600;700&family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap');",
+    "families": {
+      "heading": "'Cormorant Garamond', Georgia, serif",
+      "handwritten": "'Caveat', cursive",
+      "body_ui": "'Plus Jakarta Sans', sans-serif"
+    },
+    "usage_rules": {
+      "titles_and_headers": "Use Cormorant Garamond for all H1, H2, H3 headings, Oracle Card titles, and Memory Book titles. Add tracking-wide for elegant display.",
+      "handwritten_letters": "Use Caveat strictly for the handwritten body text in Cartas (Letters) and Memory Book personal notes (font-size 22px to 28px for realistic ink feel).",
+      "ui_controls_and_captions": "Use Plus Jakarta Sans for navigation, form labels, buttons, tooltips, subtext, and operational status."
+    }
+  },
+  "iconography_and_decorations": {
+    "strict_rule": "NO emojis allowed anywhere in the UI. Use only gold SVG icons (Lucide-react with text-[#d4af37] or custom celestial SVG paths).",
+    "action_icons": {
+      "edit_pencil": "Gold SVG Pencil icon (<Edit3 className='w-4 h-4 text-[#d4af37] hover:text-[#fef08a]' />) - trigger for editable fields",
+      "delete_trash": "Gold/Amber SVG Trash icon (<Trash2 className='w-4 h-4 text-[#d4af37]/70 hover:text-red-400' />) - trigger with confirmation modal",
+      "add_plus": "<Plus className='w-5 h-5 text-[#d4af37]' /> with gold glowing circle frame",
+      "download_pdf": "<Printer /> or <FileDown className='w-4 h-4 text-[#d4af37]' /> for A4 PDF export"
+    },
+    "decorations": "Celestial gold stars, thin geometric line-art borders, glowing stardust particles on click/hover."
+  },
+  "brand_footer": {
+    "position": "Fixed sticky bottom navigation footer (z-index 50) that is never obscured by modals or scrollable content.",
+    "background": "backdrop-blur-md bg-[#0b1a2f]/90 border-t border-[#d4af37]/30",
+    "logo_spec": "Thin geometric line-art gold cat sitting next to an oracle card deck / open book. Include brand text 'La Gata y la Magia' in Cormorant Garamond with small caption 'Mensajes Ancestrales'.",
+    "memory_book_stamp": "The geometric gold cat logo is also rendered as a foil stamp seal on the last page of the Memory Book (Libro de Recuerdos)."
+  },
+  "modules_and_layouts": {
+    "home_avatar_selection": {
+      "concept": "Sanctuary grid where users can create multiple avatar cards (people or pets who passed away).",
+      "avatar_card_design": "Circular or arched photo container with 2px gold glowing border, editable photo frame with gold pencil overlay, avatar name in Cormorant Garamond, birth/passing dates, and entry action button.",
+      "interactions": "Edit photo modal with scale/crop controls, edit details modal, delete confirmation dialog."
+    },
+    "avatar_dashboard": {
+      "concept": "A celestial hub connecting 5 sacred spaces for the selected avatar.",
+      "grid_layout": "Tetris-style asymmetrical bento layout with 5 distinct space portals:",
+      "portals": [
+        "1. Mazo Oráculo (Oracle Cards Deck)",
+        "2. Línea de Tiempo (Sinuous Memorial Timeline)",
+        "3. Galería de Fotos (Photo Gallery with Categorized Folders)",
+        "4. Cartas Manuscritas (Handwritten Letters in Caveat)",
+        "5. Libro de Recuerdos (Flipbook Memory Book with Depth)"
+      ]
+    },
+    "oraculo_deck": {
+      "concept": "Personal oracle card deck (up to 21 cards). Each card has a message, image/symbol, and title.",
+      "interactions": "Interactive 3-second card shuffle animation with stardust glow, 3D card flip action, card reader modal, add/edit card dialog, PDF card deck export layout."
+    },
+    "sinuous_timeline": {
+      "concept": "Vertical curved undulating SVG path with node markers representing memorable dates and moments.",
+      "visuals": "Alternating left/right cards along a glowing gold wavy line. Each milestone has an editable date, icon, title, description, and attached photo."
+    },
+    "photo_gallery": {
+      "concept": "Grid of memories with custom folders (e.g., 'Viajes', 'Sonrisas', 'Momentos Especiales').",
+      "visuals": "Masonry or bento photo cards with gold frame hover, lightboxes, photo upload, folder management."
+    },
+    "handwritten_letters": {
+      "concept": "Epistolary space for writing letters to the loved one.",
+      "letter_structure": "Cream/Ivory stationery sheet background (#fdfbf7). Top right date, center avatar name greeting, main body text formatted in Caveat cursive font, bottom author signature.",
+      "actions": "Edit letter, download letter as printable A4 PDF with brand ornate gold frame."
+    },
+    "memory_book": {
+      "concept": "Digital hardbound memory album with realistic page-flip transitions and dimensional page shadows.",
+      "structure": "Cover page with avatar photo & gold embossed title, inner pages with photos and notes, final page with 'La Gata y la Magia' golden wax seal stamp."
+    },
+    "pdf_export_and_backup": {
+      "pdf_export": "Generate printable A4 PDFs with gold border frames and 'La Gata y la Magia' watermark for Oracle Cards, Letters, Timeline, and Memory Book.",
+      "json_backup": "One-click Backup (Export JSON data) and Restore (Import JSON file) to ensure user memories are permanently preserved locally."
+    }
+  },
+  "micro_interactions": {
+    "glow_on_touch": "All interactive gold buttons, cards, and icons feature a dynamic gold aura radial glow on hover and active touch.",
+    "sparkle_effect": "Subtle gold stardust sparkle particle trigger on button click and oracle card flip.",
+    "modal_transitions": "Framer motion scale-up + backdrop fade-in (0.25s ease-out)."
+  },
+  "image_urls": {
+    "celestial_background": "https://images.unsplash.com/photo-1689214624479-e971574a02a2?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjA1ODR8MHwxfHNlYXJjaHwzfHxteXN0aWNhbCUyMGdvbGQlMjB0YXJvdCUyMGNlbGVzdGlhbCUyMHN0YXIlMjBiYWNrZ3JvdW5kfGVufDB8fHx8MTc5MjEzMTg3N3ww&ixlib=rb-4.1.0&q=85",
+    "oracle_deck_bg": "https://images.pexels.com/photos/31265604/pexels-photo-31265604.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+    "tarot_cards_hand": "https://images.pexels.com/photos/19501737/pexels-photo-19501737.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940"
+  },
+  "instructions_to_main_agent": [
+    "Ensure font links for Cormorant Garamond, Caveat, and Plus Jakarta Sans are added to index.html or imported in index.css.",
+    "Implement client-heavy local state with localStorage persistence and full JSON Export/Import capabilities.",
+    "Make all editable elements accessible via a gold pencil button, launching standard modal editors.",
+    "Adhere to strict data-testid attributes on all key buttons, inputs, modals, and navigation links.",
+    "Use glassmorphism for all dialogs, dropdowns, and cards over the deep navy background.",
+    "Keep the footer fixed at the bottom with high z-index and the gold cat logo."
+  ],
+  "UNIVERSAL GUIDELINES FOR MAIN AGENT": {
+    "data_testid_requirement": "All interactive elements (buttons, links, inputs, cards, modals) MUST include kebab-case data-testid attributes (e.g. data-testid='create-avatar-button', data-testid='edit-avatar-pencil', data-testid='oraculo-portal-card').",
+    "no_emojis": "Never use emoji characters. Use Lucide React icons with text-[#d4af37] for celestial and gold icons.",
+    "responsive_and_accessible": "Ensure full responsiveness on mobile, tablet, and desktop with accessible contrast across all glassmorphic components."
+  }
+}
