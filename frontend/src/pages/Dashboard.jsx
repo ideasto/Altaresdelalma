@@ -1,27 +1,63 @@
-import React from "react";
+import React, { useState } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { useStore } from "../store/StoreContext";
-import { CatLogo } from "../components/Logo";
-import { Sparkles, Milestone, Images, Mail, BookOpen, ArrowLeft, ArrowRight, Cat, User } from "lucide-react";
+import SpacePhoto from "../components/SpacePhoto";
+import HeaderPhrase from "../components/HeaderPhrase";
+import PhotoEditor from "../components/PhotoEditor";
+import SpaceForm from "../components/SpaceForm";
+import { EditPencil } from "../components/common";
+import { GalleryPreview, OraclePreview, TimelinePreview, LettersPreview, BookPreview } from "../components/dashboard/ModulePreviews";
+import { plural } from "../lib/format";
+import { Sparkles, Milestone, Images, Mail, BookOpen, ArrowLeft, ArrowRight } from "lucide-react";
+import { toast } from "sonner";
 
-const PORTALS = [
-  { key: "oraculo", title: "Mazo Oráculo", desc: "Escribí hasta 21 cartas y consultá su sabiduría.", icon: Sparkles, span: "lg:col-span-2 lg:row-span-2", count: (a) => a.cards.length },
-  { key: "linea", title: "Línea de Tiempo", desc: "Los momentos que marcaron su historia.", icon: Milestone, span: "", count: (a) => a.timeline.length },
-  { key: "galeria", title: "Galería de Fotos", desc: "Hasta 100 fotos en carpetas.", icon: Images, span: "", count: (a) => a.gallery.photos.length },
-  { key: "cartas", title: "Cartas", desc: "Escribile de puño y letra, cuando lo necesites.", icon: Mail, span: "", count: (a) => a.letters.length },
-  { key: "libro", title: "Libro de Recuerdos", desc: "Un álbum encuadernado para hojear.", icon: BookOpen, span: "", count: (a) => a.book.length },
+const MODULES = [
+  { key: "galeria", title: "Galería de Fotos", icon: Images, Preview: GalleryPreview, span: "sm:col-span-2 lg:row-span-2", minH: "min-h-[300px] lg:min-h-0",
+    count: (a) => a.gallery.photos.length && plural(a.gallery.photos.length, "foto", "fotos"), action: (a) => (a.gallery.photos.length ? "Ver fotos y carpetas" : "Agregar fotos") },
+  { key: "oraculo", title: "Mazo Oráculo", icon: Sparkles, Preview: OraclePreview,
+    count: (a) => a.cards.length && plural(a.cards.length, "carta", "cartas"), action: (a) => (a.cards.length ? "Sacar una carta" : "Crear mi primera carta"), query: (a) => (a.cards.length ? "?consultar=1" : "?nueva=1") },
+  { key: "linea", title: "Línea de Tiempo", icon: Milestone, Preview: TimelinePreview,
+    count: (a) => a.timeline.length && plural(a.timeline.length, "momento", "momentos"), action: (a) => (a.timeline.length ? "Ver su historia" : "Agregar un momento"), query: (a) => (a.timeline.length ? "" : "?nueva=1") },
+  { key: "cartas", title: "Cartas", icon: Mail, Preview: LettersPreview,
+    count: (a) => a.letters.length && plural(a.letters.length, "carta", "cartas"), action: (a) => (a.letters.length ? "Ver mis cartas" : "Escribir una carta"), query: (a) => (a.letters.length ? "" : "?nueva=1") },
+  { key: "libro", title: "Libro de Recuerdos", icon: BookOpen, Preview: BookPreview,
+    count: (a) => a.book.length && plural(a.book.length, "página", "páginas"), action: (a) => (a.book.length || a.bookMeta.title ? "Abrir el libro" : "Crear mi libro") },
 ];
+
+function ModuleCard({ m, a }) {
+  const to = `/espacio/${a.id}/${m.key}`;
+  const Icon = m.icon;
+  const count = m.count(a);
+  return (
+    <div className={`glass portal-card rounded-3xl relative overflow-hidden flex flex-col p-5 ${m.span || ""} ${m.minH || "min-h-[230px]"}`} data-testid={`portal-${m.key}`}>
+      <Link to={to} className="absolute inset-0 z-0" aria-label={m.title} data-testid={`portal-link-${m.key}`} />
+      <div className="relative z-10 pointer-events-none flex items-center justify-between gap-2">
+        <div className="flex items-center gap-2.5">
+          <span className="rounded-xl p-2 bg-[#d4af37]/12 gold-text"><Icon className="w-5 h-5" /></span>
+          <h3 className={`font-heading text-[#f8fafc] ${m.key === "galeria" ? "text-3xl sm:text-4xl" : "text-2xl"}`}>{m.title}</h3>
+        </div>
+        {count ? <span className="font-ui text-xs text-[#a9bacb]" data-testid={`portal-count-${m.key}`}>{count}</span> : null}
+      </div>
+      <div className="relative z-10 pointer-events-none flex-1 py-4 min-h-[110px]"><m.Preview a={a} /></div>
+      <Link to={to + (m.query ? m.query(a) : "")} className="relative z-10 self-start inline-flex items-center gap-1 gold-text text-sm hover:text-[#fde68a]" data-testid={`portal-action-${m.key}`}>
+        {m.action(a)} <ArrowRight className="w-4 h-4" />
+      </Link>
+    </div>
+  );
+}
 
 export default function Dashboard() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { getAvatar } = useStore();
+  const { getAvatar, updateAvatar } = useStore();
   const avatar = getAvatar(id);
+  const [photoOpen, setPhotoOpen] = useState(false);
+  const [editOpen, setEditOpen] = useState(false);
 
   if (!avatar) {
     return (
       <div className="max-w-xl mx-auto px-6 pt-24 text-center">
-        <p className="text-[#94a3b8] mb-4">Este espacio ya no existe.</p>
+        <p className="text-[#a9bacb] mb-4">Este espacio no existe en este navegador.</p>
         <Link to="/" className="gold-text underline">Volver al inicio</Link>
       </div>
     );
@@ -29,66 +65,28 @@ export default function Dashboard() {
 
   return (
     <div>
-      {/* hero header */}
-      <div className="relative overflow-hidden">
-        <div className="max-w-6xl mx-auto px-4 sm:px-8 pt-8">
-          <button className="icon-btn mb-6" onClick={() => navigate("/")} data-testid="dashboard-back">
-            <ArrowLeft className="w-5 h-5" />
-          </button>
-          <div className="flex flex-col sm:flex-row items-center gap-6 text-center sm:text-left mb-10">
-            <div
-              className="rounded-full overflow-hidden shrink-0 flex items-center justify-center bg-[#0b1a2f] float-soft"
-              style={{ width: 120, height: 120, border: "2px solid rgba(212,175,55,0.7)", boxShadow: "0 0 30px rgba(212,175,55,0.3)" }}
-            >
-              {avatar.photoCropped ? (
-                <img src={avatar.photoCropped} alt={avatar.name} className="w-full h-full object-cover" />
-              ) : (
-                <span className="gold-text opacity-60">{avatar.kind === "animal" ? <Cat className="w-12 h-12" /> : <User className="w-12 h-12" />}</span>
-              )}
+      <div className="max-w-6xl mx-auto px-4 sm:px-8 pt-8">
+        <button className="icon-btn mb-6" onClick={() => navigate("/")} data-testid="dashboard-back" aria-label="Volver al inicio"><ArrowLeft className="w-5 h-5" /></button>
+        <div className="flex flex-col sm:flex-row items-center gap-6 text-center sm:text-left mb-10" data-testid="space-header">
+          <SpacePhoto space={avatar} size={128} interactive onClick={() => setPhotoOpen(true)} testId="header-photo" />
+          <div className="min-w-0">
+            <div className="flex items-center gap-2 justify-center sm:justify-start">
+              <h1 className="font-heading text-4xl sm:text-5xl lg:text-6xl gold-gradient-text leading-tight break-words" data-testid="header-name">{avatar.name}</h1>
+              <EditPencil onClick={() => setEditOpen(true)} testId="header-name-edit" title="Editar nombre, símbolo y fechas" />
             </div>
-            <div>
-              <p className="font-ui text-xs tracking-[0.3em] uppercase text-[#94a3b8] mb-1">Su espacio sagrado</p>
-              <h1 className="font-heading text-4xl sm:text-6xl gold-gradient-text leading-none">{avatar.name}</h1>
-              <p className="text-[#cbd5e1] mt-2 font-hand text-2xl">Honramos tu luz, siempre.</p>
-            </div>
+            <HeaderPhrase phrase={avatar.phrase} onSave={(phrase) => updateAvatar(id, { phrase })} />
           </div>
         </div>
       </div>
 
-      {/* bento portals */}
-      <div className="max-w-6xl mx-auto px-4 sm:px-8">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 auto-rows-[200px]">
-          {PORTALS.map(({ key, title, desc, icon: Icon, span, count }) => (
-            <button
-              key={key}
-              onClick={() => navigate(`/avatar/${id}/${key}`)}
-              data-testid={`portal-${key}`}
-              className={`glass portal-card rounded-3xl p-6 text-left flex flex-col justify-between relative overflow-hidden group ${span}`}
-            >
-              <div className="absolute -top-8 -right-8 opacity-10 gold-text group-hover:opacity-20 transition-opacity">
-                <Icon className="w-40 h-40" strokeWidth={0.8} />
-              </div>
-              <div className="flex items-center justify-between relative z-10">
-                <span className="rounded-2xl p-3 bg-[#d4af37]/10 gold-text group-hover:shadow-[0_0_20px_rgba(212,175,55,0.4)] transition-all">
-                  <Icon className="w-6 h-6" />
-                </span>
-                <span className="font-ui text-xs text-[#94a3b8]">{count(avatar)} ítems</span>
-              </div>
-              <div className="relative z-10">
-                <h3 className="font-heading text-2xl sm:text-3xl text-[#f8fafc] mb-1">{title}</h3>
-                <p className="text-[#94a3b8] text-sm leading-snug">{desc}</p>
-                <span className="inline-flex items-center gap-1 gold-text text-sm mt-3 opacity-0 group-hover:opacity-100 transition-opacity">
-                  Entrar <ArrowRight className="w-4 h-4" />
-                </span>
-              </div>
-            </button>
-          ))}
-        </div>
-
-        <div className="flex justify-center py-12 opacity-40 gold-text">
-          <CatLogo size={34} />
+      <div className="max-w-6xl mx-auto px-4 sm:px-8 pb-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 lg:auto-rows-[240px] gap-5">
+          {MODULES.map((m) => <ModuleCard key={m.key} m={m} a={avatar} />)}
         </div>
       </div>
+
+      <PhotoEditor open={photoOpen} onClose={() => setPhotoOpen(false)} initialPhoto={avatar.photo} round title={`Foto de ${avatar.name}`} onSave={(d) => updateAvatar(id, d)} />
+      <SpaceForm open={editOpen} onClose={() => setEditOpen(false)} editing={avatar} onUpdate={(d) => { const ok = updateAvatar(id, d); if (ok) toast.success("Espacio actualizado."); return ok; }} />
     </div>
   );
 }

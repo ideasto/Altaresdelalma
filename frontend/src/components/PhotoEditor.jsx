@@ -27,7 +27,7 @@ export default function PhotoEditor({ open, onClose, initialPhoto = "", aspect =
     const file = e.target.files?.[0];
     if (!file) return;
     const dataUrl = await fileToDataUrl(file);
-    const shrunk = await shrinkDataUrl(dataUrl, 1400, 0.85);
+    const shrunk = await shrinkDataUrl(dataUrl, 1600, 0.86);
     setSrc(shrunk);
     setCrop({ x: 0, y: 0 });
     setZoom(1);
@@ -39,8 +39,8 @@ export default function PhotoEditor({ open, onClose, initialPhoto = "", aspect =
     try {
       let cropped = src;
       if (areaPixels) cropped = await getCroppedImg(src, areaPixels, 900);
-      onSave({ photo: src, photoCropped: cropped, crop: { ...crop, zoom } });
-      onClose();
+      const ok = onSave({ photo: src, photoCropped: cropped, crop: { ...crop, zoom } });
+      if (ok !== false) onClose();
     } finally {
       setBusy(false);
     }
@@ -60,7 +60,7 @@ export default function PhotoEditor({ open, onClose, initialPhoto = "", aspect =
       ) : (
         <>
           <div
-            className={`relative w-full h-72 bg-[#0b1a2f] overflow-hidden ${round ? "rounded-full mx-auto" : "rounded-xl"}`}
+            className={`relative w-full h-72 bg-[#152438] overflow-hidden ${round ? "rounded-full mx-auto" : "rounded-xl"}`}
             style={round ? { width: 288, height: 288 } : {}}
           >
             <Cropper

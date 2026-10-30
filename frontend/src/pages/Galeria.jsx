@@ -1,179 +1,159 @@
 import React, { useState, useRef } from "react";
 import { useParams, Link } from "react-router-dom";
 import { useStore } from "../store/StoreContext";
-import { PageHeader, Modal, ConfirmDialog, GoldButton, GhostButton, EditPencil, TrashButton, Field, TextInput } from "../components/common";
+import { PageHeader, Modal, ConfirmDialog, GoldButton, GhostButton, Field, TextInput } from "../components/common";
+import FolderCards from "../components/galeria/FolderCards";
+import PhotoTile from "../components/galeria/PhotoTile";
+import { StorageMeter } from "../components/StorageBits";
 import { makeSheet, renderPdf } from "../lib/pdf";
 import { fileToDataUrl, shrinkDataUrl } from "../lib/image";
+import { plural } from "../lib/format";
+import { LIMITS } from "../config/brand";
 import { toast } from "sonner";
-import { Images, FileDown, Upload, FolderPlus, Folder, FolderOpen, ChevronLeft, ChevronRight, FolderInput } from "lucide-react";
-
-const MAX_PHOTOS = 100;
-const MAX_FOLDERS = 5;
+import { Images, FileDown, Upload, ChevronLeft, ChevronRight, Share2, X } from "lucide-react";
 
 export default function Galeria() {
   const { id } = useParams();
-  const { getAvatar, updateAvatar } = useStore();
+  const { getAvatar, updateAvatar, removeItem } = useStore();
   const avatar = getAvatar(id);
   const fileRef = useRef(null);
 
   const [active, setActive] = useState("all");
-  const [folderForm, setFolderForm] = useState(null); // {mode:'create'|'rename', name, id?}
+  const [folderForm, setFolderForm] = useState(null);
   const [delFolder, setDelFolder] = useState(null);
   const [delPhoto, setDelPhoto] = useState(null);
   const [movePhoto, setMovePhoto] = useState(null);
+  const [caption, setCaption] = useState(null);
   const [lightbox, setLightbox] = useState(-1);
   const [uploading, setUploading] = useState(false);
+  const [selected, setSelected] = useState([]);
 
   if (!avatar) return <Link to="/" className="gold-text underline block p-10">Volver</Link>;
   const { folders, photos } = avatar.gallery;
-  const visible = active === "all" ? photos : photos.filter((p) => p.folderId === active);
+  const visible = active === "all" ? photos : active === "general" ? photos.filter((p) => !p.folderId) : photos.filter((p) => p.folderId === active);
+  const folderName = (fid) => folders.find((f) => f.id === fid)?.name;
+  const setPhotos = (fn) => updateAvatar(id, (a) => ({ gallery: { ...a.gallery, photos: fn(a.gallery.photos) } }));
 
   const upload = async (e) => {
     const files = Array.from(e.target.files || []);
+    e.target.value = "";
     if (!files.length) return;
-    if (photos.length + files.length > MAX_PHOTOS) return toast.error(`Máximo ${MAX_PHOTOS} fotos (te quedan ${MAX_PHOTOS - photos.length}).`);
+    if (photos.length + files.length > LIMITS.photos) return toast.error(`Hasta ${LIMITS.photos} fotos por espacio (te quedan ${LIMITS.photos - photos.length}).`);
     setUploading(true);
     try {
-      const folderId = active === "all" ? null : active;
+      const folderId = active === "all" || active === "general" ? null : active;
       const added = [];
-      for (const f of files) {
-        const d = await fileToDataUrl(f);
-        const s = await shrinkDataUrl(d, 1400, 0.82);
-        added.push({ id: crypto.randomUUID(), src: s, folderId });
-      }
-      updateAvatar(id, (a) => ({ gallery: { ...a.gallery, photos: [...a.gallery.photos, ...added] } }));
-      toast.success(`${added.length} foto(s) agregada(s).`);
+      for (const f of files) added.push({ id: crypto.randomUUID(), src: await shrinkDataUrl(await fileToDataUrl(f), 1600, 0.85), folderId, caption: "" });
+      if (setPhotos((ph) => [...ph, ...added])) return toast.success(`${plural(added.length, "foto agregada", "fotos agregadas")}.`);
+      let fit = 0;
+      for (const p of added) { if (!updateAvatar(id, (a) => ({ gallery: { ...a.gallery, photos: [...a.gallery.photos, p] } }), { silent: true })) break; fit++; }
+      toast.error(fit ? `Solo entraron ${fit} de ${added.length} fotos: el navegador no tiene más lugar.` : "No entró ninguna foto: el navegador no tiene más lugar.", { description: "Descargá un respaldo y liberá espacio borrando fotos de esta app que ya no necesites acá." });
+    } catch {
+      toast.error("No se pudo leer alguna de las fotos.");
     } finally {
       setUploading(false);
-      e.target.value = "";
     }
   };
 
   const saveFolder = () => {
     const name = folderForm.name.trim();
     if (!name) return toast.error("Poné un nombre a la carpeta.");
-    if (folderForm.mode === "create") {
-      if (folders.length >= MAX_FOLDERS) return toast.error(`Máximo ${MAX_FOLDERS} carpetas.`);
-      const f = { id: crypto.randomUUID(), name };
-      updateAvatar(id, (a) => ({ gallery: { ...a.gallery, folders: [...a.gallery.folders, f] } }));
-      toast.success("Carpeta creada.");
-    } else {
-      updateAvatar(id, (a) => ({ gallery: { ...a.gallery, folders: a.gallery.folders.map((f) => (f.id === folderForm.id ? { ...f, name } : f)) } }));
-      toast.success("Carpeta renombrada.");
-    }
-    setFolderForm(null);
+    const ok = folderForm.mode === "create"
+      ? updateAvatar(id, (a) => ({ gallery: { ...a.gallery, folders: [...a.gallery.folders, { id: crypto.randomUUID(), name }] } }))
+      : updateAvatar(id, (a) => ({ gallery: { ...a.gallery, folders: a.gallery.folders.map((f) => (f.id === folderForm.id ? { ...f, name } : f)) } }));
+    if (ok) { toast.success(folderForm.mode === "create" ? "Carpeta creada." : "Carpeta renombrada."); setFolderForm(null); }
   };
 
   const removeFolder = (moveToGeneral) => {
-    updateAvatar(id, (a) => {
-      const fid = delFolder.id;
-      let ph = a.gallery.photos;
-      if (moveToGeneral) ph = ph.map((p) => (p.folderId === fid ? { ...p, folderId: null } : p));
-      else ph = ph.filter((p) => p.folderId !== fid);
-      return { gallery: { folders: a.gallery.folders.filter((f) => f.id !== fid), photos: ph } };
-    });
-    toast.success(moveToGeneral ? "Carpeta eliminada, fotos movidas a la galería general." : "Carpeta y sus fotos eliminadas.");
-    if (active === delFolder.id) setActive("all");
-    setDelFolder(null);
+    const fid = delFolder.id;
+    const ok = updateAvatar(id, (a) => ({
+      gallery: {
+        folders: a.gallery.folders.filter((f) => f.id !== fid),
+        photos: moveToGeneral ? a.gallery.photos.map((p) => (p.folderId === fid ? { ...p, folderId: null } : p)) : a.gallery.photos.filter((p) => p.folderId !== fid),
+      },
+    }));
+    if (ok) { toast.success(moveToGeneral ? "Carpeta eliminada; sus fotos pasaron a General." : "Carpeta y fotos eliminadas definitivamente."); if (active === fid) setActive("all"); setDelFolder(null); }
   };
 
-  const doMove = (folderId) => {
-    updateAvatar(id, (a) => ({ gallery: { ...a.gallery, photos: a.gallery.photos.map((p) => (p.id === movePhoto.id ? { ...p, folderId } : p)) } }));
-    toast.success("Foto movida.");
-    setMovePhoto(null);
-  };
-
-  const exportPdf = () => {
-    if (visible.length === 0) return toast.error("No hay fotos para exportar.");
-    const folderName = active === "all" ? "Todas las fotos" : folders.find((f) => f.id === active)?.name;
+  const exportPdf = (list, label) => {
+    if (!list.length) return toast.error("No hay fotos para exportar.");
     const chunks = [];
-    for (let i = 0; i < visible.length; i += 6) chunks.push(visible.slice(i, i + 6));
+    for (let i = 0; i < list.length; i += 6) chunks.push(list.slice(i, i + 6));
     const sheets = chunks.map((chunk) => {
-      const { sheet, content } = makeSheet({ title: "Galería", subtitle: `${avatar.name} · ${folderName}` });
+      const { sheet, content } = makeSheet({ title: "Galería", subtitle: `${avatar.name} · ${label}` });
       const grid = document.createElement("div");
       Object.assign(grid.style, { display: "grid", gridTemplateColumns: "1fr 1fr", gridTemplateRows: "1fr 1fr 1fr", gap: "16px", height: "100%" });
       chunk.forEach((p) => {
         const box = document.createElement("div");
-        Object.assign(box.style, { border: "1px solid #c9a94a", borderRadius: "8px", overflow: "hidden", background: "#f0ead9" });
+        Object.assign(box.style, { border: "1px solid #c9a94a", borderRadius: "6px", overflow: "hidden", background: "#f0ead9", display: "flex", alignItems: "center", justifyContent: "center" });
         const img = document.createElement("img");
-        img.src = p.src; img.crossOrigin = "anonymous";
-        Object.assign(img.style, { width: "100%", height: "100%", objectFit: "cover" });
+        img.src = p.src;
+        Object.assign(img.style, { maxWidth: "100%", maxHeight: "100%", objectFit: "contain" });
         box.appendChild(img); grid.appendChild(box);
       });
       content.appendChild(grid);
       return sheet;
     });
-    toast.promise(renderPdf(sheets, `galeria-${avatar.name}.pdf`), {
-      loading: "Generando galería…", success: "PDF descargado.", error: "Error al generar el PDF.",
-    });
+    toast.promise(renderPdf(sheets, `galeria-${avatar.name}.pdf`), { loading: "Generando galería…", success: "PDF descargado.", error: "Error al generar el PDF." });
   };
 
-  const folderName = (fid) => folders.find((f) => f.id === fid)?.name;
+  const sharePhoto = async (p) => {
+    try {
+      const blob = await (await fetch(p.src)).blob();
+      const file = new File([blob], "foto.jpg", { type: blob.type || "image/jpeg" });
+      if (navigator.canShare && navigator.canShare({ files: [file] })) return await navigator.share({ files: [file], title: p.caption || avatar.name });
+      const a = document.createElement("a"); a.href = p.src; a.download = "foto.jpg"; a.click();
+      toast.success("Tu dispositivo no permite compartir directo: descargamos la foto.");
+    } catch (e) { if (e?.name !== "AbortError") toast.error("No se pudo compartir la foto."); }
+  };
+
+  const toggle = (pid) => setSelected((s) => (s.includes(pid) ? s.filter((x) => x !== pid) : [...s, pid]));
+  const selPhotos = photos.filter((p) => selected.includes(p.id));
+  const activeLabel = active === "all" ? "Todas las fotos" : active === "general" ? "General" : folderName(active);
+  const lb = visible[lightbox];
 
   return (
     <div className="pb-10">
       <PageHeader title="Galería de Fotos" subtitle={avatar.name}>
-        <GhostButton onClick={exportPdf} testId="galeria-pdf"><FileDown className="w-4 h-4" /> PDF</GhostButton>
-        <GoldButton onClick={() => fileRef.current?.click()} testId="galeria-upload" className="px-5 py-2.5">
-          <Upload className="w-4 h-4" /> {uploading ? "Subiendo…" : "Subir fotos"}
-        </GoldButton>
+        <GhostButton onClick={() => exportPdf(visible, activeLabel)} testId="galeria-pdf"><FileDown className="w-4 h-4" /> PDF de esta vista</GhostButton>
+        <GoldButton onClick={() => fileRef.current?.click()} testId="galeria-upload" className="px-5 py-2.5"><Upload className="w-4 h-4" /> {uploading ? "Subiendo…" : "Agregar fotos"}</GoldButton>
         <input ref={fileRef} type="file" accept="image/*" multiple className="hidden" onChange={upload} data-testid="galeria-file-input" />
       </PageHeader>
 
       <div className="max-w-6xl mx-auto px-4 sm:px-8 pt-8">
-        {/* folder tabs */}
-        <div className="flex items-center gap-2 flex-wrap mb-8">
-          <FolderChip active={active === "all"} onClick={() => setActive("all")} icon={FolderOpen} label={`Todas (${photos.length})`} testId="galeria-folder-all" />
-          {folders.map((f) => (
-            <div key={f.id} className="relative group">
-              <FolderChip
-                active={active === f.id}
-                onClick={() => setActive(f.id)}
-                icon={Folder}
-                label={`${f.name} (${photos.filter((p) => p.folderId === f.id).length})`}
-                testId={`galeria-folder-${f.id}`}
-              />
-              <div className={`absolute -top-2 -right-2 flex gap-0.5 bg-[#0b1a2f] rounded-full border border-[#d4af37]/40 transition-opacity ${active === f.id ? "opacity-100" : "opacity-0 group-hover:opacity-100"}`}>
-                <EditPencil onClick={() => setFolderForm({ mode: "rename", name: f.name, id: f.id })} testId={`galeria-folder-rename-${f.id}`} />
-                <TrashButton onClick={() => setDelFolder(f)} testId={`galeria-folder-delete-${f.id}`} />
-              </div>
-            </div>
-          ))}
-          {folders.length < MAX_FOLDERS && (
-            <button className="ghost-gold rounded-full px-4 py-2 text-sm inline-flex items-center gap-2" onClick={() => setFolderForm({ mode: "create", name: "" })} data-testid="galeria-new-folder">
-              <FolderPlus className="w-4 h-4" /> Nueva carpeta
-            </button>
-          )}
-        </div>
+        <FolderCards folders={folders} photos={photos} active={active} setActive={setActive} canCreate={folders.length < LIMITS.folders}
+          onRename={(f) => setFolderForm({ mode: "rename", name: f.name, id: f.id })} onDelete={setDelFolder} onCreate={() => setFolderForm({ mode: "create", name: "" })} />
+
+        {selected.length > 0 && (
+          <div className="glass-strong rounded-2xl px-4 py-3 mb-5 flex flex-wrap items-center gap-3 sticky top-24 z-30" data-testid="galeria-selection-bar">
+            <span className="text-sm text-[#f8fafc]">{plural(selected.length, "foto seleccionada", "fotos seleccionadas")}</span>
+            <GhostButton className="py-1.5" onClick={() => exportPdf(selPhotos, "Selección")} testId="galeria-export-selection"><FileDown className="w-4 h-4" /> PDF</GhostButton>
+            {selected.length === 1 && <GhostButton className="py-1.5" onClick={() => sharePhoto(selPhotos[0])} testId="galeria-share-selection"><Share2 className="w-4 h-4" /> Compartir</GhostButton>}
+            <button className="icon-btn ml-auto" onClick={() => setSelected([])} aria-label="Quitar selección" data-testid="galeria-clear-selection"><X className="w-4 h-4" /></button>
+          </div>
+        )}
 
         {visible.length === 0 ? (
           <div className="glass rounded-3xl py-16 text-center">
-            <span className="gold-text float-soft inline-block mb-4"><Images className="w-14 h-14" strokeWidth={1} /></span>
-            <p className="text-[#cbd5e1] mb-5">No hay fotos en este espacio todavía.</p>
-            <GoldButton onClick={() => fileRef.current?.click()} testId="galeria-upload-empty"><Upload className="w-4 h-4" /> Subir fotos</GoldButton>
+            <Images className="w-14 h-14 gold-text mx-auto mb-4" strokeWidth={1} />
+            <p className="text-[#d5dfea] mb-5">No hay fotos acá todavía.</p>
+            <GoldButton onClick={() => fileRef.current?.click()} testId="galeria-upload-empty"><Upload className="w-4 h-4" /> Agregar fotos</GoldButton>
           </div>
         ) : (
-          <div className="columns-2 sm:columns-3 lg:columns-4 gap-4 [column-fill:_balance]">
+          <div className="columns-2 sm:columns-3 lg:columns-4 gap-4">
             {visible.map((p, idx) => (
-              <div key={p.id} className="relative group mb-4 break-inside-avoid rounded-xl overflow-hidden glass" data-testid={`galeria-photo-${p.id}`}>
-                <img src={p.src} alt="" className="w-full cursor-pointer hover:opacity-90 transition-opacity" onClick={() => setLightbox(idx)} />
-                {p.folderId && active === "all" && (
-                  <span className="absolute bottom-2 left-2 text-[10px] bg-[#0b1a2f]/80 gold-text px-2 py-0.5 rounded-full">{folderName(p.folderId)}</span>
-                )}
-                <div className="absolute top-2 right-2 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity bg-[#0b1a2f]/70 rounded-full p-0.5">
-                  <button className="icon-btn" onClick={() => setMovePhoto(p)} data-testid={`galeria-move-${p.id}`} title="Mover a carpeta"><FolderInput className="w-4 h-4" /></button>
-                  <TrashButton onClick={() => setDelPhoto(p)} testId={`galeria-delete-${p.id}`} />
-                </div>
-              </div>
+              <PhotoTile key={p.id} p={p} folderName={active === "all" ? folderName(p.folderId) : ""} selected={selected.includes(p.id)} onToggle={() => toggle(p.id)}
+                onOpen={() => setLightbox(idx)} onMove={() => setMovePhoto(p)} onCaption={() => setCaption({ id: p.id, text: p.caption })} onDelete={() => setDelPhoto(p)} />
             ))}
           </div>
         )}
+        <StorageMeter className="max-w-md mt-8" />
+        <p className="text-xs text-[#7f93a8] mt-2 max-w-xl">Las fotos se guardan como copias reducidas para que entren en el navegador; para imprimir en grande conservá tus originales.</p>
       </div>
 
-      {/* folder form */}
       <Modal open={!!folderForm} onClose={() => setFolderForm(null)} title={folderForm?.mode === "rename" ? "Renombrar carpeta" : "Nueva carpeta"} maxWidth="max-w-md" testId="galeria-folder-modal">
         <Field label="Nombre de la carpeta">
-          <TextInput value={folderForm?.name || ""} onChange={(e) => setFolderForm({ ...folderForm, name: e.target.value })} placeholder="Ej: Viajes, Sonrisas…" data-testid="galeria-folder-name-input" onKeyDown={(e) => e.key === "Enter" && saveFolder()} />
+          <TextInput value={folderForm?.name || ""} onChange={(e) => setFolderForm({ ...folderForm, name: e.target.value })} placeholder="Ej: Viajes, Sonrisas…" maxLength={40} data-testid="galeria-folder-name-input" onKeyDown={(e) => e.key === "Enter" && saveFolder()} />
         </Field>
         <div className="flex justify-end gap-3">
           <GhostButton onClick={() => setFolderForm(null)} testId="galeria-folder-cancel">Cancelar</GhostButton>
@@ -181,46 +161,46 @@ export default function Galeria() {
         </div>
       </Modal>
 
-      {/* delete folder (two options) */}
       <Modal open={!!delFolder} onClose={() => setDelFolder(null)} title="Eliminar carpeta" maxWidth="max-w-md" testId="galeria-folder-delete-modal">
-        <p className="text-[#cbd5e1] mb-6">
-          La carpeta <span className="gold-text">{delFolder?.name}</span> tiene fotos. ¿Qué querés hacer con ellas?
-        </p>
+        <p className="text-[#d5dfea] mb-6">¿Qué hacemos con las fotos de <span className="gold-text">{delFolder?.name}</span>?</p>
         <div className="flex flex-col gap-3">
-          <GoldButton onClick={() => removeFolder(true)} testId="galeria-folder-move-general">Mover fotos a la galería general</GoldButton>
-          <button className="rounded-full px-5 py-3 text-sm font-semibold bg-red-500/90 text-white hover:bg-red-500 transition-all" onClick={() => removeFolder(false)} data-testid="galeria-folder-delete-all">
-            Borrar la carpeta y todas sus fotos
-          </button>
+          <GoldButton onClick={() => removeFolder(true)} testId="galeria-folder-move-general">Moverlas a General</GoldButton>
+          <button className="rounded-full px-5 py-3 text-sm font-semibold bg-red-500/90 text-white hover:bg-red-500" onClick={() => removeFolder(false)} data-testid="galeria-folder-delete-all">Eliminar la carpeta y sus fotos (definitivo)</button>
           <GhostButton onClick={() => setDelFolder(null)} testId="galeria-folder-delete-cancel">Cancelar</GhostButton>
         </div>
       </Modal>
 
-      {/* move photo */}
       <Modal open={!!movePhoto} onClose={() => setMovePhoto(null)} title="Mover foto" maxWidth="max-w-md" testId="galeria-move-modal">
         <div className="flex flex-col gap-2">
-          <button className={`text-left rounded-xl px-4 py-3 border transition-all ${!movePhoto?.folderId ? "border-[#d4af37] gold-text" : "border-[#d4af37]/25 text-[#cbd5e1] hover:border-[#d4af37]/60"}`} onClick={() => doMove(null)} data-testid="galeria-move-general">
-            Galería general
-          </button>
-          {folders.map((f) => (
-            <button key={f.id} className={`text-left rounded-xl px-4 py-3 border transition-all ${movePhoto?.folderId === f.id ? "border-[#d4af37] gold-text" : "border-[#d4af37]/25 text-[#cbd5e1] hover:border-[#d4af37]/60"}`} onClick={() => doMove(f.id)} data-testid={`galeria-move-to-${f.id}`}>
+          {[{ id: null, name: "General" }, ...folders].map((f) => (
+            <button key={f.id || "general"} className={`text-left rounded-xl px-4 py-3 border ${(movePhoto?.folderId || null) === f.id ? "border-[#d4af37] gold-text" : "border-[#d4af37]/25 text-[#d5dfea] hover:border-[#d4af37]/60"}`}
+              onClick={() => { if (setPhotos((ph) => ph.map((p) => (p.id === movePhoto.id ? { ...p, folderId: f.id } : p)))) { toast.success("Foto movida."); setMovePhoto(null); } }} data-testid={`galeria-move-to-${f.id || "general"}`}>
               {f.name}
             </button>
           ))}
-          {folders.length === 0 && <p className="text-[#94a3b8] text-sm">Creá una carpeta para organizar tus fotos.</p>}
         </div>
       </Modal>
 
-      {/* lightbox */}
+      <Modal open={!!caption} onClose={() => setCaption(null)} title="Pie de foto" maxWidth="max-w-md" testId="galeria-caption-modal">
+        <TextInput value={caption?.text || ""} onChange={(e) => setCaption({ ...caption, text: e.target.value })} maxLength={120} placeholder="Opcional" data-testid="galeria-caption-input" />
+        <div className="flex justify-end gap-3 mt-5">
+          <GhostButton onClick={() => setCaption(null)} testId="galeria-caption-cancel">Cancelar</GhostButton>
+          <GoldButton onClick={() => { if (setPhotos((ph) => ph.map((p) => (p.id === caption.id ? { ...p, caption: caption.text.trim() } : p)))) { toast.success("Pie guardado."); setCaption(null); } }} testId="galeria-caption-save">Guardar</GoldButton>
+        </div>
+      </Modal>
+
       <Modal open={lightbox >= 0} onClose={() => setLightbox(-1)} title="" maxWidth="max-w-3xl" testId="galeria-lightbox">
-        {lightbox >= 0 && visible[lightbox] && (
+        {lb && (
           <div className="relative">
-            <img src={visible[lightbox].src} alt="" className="w-full max-h-[70vh] object-contain rounded-xl" />
+            <img src={lb.src} alt={lb.caption || ""} className="w-full max-h-[70vh] object-contain rounded-xl" />
+            {lb.caption && <p className="text-center text-[#f8fafc] mt-3 font-hand text-2xl">{lb.caption}</p>}
             {visible.length > 1 && (
               <>
-                <button className="icon-btn absolute left-2 top-1/2 -translate-y-1/2 bg-[#0b1a2f]/80" onClick={() => setLightbox((lightbox - 1 + visible.length) % visible.length)} data-testid="lightbox-prev"><ChevronLeft className="w-6 h-6" /></button>
-                <button className="icon-btn absolute right-2 top-1/2 -translate-y-1/2 bg-[#0b1a2f]/80" onClick={() => setLightbox((lightbox + 1) % visible.length)} data-testid="lightbox-next"><ChevronRight className="w-6 h-6" /></button>
+                <button className="icon-btn absolute left-2 top-1/2 -translate-y-1/2 bg-[#152438]/80" onClick={() => setLightbox((lightbox - 1 + visible.length) % visible.length)} aria-label="Anterior" data-testid="lightbox-prev"><ChevronLeft className="w-6 h-6" /></button>
+                <button className="icon-btn absolute right-2 top-1/2 -translate-y-1/2 bg-[#152438]/80" onClick={() => setLightbox((lightbox + 1) % visible.length)} aria-label="Siguiente" data-testid="lightbox-next"><ChevronRight className="w-6 h-6" /></button>
               </>
             )}
+            <div className="flex justify-center mt-3"><GhostButton className="py-2" onClick={() => sharePhoto(lb)} testId="lightbox-share"><Share2 className="w-4 h-4" /> Compartir esta foto</GhostButton></div>
           </div>
         )}
       </Modal>
@@ -228,23 +208,11 @@ export default function Galeria() {
       <ConfirmDialog
         open={!!delPhoto}
         onClose={() => setDelPhoto(null)}
-        onConfirm={() => { updateAvatar(id, (a) => ({ gallery: { ...a.gallery, photos: a.gallery.photos.filter((p) => p.id !== delPhoto.id) } })); toast.success("Foto eliminada."); setDelPhoto(null); }}
+        onConfirm={() => { removeItem(id, "gallery.photos", delPhoto.id, "Foto eliminada."); setSelected((s) => s.filter((x) => x !== delPhoto.id)); setDelPhoto(null); }}
         title="¿Eliminar esta foto?"
-        message="La foto se borrará de la galería."
+        message="Se borra de la galería. Vas a poder deshacerlo unos segundos."
         testId="galeria-photo-delete-confirm"
       />
     </div>
-  );
-}
-
-function FolderChip({ active, onClick, icon: Icon, label, testId }) {
-  return (
-    <button
-      onClick={onClick}
-      data-testid={testId}
-      className={`rounded-full px-4 py-2 text-sm inline-flex items-center gap-2 border transition-all ${active ? "border-[#d4af37] bg-[#d4af37]/15 gold-text shadow-[0_0_14px_rgba(212,175,55,0.3)]" : "border-[#d4af37]/25 text-[#cbd5e1] hover:border-[#d4af37]/60"}`}
-    >
-      <Icon className="w-4 h-4" /> {label}
-    </button>
   );
 }

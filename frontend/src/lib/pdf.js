@@ -1,18 +1,11 @@
 import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
+import { BRAND } from "../config/brand";
 
 export const A4 = { w: 794, h: 1123 }; // px at ~96dpi
 const FRAME_URL = "/frame-a4.png";
+const LOGO_URL = BRAND.logos.goldFull;
 
-const CAT_SVG = `
-<svg width="34" height="41" viewBox="0 0 100 120" fill="none" stroke="#b8922c" stroke-width="2"
-  stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg">
-  <path d="M31 50 L35 16 L52 40"/><path d="M69 50 L65 16 L48 40"/>
-  <path d="M31 50 L35 72 L50 82 L65 72 L69 50"/><path d="M35 72 L50 63 L65 72"/>
-  <path d="M50 44 L54 50 L50 56 L46 50 Z"/>
-  <path d="M38 74 L29 112 L50 119 L71 112 L62 74"/>
-  <path d="M71 112 C93 110 91 84 76 88"/>
-</svg>`;
 
 export function makeSheet({ title = "", subtitle = "" } = {}) {
   const sheet = document.createElement("div");
@@ -52,10 +45,10 @@ export function makeSheet({ title = "", subtitle = "" } = {}) {
   });
   header.innerHTML = `
     <div style="display:flex;align-items:center;justify-content:center;gap:10px;">
-      ${CAT_SVG}
-      <div style="font-size:26px;letter-spacing:2px;color:#b8922c;font-weight:600;">La Gata y la Magia</div>
+      <img src="${LOGO_URL}" style="height:44px;width:auto;" />
+      <div style="font-size:26px;letter-spacing:2px;color:#b8922c;font-weight:600;">${BRAND.appName}</div>
     </div>
-    <div style="font-size:12px;letter-spacing:5px;text-transform:uppercase;color:#9c8a66;margin-top:2px;">Mensajes Ancestrales</div>
+    <div style="font-size:12px;letter-spacing:5px;text-transform:uppercase;color:#9c8a66;margin-top:2px;">${BRAND.brandName}</div>
     ${title ? `<div style="font-size:34px;color:#2b2114;margin-top:18px;font-weight:600;">${escapeHtml(title)}</div>` : ""}
     ${subtitle ? `<div style="font-size:18px;color:#6b5a3e;font-style:italic;margin-top:2px;">${escapeHtml(subtitle)}</div>` : ""}
     <div style="width:120px;height:1px;background:#c9a94a;margin:14px auto 0;"></div>
@@ -87,7 +80,7 @@ export function makeSheet({ title = "", subtitle = "" } = {}) {
     color: "#9c8a66",
     fontFamily: "'Plus Jakarta Sans', sans-serif",
   });
-  footer.textContent = "La Gata y la Magia · lagataylamagia@gmail.com";
+  footer.textContent = `${BRAND.brandName} · ${BRAND.email} · @${BRAND.instagram}`;
   sheet.appendChild(footer);
 
   return { sheet, content };

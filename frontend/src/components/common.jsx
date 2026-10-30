@@ -126,7 +126,7 @@ export function PageHeader({ title, subtitle, onBack, children, backTestId }) {
           </button>
           <div className="min-w-0">
             <h1 className="font-heading text-2xl sm:text-4xl gold-gradient-text truncate">{title}</h1>
-            {subtitle && <p className="text-xs sm:text-sm text-[#94a3b8] truncate">{subtitle}</p>}
+            {subtitle && <p className="text-xs sm:text-sm text-[#a9bacb] truncate">{subtitle}</p>}
           </div>
         </div>
         <div className="flex items-center gap-2 flex-wrap">{children}</div>
@@ -138,11 +138,11 @@ export function PageHeader({ title, subtitle, onBack, children, backTestId }) {
 export function EmptyState({ icon: Icon, title, message, action }) {
   return (
     <div className="flex flex-col items-center justify-center text-center py-20 px-6">
-      <div className="gold-text float-soft mb-6 opacity-80">
+      <div className="gold-text mb-6 opacity-80">
         <Icon className="w-16 h-16" strokeWidth={1} />
       </div>
       <h3 className="font-heading text-2xl sm:text-3xl text-[#f8fafc] mb-2">{title}</h3>
-      <p className="text-[#94a3b8] max-w-md mb-7 leading-relaxed">{message}</p>
+      <p className="text-[#a9bacb] max-w-md mb-7 leading-relaxed">{message}</p>
       {action}
     </div>
   );
@@ -151,14 +151,14 @@ export function EmptyState({ icon: Icon, title, message, action }) {
 export function Field({ label, children }) {
   return (
     <label className="block mb-4">
-      <span className="font-ui text-xs uppercase tracking-wider text-[#94a3b8] mb-1.5 block">{label}</span>
+      <span className="font-ui text-xs uppercase tracking-wider text-[#a9bacb] mb-1.5 block">{label}</span>
       {children}
     </label>
   );
 }
 
 const inputCls =
-  "w-full rounded-xl bg-[#0b1a2f]/60 border border-[#d4af37]/30 px-4 py-2.5 text-[#f8fafc] placeholder:text-[#64748b] outline-none focus:border-[#d4af37] focus:shadow-[0_0_14px_rgba(212,175,55,0.25)] transition-all";
+  "w-full rounded-xl bg-[#152438]/60 border border-[#d4af37]/30 px-4 py-2.5 text-[#f8fafc] placeholder:text-[#7f93a8] outline-none focus:border-[#d4af37] focus:shadow-[0_0_14px_rgba(212,175,55,0.25)] transition-all";
 
 export function TextInput(props) {
   return <input {...props} className={`${inputCls} ${props.className || ""}`} />;
