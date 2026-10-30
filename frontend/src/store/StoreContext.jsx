@@ -81,7 +81,10 @@ export function StoreProvider({ children }) {
     if (ok && item) {
       toast.success(doneMsg, {
         duration: 7000,
-        action: { label: "Deshacer", onClick: () => updateAvatar(avatarId, (a) => { const l = [...get(a)]; l.splice(Math.min(index, l.length), 0, item); return set(a, l); }) },
+        action: { label: "Deshacer", onClick: () => {
+          const back = updateAvatar(avatarId, (a) => { const l = [...get(a)]; l.splice(Math.min(index, l.length), 0, item); return set(a, l); });
+          if (back) toast.success("Listo, lo recuperamos.");
+        } },
       });
     }
     return ok;

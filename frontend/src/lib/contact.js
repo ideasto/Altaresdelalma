@@ -46,8 +46,7 @@ export function saveContact({ name, email, accepted }) {
     c.attempts = 0;
     c.nextAttemptAt = 0;
   }
-  writeContact(c);
-  return c;
+  return writeContact(c) ? c : null;
 }
 
 export function requestUnsubscribe() {

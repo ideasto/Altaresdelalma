@@ -31,12 +31,15 @@ export default function SpaceForm({ open, onClose, editing, onCreate, onUpdate }
       if (!contact.name.trim()) return toast.error("Escribí tu nombre.");
       if (!validEmail(contact.email)) return toast.error("Revisá tu email, parece incompleto.");
       if (!contact.accepted) return toast.error("Para crear el espacio necesitamos tu aceptación explícita.");
-      saveContact(contact);
-      syncContact();
     }
     const data = { ...form, name: form.name.trim() };
     const ok = editing ? onUpdate(data) : onCreate(data);
-    if (ok) onClose();
+    if (!ok) return;
+    if (needContact) {
+      if (!saveContact(contact)) toast.error("Tus datos no se pudieron guardar en este navegador.", { description: "Podés cargarlos después desde «Tus datos»." });
+      syncContact();
+    }
+    onClose();
   };
 
   return (

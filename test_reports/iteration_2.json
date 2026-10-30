@@ -1,0 +1,35 @@
+{
+  "summary": "Frontend-only E2E testing of Altares del Alma (Entregas 1+2) via Playwright at 1920px and 360px. Covered 18 requested scenarios: welcome/first launch, first and second space creation with contact registration and consent, Tus datos/baja, dashboard header (no float animation, editable name, phrase add/suggest/edit/remove persisting after reload), 5 portal modules with empty and filled previews and correct plural counters, Cartas (sobres, reader actions, TXT+PDF downloads, delete+Deshacer, draft recovery, quota-fail keeps editor open with save-fail-notice), Oráculo (hints, origin, actions visible without hover, shuffle+skip, button disabled during shuffle, ?consultar=1), Galería (upload png/jpg, folders with previews, rename, move, delete folder with move-to-General and delete-all, caption, multi-select bar, lightbox, delete+undo), Libro (default title, custom title/subtitle, back cover with same title + placeholder + review + closing + editorial credit, renaming space keeps custom title, add/reorder pages, import from photos/letters/moments with 'Ya está en el libro', PDF), Timeline (with/without date, stable order, edit/delete+undo), backup all/per space (format+version 2, no contact data), restore preview/cancel/merge copy/skip/replace with ack, corrupt and future-version files rejected, legacy {espacios} file imported as Tito with 1 letter, Trash (count, restore, purge with confirm), corrupt storage gate (raw value not overwritten until confirm; download raw; restore from gate), automatic migration from mensajes_ancestrales_v1, /avatar/:id(/sub) redirects, 360px responsive (no horizontal overflow on 7 routes), no 'avatar'/'ítems' word in UI. One real bug found: RestoreDialog keeps its previous mode/ack/dup state between openings, which can silently replace all data.",
+  "backend_issues": {"critical": [], "minor": []},
+  "frontend_issues": {
+    "ui_bugs": [
+      {"component": "RestoreDialog (components/RestoreDialog.jsx, mounted permanently in Home.jsx)", "issue": "The mode/dup/ack state stays the same between restore sessions because the component never unmounts (it only returns null when data is missing). Reproduction: open restore with any file, pick 'Reemplazar todo', tick restore-replace-ack, click Cancelar. Then upload another file. The dialog opens with 'Reemplazar todo' already selected and the ack already ticked, so one click on Restaurar wipes all existing spaces. Confirmed: a later legacy-file restore replaced Rosa+Nuevo with only Tito. The dup choice (copy/overwrite/skip) carries over the same way.", "selector": "[data-testid=restore-dialog]", "priority": "HIGH"}
+    ],
+    "integration_issues": [],
+    "design_issues": [
+      {"screen": "Storage gate (corrupt data)", "issues": ["The welcome modal opens on top of storage-gate when altares_welcome_seen is not set. A user with unreadable data is not a first-time user, so hide the welcome while boot.status is corrupt or inaccessible, or when data already exists or was migrated."]},
+      {"screen": "Undo toast", "issues": ["After clicking 'Deshacer' no confirmation toast appears. Minor."]}
+    ]
+  },
+  "test_report_links": [],
+  "action_items": [
+    "HIGH: Reset RestoreDialog state each time a new backup is loaded. Either add useEffect(() => { setMode('merge'); setDup('copy'); setAck(false); }, [data]) or render it with key={restoreData?.exportedAt + Date.now()}. Use conditional mounting ({restoreData && <RestoreDialog .../>}) in Home.jsx.",
+    "LOW: Do not show the Welcome modal when boot.status is corrupt, inaccessible or migrated (or when there are already spaces).",
+    "LOW (code review): SpaceForm saves the contact (saveContact + syncContact) before createAvatar. If the space write fails (quota), the contact is still recorded. Consider saving the contact only after the space is created successfully."
+  ],
+  "critical_code_review_comments": [
+    "RestoreDialog state persists across openings and can lead to silent full replacement (see ui_bugs).",
+    "SpaceForm: contact is saved before onCreate, so it is not atomic with the space creation.",
+    "saveContact ignores the writeContact() return value. If writing the contact fails, the UI still proceeds as if it was saved.",
+    "removeItem undo: if the user navigates away, the toast action still runs updateAvatar. That is fine, but undo gives no feedback toast.",
+    "StorageGate restore applies directly without a preview, which differs from the Home restore flow. Acceptable, but could reuse RestoreDialog."
+  ],
+  "updated_files": [],
+  "success_rate": {"backend": "N/A (no backend)", "frontend": "97% (all 18 scenarios pass functionally; 1 HIGH state bug in restore dialog)"},
+  "test_credentials": "None required (no auth). /app/memory/test_credentials.md is outdated: it mentions old 'Respaldar recuerdos' labels and the array format.",
+  "seed_data_creation": "Seeded localStorage directly per scenario (ma_data_v1 with spaces s1/s2, altares_welcome_seen). Test backup files in /tmp/bk (valid.json, legacy.json, corrupt.json, future.json) and images /tmp/img0.png,/tmp/img1.png,/tmp/img2.jpg.",
+  "retest_needed": true,
+  "should_main_agent_self_test": true,
+  "context_for_next_testing_agent": "SPA with localStorage only. Clear localStorage between scenarios and set altares_welcome_seen='1' to skip the welcome. Header phrase remove button (header-phrase-remove) is inside the edit modal, so open header-phrase-edit first. Trash purge confirm: [data-testid=trash-purge-confirm] [data-testid=confirm-accept]. Import items testid: libro-import-item-{src}, use the prefix selector. Retest: open restore → choose replace+ack → cancel → open another file → it must default to merge with ack unchecked.",
+  "rca of the issue": "RestoreDialog is rendered unconditionally in Home.jsx (<RestoreDialog data={restoreData} .../>). Its useState hooks (mode, dup, ack) start once on mount and never reset because the component only returns null when data is null and stays mounted. Fix: mount it conditionally or reset the state in useEffect when data changes."
+}

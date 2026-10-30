@@ -19,7 +19,7 @@ export default function ContactDialog({ open, onClose }) {
   const save = async () => {
     if (!v.name.trim() || !validEmail(v.email)) return toast.error("Revisá tu nombre y email.");
     if (!v.accepted) return toast.error("Necesitamos tu aceptación explícita.");
-    saveContact(v);
+    if (!saveContact(v)) return toast.error("No se pudieron guardar tus datos en este navegador.");
     setC(await syncContact());
     toast.success("Tus datos quedaron guardados en este navegador.");
   };

@@ -49,7 +49,7 @@ export default function Home() {
     e.target.value = "";
     if (!file) return;
     try {
-      setRestoreData(parseBackup(await file.text()));
+      setRestoreData({ ...parseBackup(await file.text()), loadedAt: Date.now() });
     } catch (err) {
       toast.error(err.message || "No se pudo leer el archivo de respaldo.");
     }
@@ -136,7 +136,7 @@ export default function Home() {
         onSave={(data) => updateAvatar(photoFor.id, data)}
       />
 
-      <RestoreDialog data={restoreData} onClose={() => setRestoreData(null)} />
+      {restoreData && <RestoreDialog key={restoreData.loadedAt} data={restoreData} onClose={() => setRestoreData(null)} />}
       <TrashDialog open={trashOpen} onClose={() => setTrashOpen(false)} />
       <ContactDialog open={contactOpen} onClose={() => setContactOpen(false)} />
 

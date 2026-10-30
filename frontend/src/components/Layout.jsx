@@ -7,9 +7,11 @@ import { Instagram, Mail, HelpCircle } from "lucide-react";
 import Welcome, { welcomeSeen } from "./Welcome";
 import StorageGate from "./StorageGate";
 import { syncContact } from "../lib/contact";
+import { useStore } from "../store/StoreContext";
 
 export default function Layout() {
-  const [welcome, setWelcome] = useState(() => !welcomeSeen());
+  const { boot } = useStore();
+  const [welcome, setWelcome] = useState(() => !welcomeSeen() && boot.status === "first");
 
   useEffect(() => {
     syncContact();
