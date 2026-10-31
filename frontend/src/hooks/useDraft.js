@@ -10,14 +10,20 @@ export default function useDraft(key, value, active) {
   const [recovered, setRecovered] = useState(null);
   const base = useRef(null);
   const pending = useRef(false);
+  const latest = useRef(value); latest.current = value;
+  const cleared = useRef(false);
 
   useEffect(() => {
     if (!active) return;
+    cleared.current = false;
     const d = loadDraft(key);
     pending.current = !!d;
     setRecovered(d);
     setFailed(false);
     base.current = null;
+    return () => {
+      if (!cleared.current && !pending.current && base.current !== null && JSON.stringify(latest.current) !== base.current) saveDraft(key, latest.current);
+    };
   }, [key, active]);
 
   useEffect(() => {
@@ -25,6 +31,7 @@ export default function useDraft(key, value, active) {
     const json = JSON.stringify(value);
     if (base.current === null) { base.current = json; return; }
     if (pending.current || json === base.current || blank(value)) return;
+    cleared.current = false;
     const t = setTimeout(() => setFailed(!saveDraft(key, value)), 500);
     return () => clearTimeout(t);
   }, [key, value, active]);
@@ -34,7 +41,7 @@ export default function useDraft(key, value, active) {
     recovered,
     pending: !!recovered,
     apply: () => { pending.current = false; const r = recovered; setRecovered(null); return r; },
-    clear: () => { clearDraft(key); pending.current = false; setRecovered(null); },
+    clear: () => { cleared.current = true; clearDraft(key); pending.current = false; setRecovered(null); },
     // Se llama al abrir para fijar el contenido inicial (no cuenta como cambio).
     rebase: (v) => { base.current = JSON.stringify(v); },
   };

@@ -24,10 +24,11 @@ const MODULES = [
     count: (a) => a.book.length && plural(a.book.length, "página", "páginas"), action: (a) => (a.book.length || a.bookMeta.title ? "Abrir el libro" : "Crear mi libro") },
 ];
 
-function ModuleCard({ m, a }) {
+function ModuleCard({ m, a, onFavorite }) {
   const to = `/espacio/${a.id}/${m.key}`;
   const Icon = m.icon;
   const count = m.count(a);
+  const items = { galeria: a.gallery.photos, oraculo: a.cards, linea: a.timeline, cartas: a.letters, libro: a.book }[m.key];
   return (
     <div className={`glass portal-card rounded-3xl relative overflow-hidden flex flex-col p-5 ${m.span || ""} ${m.minH || "min-h-[230px]"}`} data-testid={`portal-${m.key}`}>
       <Link to={to} className="absolute inset-0 z-0" aria-label={m.title} data-testid={`portal-link-${m.key}`} />
@@ -39,6 +40,7 @@ function ModuleCard({ m, a }) {
         {count ? <span className="font-ui text-xs text-[#a9bacb]" data-testid={`portal-count-${m.key}`}>{count}</span> : null}
       </div>
       <div className="relative z-10 pointer-events-none flex-1 py-4 min-h-[110px]"><m.Preview a={a} /></div>
+      {items.length > 0 && <select className="relative z-10 bg-transparent text-xs text-[#d5dfea] w-full mb-2" aria-label={`Vista favorita de ${m.title}`} value={a.favorites?.[m.key] || ""} onChange={e => onFavorite(m.key, e.target.value)}><option className="bg-[#234766]" value="">Más reciente</option>{items.map(x => <option className="bg-[#234766]" key={x.id} value={x.id}>{(x.title || x.caption || x.message || x.body || "Foto").slice(0, 45)}</option>)}</select>}
       <Link to={to + (m.query ? m.query(a) : "")} className="relative z-10 self-start inline-flex items-center gap-1 gold-text text-sm hover:text-[#fde68a]" data-testid={`portal-action-${m.key}`}>
         {m.action(a)} <ArrowRight className="w-4 h-4" />
       </Link>
@@ -81,12 +83,12 @@ export default function Dashboard() {
 
       <div className="max-w-6xl mx-auto px-4 sm:px-8 pb-6">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 lg:auto-rows-[240px] gap-5">
-          {MODULES.map((m) => <ModuleCard key={m.key} m={m} a={avatar} />)}
+          {MODULES.map((m) => <ModuleCard key={m.key} m={m} a={avatar} onFavorite={(key, value) => updateAvatar(id, a => ({ favorites: { ...a.favorites, [key]: value } }))} />)}
         </div>
       </div>
 
       <PhotoEditor open={photoOpen} onClose={() => setPhotoOpen(false)} initialPhoto={avatar.photo} round title={`Foto de ${avatar.name}`} onSave={(d) => updateAvatar(id, d)} />
-      <SpaceForm open={editOpen} onClose={() => setEditOpen(false)} editing={avatar} onUpdate={(d) => { const ok = updateAvatar(id, d); if (ok) toast.success("Espacio actualizado."); return ok; }} />
+      <SpaceForm open={editOpen} onClose={() => setEditOpen(false)} editing={avatar} onUpdate={async (d) => { const ok = await updateAvatar(id, d); if (ok) toast.success("Espacio actualizado."); return ok; }} />
     </div>
   );
 }

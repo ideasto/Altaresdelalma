@@ -3,7 +3,7 @@ import { useParams, Link, useSearchParams } from "react-router-dom";
 import { useStore } from "../store/StoreContext";
 import PhotoEditor from "../components/PhotoEditor";
 import { PageHeader, Modal, ConfirmDialog, GoldButton, GhostButton, EditPencil, TrashButton, Field, TextInput, TextArea } from "../components/common";
-import { makeSheet, renderPdf } from "../lib/pdf";
+import { timelinePdf } from "../lib/pdf/timeline";
 import { shrinkDataUrl, fileToDataUrl } from "../lib/image";
 import { toast } from "sonner";
 import { fmtDate, sortMoments } from "../lib/format";
@@ -11,7 +11,7 @@ import {
   Clock, FileDown, Plus, Home, Heart, Star, Plane, Cake, Music, Camera, Sun, Moon, MapPin, Gift, PawPrint, GraduationCap, Baby, Image as ImageIcon,
 } from "lucide-react";
 
-const ICONS = { star: Star, heart: Heart, home: Home, plane: Plane, cake: Cake, music: Music, camera: Camera, sun: Sun, moon: Moon, pin: MapPin, gift: Gift, paw: PawPrint, grad: GraduationCap, baby: Baby };
+const ICONS = { dot: () => <span className="w-3 h-3 rounded-full bg-current block" />, star: Star, heart: Heart, home: Home, plane: Plane, cake: Cake, music: Music, camera: Camera, sun: Sun, moon: Moon, pin: MapPin, gift: Gift, paw: PawPrint, grad: GraduationCap, baby: Baby };
 const ICON_KEYS = Object.keys(ICONS);
 
 const fmt = (d) => fmtDate(d, "short");
@@ -24,24 +24,25 @@ export default function Timeline() {
 
   const [formOpen, setFormOpen] = useState(false);
   const [editing, setEditing] = useState(null);
-  const [draft, setDraft] = useState({ date: "", icon: "star", title: "", description: "", photo: "" });
+  const [draft, setDraft] = useState({ date: "", icon: "dot", title: "", description: "", photo: "" });
   const [del, setDel] = useState(null);
   const [exportOpen, setExportOpen] = useState(false);
   const [headerImg, setHeaderImg] = useState("");
   const [headerEdit, setHeaderEdit] = useState(false);
 
-  const openCreate = () => { setEditing(null); setDraft({ date: "", icon: "star", title: "", description: "", photo: "" }); setFormOpen(true); };
+  const openCreate = () => { setEditing(null); setDraft({ date: "", icon: "dot", title: "", description: "", photo: "" }); setFormOpen(true); };
   useEffect(() => { if (params.get("nueva") === "1") openCreate(); }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   if (!avatar) return <Link to="/" className="gold-text underline block p-10">Volver</Link>;
   const events = sortMoments(avatar.timeline);
   const openEdit = (e) => { setEditing(e); setDraft({ date: e.date, icon: e.icon, title: e.title, description: e.description, photo: e.photo || "" }); setFormOpen(true); };
 
-  const save = () => {
+  const save = async () => {
     if (!draft.title.trim()) return toast.error("Poné un título al momento.");
+    if (draft.date && !/^\d{4}(-(?:0[1-9]|1[0-2]))?(-(?:0[1-9]|[12]\d|3[01]))?$/.test(draft.date)) return toast.error("Usá año, mes/año en formato AAAA-MM o fecha completa AAAA-MM-DD.");
     const ok = editing
-      ? updateAvatar(id, (a) => ({ timeline: a.timeline.map((e) => (e.id === editing.id ? { ...e, ...draft } : e)) }))
-      : updateAvatar(id, (a) => ({ timeline: [...a.timeline, { id: crypto.randomUUID(), ...draft }] }));
+      ? await updateAvatar(id, (a) => ({ timeline: a.timeline.map((e) => (e.id === editing.id ? { ...e, ...draft } : e)) }))
+      : await updateAvatar(id, (a) => ({ timeline: [...a.timeline, { id: crypto.randomUUID(), ...draft }] }));
     if (ok) { toast.success(editing ? "Momento actualizado." : "Momento agregado."); setFormOpen(false); }
   };
 
@@ -49,7 +50,7 @@ export default function Timeline() {
     const file = e.target.files?.[0];
     if (!file) return;
     const d = await fileToDataUrl(file);
-    const s = await shrinkDataUrl(d, 1600, 0.88);
+    const s = await shrinkDataUrl(d, 2400, 0.92);
     setDraft((prev) => ({ ...prev, photo: s }));
   };
 
@@ -59,37 +60,7 @@ export default function Timeline() {
     setExportOpen(true);
   };
 
-  const generatePdf = () => {
-    const { sheet, content } = makeSheet({ title: "Línea de Tiempo", subtitle: avatar.name });
-    const wrap = document.createElement("div");
-    if (headerImg) {
-      const h = document.createElement("div");
-      Object.assign(h.style, { display: "flex", justifyContent: "center", marginBottom: "22px" });
-      const circle = document.createElement("div");
-      Object.assign(circle.style, { width: "120px", height: "120px", borderRadius: "9999px", overflow: "hidden", border: "2px solid #c9a94a" });
-      const img = document.createElement("img");
-      img.src = headerImg; img.crossOrigin = "anonymous";
-      Object.assign(img.style, { width: "100%", height: "100%", objectFit: "cover" });
-      circle.appendChild(img); h.appendChild(circle); wrap.appendChild(h);
-    }
-    events.forEach((e, i) => {
-      const row = document.createElement("div");
-      Object.assign(row.style, { display: "flex", gap: "16px", alignItems: "flex-start", marginBottom: "18px", paddingBottom: "14px", borderBottom: "1px solid #e3d9c0" });
-      row.innerHTML = `
-        <div style="width:34px;height:34px;border-radius:9999px;background:#d4af37;color:#2b2114;display:flex;align-items:center;justify-content:center;font-weight:700;font-family:'Plus Jakarta Sans',sans-serif;flex-shrink:0;">${i + 1}</div>
-        <div style="flex:1;">
-          <div style="font-size:14px;color:#9c8a66;font-family:'Plus Jakarta Sans',sans-serif;letter-spacing:1px;">${escapeHtml(fmt(e.date)) || "—"}</div>
-          <div style="font-size:24px;color:#2b2114;font-weight:600;">${escapeHtml(e.title)}</div>
-          ${e.description ? `<div style="font-size:16px;color:#5a4a32;font-style:italic;">${escapeHtml(e.description)}</div>` : ""}
-        </div>`;
-      wrap.appendChild(row);
-    });
-    content.appendChild(wrap);
-    setExportOpen(false);
-    toast.promise(renderPdf([sheet], `linea-de-tiempo-${avatar.name}.pdf`), {
-      loading: "Generando línea de tiempo…", success: "PDF descargado.", error: "Error al generar el PDF.",
-    });
-  };
+  const generatePdf = () => { setExportOpen(false); return toast.promise(timelinePdf(avatar), { loading: "Generando cronología…", success: "PDF descargado.", error: "Error al generar el PDF." }); };
 
   return (
     <div className="pb-10">
@@ -121,6 +92,7 @@ export default function Timeline() {
                   </span>
                   <div className={`ml-16 md:ml-0 glass rounded-2xl p-5 pt-10 relative ${left ? "md:col-start-1 md:text-right" : "md:col-start-2"}`}>
                     <div className={`absolute top-3 ${left ? "left-3 md:left-auto md:right-3" : "right-3"} flex gap-1`}>
+                      {!e.date && [-1, 1].map(delta => <button key={delta} className="icon-btn" aria-label={delta < 0 ? "Mover antes" : "Mover después"} onClick={() => updateAvatar(id, a => { const list = [...a.timeline]; const from = list.findIndex(x => x.id === e.id); const candidates = list.map((x, i) => !x.date ? i : -1).filter(i => i >= 0); const to = candidates[candidates.indexOf(from) + delta]; if (to === undefined) return {}; [list[from], list[to]] = [list[to], list[from]]; return { timeline: list }; })}>{delta < 0 ? "↑" : "↓"}</button>)}
                       <EditPencil onClick={() => openEdit(e)} testId={`timeline-edit-${e.id}`} />
                       <TrashButton onClick={() => setDel(e)} testId={`timeline-delete-${e.id}`} />
                     </div>
@@ -141,7 +113,7 @@ export default function Timeline() {
       {/* form */}
       <Modal open={formOpen} onClose={() => setFormOpen(false)} title={editing ? "Editar momento" : "Nuevo momento"} maxWidth="max-w-xl" testId="timeline-form-modal">
         <div className="grid grid-cols-2 gap-4">
-          <Field label="Fecha"><TextInput type="date" value={draft.date} onChange={(e) => setDraft({ ...draft, date: e.target.value })} data-testid="timeline-date-input" /></Field>
+          <Field label="Fecha"><TextInput type="text" placeholder="AAAA, AAAA-MM o AAAA-MM-DD" value={draft.date} onChange={(e) => setDraft({ ...draft, date: e.target.value })} data-testid="timeline-date-input" /></Field>
           <Field label="Título"><TextInput value={draft.title} onChange={(e) => setDraft({ ...draft, title: e.target.value })} placeholder="Ej: Su casamiento" data-testid="timeline-title-input" /></Field>
         </div>
         <Field label="Ícono representativo">
@@ -179,13 +151,7 @@ export default function Timeline() {
 
       {/* export preview */}
       <Modal open={exportOpen} onClose={() => setExportOpen(false)} title="Exportar línea de tiempo" testId="timeline-export-modal">
-        <p className="text-[#cbd5e1] text-sm mb-4">Elegí la imagen que irá en la cabecera del PDF.</p>
-        <div className="flex flex-col items-center gap-4">
-          <div className="rounded-full overflow-hidden flex items-center justify-center bg-[#152438]" style={{ width: 130, height: 130, border: "2px solid rgba(212,175,55,0.7)" }}>
-            {headerImg ? <img src={headerImg} alt="" className="w-full h-full object-cover" /> : <ImageIcon className="w-10 h-10 gold-text opacity-50" />}
-          </div>
-          <GhostButton onClick={() => setHeaderEdit(true)} testId="timeline-header-change">Cambiar imagen de cabecera</GhostButton>
-        </div>
+        <p className="text-sm mb-4">A4 apaisado. Imprimí al 100 % y uní las hojas por las referencias laterales.</p>
         <div className="flex justify-end gap-3 mt-6">
           <GhostButton onClick={() => setExportOpen(false)} testId="timeline-export-cancel">Cancelar</GhostButton>
           <GoldButton onClick={generatePdf} testId="timeline-export-generate"><FileDown className="w-4 h-4" /> Descargar PDF</GoldButton>

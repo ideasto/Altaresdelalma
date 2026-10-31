@@ -25,7 +25,7 @@ export default function SpaceForm({ open, onClose, editing, onCreate, onUpdate }
 
   const needContact = !editing && (!known || fixing);
 
-  const submit = () => {
+  const submit = async () => {
     if (!form.name.trim()) return toast.error("Escribí el nombre de tu ser amado.");
     if (needContact) {
       if (!contact.name.trim()) return toast.error("Escribí tu nombre.");
@@ -33,7 +33,7 @@ export default function SpaceForm({ open, onClose, editing, onCreate, onUpdate }
       if (!contact.accepted) return toast.error("Para crear el espacio necesitamos tu aceptación explícita.");
     }
     const data = { ...form, name: form.name.trim() };
-    const ok = editing ? onUpdate(data) : onCreate(data);
+    const ok = editing ? await onUpdate(data) : await onCreate(data);
     if (!ok) return;
     if (needContact) {
       if (!saveContact(contact)) toast.error("Tus datos no se pudieron guardar en este navegador.", { description: "Podés cargarlos después desde «Tus datos»." });
@@ -45,7 +45,7 @@ export default function SpaceForm({ open, onClose, editing, onCreate, onUpdate }
   return (
     <Modal open={open} onClose={onClose} title={editing ? "Editar espacio" : "Crear un espacio"} maxWidth="max-w-xl" testId="space-form-modal">
       <Field label="Nombre del ser amado">
-        <TextInput value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} placeholder="Ej: Rosa, Icky, el abuelo Jorge" maxLength={60} data-testid="space-name-input" />
+        <TextInput value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} placeholder="Ej: Papá Jorge" maxLength={60} data-testid="space-name-input" />
       </Field>
       <Field label="Símbolo (opcional)">
         <SymbolPicker value={form.symbol} onChange={(symbol) => setForm({ ...form, symbol })} />

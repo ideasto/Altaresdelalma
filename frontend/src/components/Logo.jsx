@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 import { BRAND } from "../config/brand";
 
 // Logo oficial de La Gata y la Magia (extraído del PDF de marca).
@@ -8,13 +9,13 @@ export function BrandLogo({ variant = "goldFull", className = "", style, alt = B
 
 export function BrandLockup({ compact = false }) {
   return (
-    <div className="flex items-center gap-3" data-testid="brand-lockup">
+    <Link to="/" className="flex items-center gap-3" data-testid="brand-lockup" aria-label="Ecos del Alma, inicio">
       <BrandLogo variant="goldFull" className={compact ? "h-10 w-auto" : "h-14 sm:h-16 w-auto"} alt="" />
       <div className="leading-tight">
         <div className="font-heading gold-gradient-text text-xl sm:text-2xl tracking-wide">{BRAND.appName}</div>
         <div className="font-ui text-[10px] sm:text-xs text-[#a9bacb] tracking-[0.25em] uppercase">{BRAND.brandName}</div>
       </div>
-    </div>
+    </Link>
   );
 }
 

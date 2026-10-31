@@ -80,16 +80,18 @@ async function back(doc, a) {
   doc.setDrawColor(...GOLD); doc.setLineWidth(0.4); doc.line(W / 2 - 15, y, W / 2 + 15, y);
   y += 12;
   if (m.backText) {
-    let size = 14;
+    const size = 14;
     setFont(doc, "Cormorant", "normal", size, [231, 238, 246]);
-    let ls = lines(doc, m.backText, 140);
-    while (ls.length * lh(size, 1.4) > 150 && size > 10) { size -= 0.5; setFont(doc, "Cormorant", "normal", size, [231, 238, 246]); ls = lines(doc, m.backText, 140); }
-    ls.forEach((l) => { doc.text(l, 35, y); y += lh(size, 1.4); });
+    const ls = lines(doc, m.backText, 140);
+    ls.forEach(l => {
+      if (y > 225) { doc.addPage(); fillPage(doc, BLUE); doubleBorder(doc, 10); y = 35; setFont(doc, "Cormorant", "normal", size, [231, 238, 246]); }
+      doc.text(l, 35, y); y += lh(size, 1.4);
+    });
     y += 8;
   }
   if (m.closing) {
     setFont(doc, "Caveat", "normal", 20, [253, 230, 138]);
-    lines(doc, m.closing, 140).forEach((l) => { doc.text(l, W / 2, y, { align: "center" }); y += lh(20, 1.2); });
+    lines(doc, m.closing, 140).forEach((l) => { if (y > 230) { doc.addPage(); fillPage(doc, BLUE); doubleBorder(doc, 10); y = 35; setFont(doc, "Caveat", "normal", 20, [253, 230, 138]); } doc.text(l, W / 2, y, { align: "center" }); y += lh(20, 1.2); });
   }
   await drawContain(doc, logoUrl(), W / 2 - 11, 244, 22, 26, "logo");
   setFont(doc, "helvetica", "normal", 9, GOLD);

@@ -6,11 +6,14 @@ import { BRAND } from "../config/brand";
 import { Instagram, Mail, HelpCircle } from "lucide-react";
 import Welcome, { welcomeSeen } from "./Welcome";
 import StorageGate from "./StorageGate";
+import { shouldRemind, dismissReminder } from "../lib/backupReminder";
+import { exportBackup } from "../lib/storage";
 import { syncContact } from "../lib/contact";
 import { useStore } from "../store/StoreContext";
 
 export default function Layout() {
-  const { boot } = useStore();
+  const { boot, avatars, trash } = useStore();
+  const [reminderHidden, setReminderHidden] = useState(false);
   const [welcome, setWelcome] = useState(() => !welcomeSeen() && boot.status === "first");
 
   useEffect(() => {
@@ -34,7 +37,8 @@ export default function Layout() {
         </StorageGate>
       </main>
 
-      <footer className="border-t border-[#d4af37]/25 glass-strong" data-testid="brand-footer">
+      {!reminderHidden && shouldRemind() && <aside className="max-w-6xl mx-auto px-5 py-3 text-xs text-[#d5dfea] flex flex-wrap items-center gap-3" data-testid="backup-reminder">Hay cambios nuevos. Guardá una copia de tus recuerdos. <button className="gold-text underline" onClick={() => { exportBackup(avatars, null, trash); setReminderHidden(true); }}>Descargar respaldo</button><button className="underline" onClick={() => { dismissReminder(); setReminderHidden(true); }}>Más tarde</button></aside>}
+      <footer className="brand-footer" data-testid="brand-footer">
         <div className="max-w-6xl mx-auto px-5 py-5 flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-3">
             <BrandLogo variant="goldHorizontal" className="h-9 w-auto" />

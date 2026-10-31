@@ -7,8 +7,8 @@ import { BookCover, BookBack } from "../components/libro/BookCovers";
 import BookMetaEditor from "../components/libro/BookMetaEditor";
 import PageEditor from "../components/libro/PageEditor";
 import ImportDialog from "../components/libro/ImportDialog";
-import { makeSheet, renderPdf } from "../lib/pdf";
-import { bookTitle } from "../lib/format";
+import { bookPdf } from "../lib/pdf/book";
+import { bookTitle, BOOK_FONTS } from "../lib/format";
 import { BRAND } from "../config/brand";
 import { toast } from "sonner";
 import { FileDown, Plus, ChevronLeft, ChevronRight, ArrowUp, ArrowDown, Import } from "lucide-react";
@@ -32,10 +32,10 @@ export default function Libro() {
   const view = i === 0 ? "cover" : i === total - 1 ? "back" : pages[i - 1];
   const go = (d) => { setDir(d); setIndex(Math.max(0, Math.min(total - 1, i + d))); };
 
-  const savePage = (draft) => {
+  const savePage = async (draft) => {
     const ok = editing
-      ? updateAvatar(id, (a) => ({ book: a.book.map((p) => (p.id === editing.id ? { ...p, ...draft } : p)) }))
-      : updateAvatar(id, (a) => ({ book: [...a.book, { id: crypto.randomUUID(), source: "", ...draft }] }));
+      ? await updateAvatar(id, (a) => ({ book: a.book.map((p) => (p.id === editing.id ? { ...p, ...draft } : p)) }))
+      : await updateAvatar(id, (a) => ({ book: [...a.book, { id: crypto.randomUUID(), source: "", ...draft }] }));
     if (ok) {
       toast.success(editing ? "Página actualizada." : "Página guardada.");
       if (!editing) { setDir(1); setIndex(pages.length + 1); }
@@ -43,44 +43,20 @@ export default function Libro() {
     return ok;
   };
 
-  const move = (pid, d) => {
+  const move = async (pid, d) => {
     const from = pages.findIndex((p) => p.id === pid);
     const to = from + d;
     if (to < 0 || to >= pages.length) return;
-    if (updateAvatar(id, (a) => { const b = [...a.book]; [b[from], b[to]] = [b[to], b[from]]; return { book: b }; })) { setDir(d); setIndex(to + 1); }
+    if (await updateAvatar(id, (a) => { const b = [...a.book]; [b[from], b[to]] = [b[to], b[from]]; return { book: b }; })) { setDir(d); setIndex(to + 1); }
   };
 
-  const importPages = (list) => {
-    const ok = updateAvatar(id, (a) => ({ book: [...a.book, ...list.map((p) => ({ id: crypto.randomUUID(), ...p }))] }));
+  const importPages = async (list) => {
+    const ok = await updateAvatar(id, (a) => ({ book: [...a.book, ...list.map((p) => ({ id: crypto.randomUUID(), ...p }))] }));
     if (ok) toast.success(`Se agregaron ${list.length} página(s) al final del libro.`);
     return ok;
   };
 
-  const exportPdf = () => {
-    const sheets = [];
-    const add = (opts, build) => { const { sheet, content } = makeSheet(opts); build(content); sheets.push(sheet); };
-    const cover = avatar.bookMeta.coverPhoto || avatar.photoCropped;
-    add({ title: bookTitle(avatar), subtitle: avatar.bookMeta.subtitle }, (c) => {
-      if (!cover) return;
-      c.innerHTML = `<div style="display:flex;justify-content:center;align-items:center;height:100%"><img src="${cover}" style="max-width:70%;max-height:100%;object-fit:contain;border:4px solid #c9a94a;border-radius:4px"/></div>`;
-    });
-    pages.forEach((p) => add({ title: p.title || "" }, (c) => {
-      const w = document.createElement("div");
-      w.style.textAlign = "center";
-      if (p.photo) { const im = document.createElement("img"); im.src = p.photo; Object.assign(im.style, { maxWidth: "80%", maxHeight: "420px", objectFit: "contain", marginBottom: "22px", border: "2px solid #d8c9a3" }); w.appendChild(im); }
-      if (p.text) { const t = document.createElement("div"); Object.assign(t.style, { fontFamily: "'Caveat',cursive", fontSize: "26px", lineHeight: "1.5", whiteSpace: "pre-wrap" }); t.textContent = p.text; w.appendChild(t); }
-      c.appendChild(w);
-    }));
-    add({ title: bookTitle(avatar) }, (c) => {
-      const w = document.createElement("div");
-      Object.assign(w.style, { textAlign: "center", fontSize: "20px", lineHeight: "1.6", whiteSpace: "pre-wrap" });
-      w.textContent = avatar.bookMeta.backText || "";
-      if (avatar.bookMeta.closing) { const cl = document.createElement("div"); Object.assign(cl.style, { fontFamily: "'Caveat',cursive", fontSize: "28px", marginTop: "28px", color: "#8a6d1f" }); cl.textContent = avatar.bookMeta.closing; w.appendChild(cl); }
-      const cr = document.createElement("div"); Object.assign(cr.style, { marginTop: "40px", fontSize: "12px", letterSpacing: "3px", textTransform: "uppercase", color: "#9c8a66", fontFamily: "'Plus Jakarta Sans',sans-serif" }); cr.textContent = BRAND.editorialCredit; w.appendChild(cr);
-      c.appendChild(w);
-    });
-    toast.promise(renderPdf(sheets, `libro-${avatar.name}.pdf`), { loading: "Encuadernando el libro…", success: "PDF descargado.", error: "Error al generar el PDF." });
-  };
+  const exportPdf = () => toast.promise(bookPdf(avatar), { loading: "Encuadernando el libro…", success: "PDF descargado.", error: "Error al generar el PDF." });
 
   const label = view === "cover" ? "Tapa" : view === "back" ? "Contratapa" : `Página ${i} de ${pages.length}`;
 
@@ -101,12 +77,12 @@ export default function Libro() {
                 {view === "cover" && <BookCover a={avatar} onEdit={() => setMeta("cover")} />}
                 {view === "back" && <BookBack a={avatar} onEdit={() => setMeta("back")} />}
                 {typeof view === "object" && (
-                  <div className="paper-sheet book-depth rounded-r-xl rounded-l-sm aspect-[3/4] p-7 relative overflow-hidden" data-testid={`libro-page-${view.id}`}>
+                  <div className="paper-sheet book-depth rounded-r-xl rounded-l-sm aspect-[210/297] p-7 relative overflow-hidden" data-testid={`libro-page-${view.id}`}>
                     <div className="absolute inset-3 rounded-lg border border-[#c9a94a]/40 pointer-events-none" />
-                    <div className="h-full overflow-y-auto fancy-scroll flex flex-col items-center text-center pt-2">
+                    <div className="h-full overflow-y-auto fancy-scroll flex flex-col items-center pt-2">
                       {view.title && <h3 className="font-heading text-3xl text-[#2b2114] mb-4">{view.title}</h3>}
                       {view.photo && <div className="bg-white p-1.5 shadow mb-4"><img src={view.photo} alt="" className="max-h-56 object-contain" /></div>}
-                      {view.text && <p className="font-hand text-[24px] leading-relaxed text-[#2b2114] whitespace-pre-wrap">{view.text}</p>}
+                      {view.text && <p className={`${(BOOK_FONTS[view.font] || BOOK_FONTS.serif).css} leading-relaxed text-[#2b2114] whitespace-pre-wrap w-full`} style={{ fontSize: (BOOK_FONTS[view.font] || BOOK_FONTS.serif).px[view.size || "m"] }}>{view.text}</p>}
                     </div>
                   </div>
                 )}
@@ -129,8 +105,9 @@ export default function Libro() {
         </div>
       </div>
 
+      <div className="flex justify-center mt-8"><GoldButton onClick={() => { setEditing(null); setPageOpen(true); }} testId="libro-add-bottom">Agregar página</GoldButton></div>
       <PageEditor open={pageOpen} onClose={() => setPageOpen(false)} editing={editing} spaceId={id} onSave={savePage} />
-      <BookMetaEditor open={!!meta} part={meta} onClose={() => setMeta(null)} a={avatar} onSave={(m) => { const ok = updateAvatar(id, { bookMeta: m }); if (ok) toast.success("Libro actualizado."); return ok; }} />
+      <BookMetaEditor open={!!meta} part={meta} onClose={() => setMeta(null)} a={avatar} onSave={async (m) => { const ok = await updateAvatar(id, { bookMeta: m }); if (ok) toast.success("Libro actualizado."); return ok; }} />
       <ImportDialog open={importOpen} onClose={() => setImportOpen(false)} a={avatar} onImport={importPages} />
 
       <ConfirmDialog

@@ -52,8 +52,18 @@ async function moment(doc, e, x, w, up) {
 
 // A4 apaisado, camino continuo con puntos, tantas hojas como haga falta y referencias de unión.
 export async function timelinePdf(a) {
-  const list = sortMoments(a.timeline);
   const doc = await newDoc("landscape");
+  const list = [];
+  for (const e of sortMoments(a.timeline)) {
+    setFont(doc, "Cormorant", "normal", 11);
+    const all = lines(doc, e.description, (R - L) / SLOTS - 8);
+    let offset = 0, part = 0;
+    do {
+      const count = part === 0 && e.photo ? 3 : 8;
+      list.push({ ...e, photo: part === 0 ? e.photo : "", title: part === 0 ? e.title : `${e.title} (continúa)`, description: all.slice(offset, offset + count).join("\n") });
+      offset += count; part++;
+    } while (offset < all.length);
+  }
   const n = Math.max(1, Math.ceil(list.length / SLOTS));
   const slotW = (R - L) / SLOTS;
   for (let s = 0; s < n; s++) {

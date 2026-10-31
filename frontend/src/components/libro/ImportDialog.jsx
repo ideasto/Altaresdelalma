@@ -21,9 +21,9 @@ export default function ImportDialog({ open, onClose, a, onImport }) {
   }[tab];
 
   const toggle = (s) => setSel((x) => (x.includes(s) ? x.filter((y) => y !== s) : [...x, s]));
-  const confirm = () => {
+  const confirm = async () => {
     const pick = items.filter((i) => sel.includes(i.src));
-    if (onImport(pick.map((i) => ({ ...i.page, source: i.src })))) { setSel([]); onClose(); }
+    if (await onImport(pick.map((i) => ({ ...i.page, source: i.src })))) { setSel([]); onClose(); }
   };
 
   return (

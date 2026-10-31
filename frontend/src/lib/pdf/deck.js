@@ -22,7 +22,7 @@ let probe = null;
 export async function initDeckProbe() { if (!probe) probe = await newDoc(); }
 // Para avisar durante la edición: misma medición y fuente que el PDF.
 export function deckFits(message) {
-  if (!probe) { probe = new jsPDF({ unit: "mm" }); initDeckProbe(); }
+  if (!probe) { initDeckProbe(); return { fits: true, pending: true }; }
   return fitMessage(probe, message || "");
 }
 
@@ -64,6 +64,7 @@ async function back(doc, x, y) {
 // Frentes y dorsos alineados para doble faz (volteo por el borde largo: columnas espejadas).
 export async function deckPdf(cards, filename) {
   const doc = await newDoc();
+  if (cards.some(c => !fitMessage(doc, c.message).fits)) throw new Error("Una frase excede la carta física.");
   const frame = await asDataUrl(DECK_FRAME_URL);
   const per = COLS * ROWS;
   const sheets = Math.ceil(cards.length / per);
