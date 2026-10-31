@@ -90,3 +90,7 @@ credentials.json
 *.key
 .credentials
 frontend/node_modules/.cache/default-development/0.pack
+
+# New editor metadata is not part of the independent application.
+# Previously tracked historical test evidence is retained.
+.emergent/

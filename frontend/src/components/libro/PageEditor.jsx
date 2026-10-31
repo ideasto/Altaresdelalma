@@ -15,14 +15,15 @@ export default function PageEditor({ open, onClose, editing, spaceId, onSave }) 
   const [draft, setDraft] = useState({ title: "", text: "", photo: "", font: "serif", size: "m" });
   const [fail, setFail] = useState(false);
   const d = useDraft(`pagina-${spaceId}-${editing?.id || "nueva"}`, draft, open);
+  const { rebase } = d;
 
   useEffect(() => {
     if (!open) return;
     setFail(false);
     const initial = editing ? { title: editing.title, text: editing.text, photo: editing.photo, font: editing.font || "serif", size: editing.size || "m" } : { title: "", text: "", photo: "", font: "serif", size: "m" };
-    d.rebase(initial);
+    rebase(initial);
     setDraft(initial);
-  }, [open, editing]);
+  }, [open, editing, rebase]);
 
   const onPhoto = async (e) => {
     const f = e.target.files?.[0];

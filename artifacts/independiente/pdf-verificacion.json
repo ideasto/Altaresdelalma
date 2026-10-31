@@ -1,0 +1,47 @@
+[
+  {
+    "file": "cartas.pdf",
+    "pages": 3,
+    "selectable_characters": 2421,
+    "size_mm": [
+      210,
+      297
+    ]
+  },
+  {
+    "file": "galeria.pdf",
+    "pages": 1,
+    "selectable_characters": 108,
+    "size_mm": [
+      210,
+      297
+    ]
+  },
+  {
+    "file": "libro.pdf",
+    "pages": 4,
+    "selectable_characters": 3889,
+    "size_mm": [
+      210,
+      297
+    ]
+  },
+  {
+    "file": "linea.pdf",
+    "pages": 1,
+    "selectable_characters": 170,
+    "size_mm": [
+      297,
+      210
+    ]
+  },
+  {
+    "file": "oraculo.pdf",
+    "pages": 2,
+    "selectable_characters": 223,
+    "size_mm": [
+      210,
+      297
+    ]
+  }
+]

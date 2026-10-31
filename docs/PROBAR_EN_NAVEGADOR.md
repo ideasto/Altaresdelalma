@@ -43,7 +43,7 @@ Cuando termines, detené el Codespace desde el menú de Codespaces de GitHub (**
 ## Configuración y verificación
 
 - `.devcontainer/devcontainer.json`: imagen oficial `mcr.microsoft.com/devcontainers/javascript-node:1-22-bookworm`, puerto 3000, apertura de navegador, instalación y arranque automáticos.
-- `.devcontainer/install.sh`: instala con la versión de Yarn fijada por el proyecto, sin modificar el manifiesto ni crear un lockfile.
+- `.devcontainer/install.sh`: instala con la versión de Yarn fijada por el proyecto, usando el lockfile versionado sin modificarlo.
 - `.devcontainer/start-preview.sh`: inicia el servidor si hace falta y evita duplicarlo al reconectar. Los procesos no se conservan en una instantánea; se arrancan al adjuntarse al entorno.
 - Se verificaron JSON, sintaxis de scripts y respuesta HTTP de la app en este entorno. La compilación con Node 22 se registra en el informe de estado. La creación de un Codespace y su URL externa requieren la cuenta del usuario y **no se ejecutaron desde este chat**.
 

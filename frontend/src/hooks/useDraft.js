@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { loadDraft, saveDraft, clearDraft } from "../lib/drafts";
 
 const blank = (v) => Object.values(v || {}).every((x) => !String(x || "").trim());
@@ -36,6 +36,8 @@ export default function useDraft(key, value, active) {
     return () => clearTimeout(t);
   }, [key, value, active]);
 
+  const rebase = useCallback((v) => { base.current = JSON.stringify(v); }, []);
+
   return {
     failed,
     recovered,
@@ -43,6 +45,6 @@ export default function useDraft(key, value, active) {
     apply: () => { pending.current = false; const r = recovered; setRecovered(null); return r; },
     clear: () => { cleared.current = true; clearDraft(key); pending.current = false; setRecovered(null); },
     // Se llama al abrir para fijar el contenido inicial (no cuenta como cambio).
-    rebase: (v) => { base.current = JSON.stringify(v); },
+    rebase,
   };
 }

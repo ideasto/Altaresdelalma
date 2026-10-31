@@ -14,14 +14,15 @@ export default function LetterEditor({ open, onClose, editing, spaceId, spaceNam
   const [draft, setDraft] = useState({ date: todayLocal(), to: "", body: "", sign: "" });
   const [fail, setFail] = useState(false);
   const d = useDraft(`carta-${spaceId}-${editing?.id || "nueva"}`, draft, open);
+  const { rebase } = d;
 
   useEffect(() => {
     if (!open) return;
     setFail(false);
     const initial = editing ? { date: editing.date, to: editing.to, body: editing.body, sign: editing.sign } : { date: todayLocal(), to: spaceName, body: "", sign: getContact()?.name || "" };
-    d.rebase(initial);
+    rebase(initial);
     setDraft(initial);
-  }, [open, editing, spaceName]);
+  }, [open, editing, spaceName, rebase]);
 
   const copy = async () => toast[(await copyText(letterText(draft))) ? "success" : "error"]("Texto copiado.");
   const download = () => downloadText(letterText(draft), "carta");

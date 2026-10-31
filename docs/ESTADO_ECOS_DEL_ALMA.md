@@ -37,7 +37,7 @@ Trabajo en `feat/ecos-del-alma-completo`, desde `790043b9bc346ad39a2ba98b6401d2a
 
 ```sh
 cd /workspace/Altaresdelalma/frontend
-corepack yarn install --no-lockfile --non-interactive
+corepack yarn install --frozen-lockfile --non-interactive
 corepack yarn build
 BROWSER=none HOST=0.0.0.0 PORT=3000 corepack yarn start
 ```
@@ -74,3 +74,13 @@ Este chat no proporciona publicación de puertos ni URL de vista previa. Se volv
 La alternativa preparada es GitHub Codespaces, con instalación, arranque y puerto 3000 automáticos en `.devcontainer/`. La guía para Sole está en [PROBAR_EN_NAVEGADOR.md](PROBAR_EN_NAVEGADOR.md): abrir la rama → Code → Codespaces → Create codespace on feat/ecos-del-alma-completo. Al terminar, Ports → 3000 → Open in Browser si no se abre sola. La creación requiere su cuenta de GitHub; no se lanzó un Codespace desde este chat y no se afirma que exista una URL externa todavía.
 
 La imagen oficial de Node 22 fue comprobada en el registro de Microsoft. JSON y sintaxis de scripts válidos. El helper de arranque reconoce el servidor ya activo y no lo duplica. Compilación correcta con Node 22.23.4 (advertencias de dependencias de hooks ya existentes, sin errores). Se verificó el reinicio con el helper bajo Node 22 y la respuesta de la página y su JavaScript. Codespaces como servicio externo todavía requiere la creación por parte de Sole.
+
+## Independencia de Emergent y preparación para Vercel
+
+Se retiraron los dos paquetes de edición de Emergent, sus adaptadores e inyección de scripts, PostHog hacia Emergent, metadatos de arranque y el requisito Python sin uso. Se conservaron los recursos y la lógica del producto. Las fuentes se sirven localmente. Los archivos históricos de pruebas no se eliminaron por coincidir con un nombre.
+
+Node 22.x y Yarn 1.22.22 fijados, `frontend/yarn.lock` versionado, Codespaces usa instalación congelada. `frontend/vercel.json` contiene instalación, build, salida `build` y rutas de SPA respetando archivos existentes. Para el futuro proyecto único, Root Directory `frontend`, Production Branch `main` tras revisar y fusionar la PR #1; no se desplegó.
+
+Prueba nueva en una copia temporal sin dependencias, build ni .env, con caché nueva: 1.499 descargas solo desde `registry.yarnpkg.com`, integridad y hash del lockfile intactos. Compilación con Node 22.23.4 y `CI=true` correcta y sin advertencias ESLint; servidor de desarrollo limpio también compila. Prueba Chromium del build estático: nueve rutas con apertura directa y recarga, ruta antigua, fuentes locales, cinco módulos y cinco descargas PDF, edición de tapa, carga de foto y guardado/recarga de carta. Cero solicitudes externas, errores JavaScript o respuestas HTTP fallidas. Regresión de borradores y recuperación pasada contra ese build.
+
+Evidencia: `artifacts/independiente/`. Configuración exacta y guía de permisos de GitHub: [INDEPENDENCIA_Y_VERCEL.md](INDEPENDENCIA_Y_VERCEL.md). No se pudieron inspeccionar desde la API las GitHub Apps, webhooks ni permisos de cuenta; la ausencia de workflows/hook activos en el checkout no prueba que Emergent carezca de acceso externo. Sole debe revisar y revocar los accesos concretos descritos en esa guía. No se mostraron secretos, no se creó otro repositorio/proyecto y no se fusionó ni desplegó.
