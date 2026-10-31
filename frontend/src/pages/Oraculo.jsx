@@ -185,7 +185,7 @@ export default function Oraculo() {
         </div>
         <div className="paper-sheet piece-editor rounded-xl border border-[#e2d9c8] p-7 max-w-xs mx-auto aspect-[7/10] flex flex-col justify-center mb-5">
           <textarea aria-label="Frase sobre la carta" className="bg-transparent text-center font-heading italic text-2xl w-full resize-none" rows={6} value={draft.message} onChange={e => setDraft({ ...draft, message: e.target.value })} placeholder="Una frase breve…" data-testid="oraculo-message-input" />
-          <input aria-label="Firma" className="bg-transparent text-center w-full" value={draft.name} onChange={e => setDraft({ ...draft, name: e.target.value })} data-testid="oraculo-name-input" />
+          <input maxLength={40} aria-label="Firma" className="bg-transparent text-center w-full" value={draft.name} onChange={e => setDraft({ ...draft, name: e.target.value })} data-testid="oraculo-name-input" />
         </div>
         {!deckFits(draft.message).fits && <p role="alert" className="text-amber-200 text-sm mb-4">Esta frase excede la carta física de 63 × 90 mm. Acortala antes de guardar.</p>}
         <Field label="¿De quién son estas palabras?">

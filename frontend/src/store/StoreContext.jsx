@@ -78,6 +78,7 @@ export function StoreProvider({ children }) {
       }
       const prev = ref.current;
       const next = updater(prev);
+      if (next === prev) return true;
       let res;
       try { res = await persist(next, prev); } catch (e) { res = { ok: false, error: e }; }
       if (!res.ok) {
@@ -104,10 +105,10 @@ export function StoreProvider({ children }) {
     commit((s) => ({ ...s, avatars: s.avatars.map((a) => (a.id === id ? { ...a, ...(typeof patch === "function" ? patch(a) : patch) } : a)) }), opts);
 
   const deleteAvatar = (id) =>
-    commit((s) => ({ avatars: s.avatars.filter((a) => a.id !== id), trash: [{ space: s.avatars.find((a) => a.id === id), deletedAt: new Date().toISOString() }, ...s.trash] }));
+    commit((s) => !s.avatars.some(a => a.id === id) ? s : ({ avatars: s.avatars.filter((a) => a.id !== id), trash: [{ space: s.avatars.find((a) => a.id === id), deletedAt: new Date().toISOString() }, ...s.trash] }));
 
   const restoreFromTrash = (id) =>
-    commit((s) => ({ avatars: [...s.avatars, s.trash.find((t) => t.space.id === id).space], trash: s.trash.filter((t) => t.space.id !== id) }));
+    commit((s) => { const item = s.trash.find(t => t.space.id === id); if (!item) return s; const space = s.avatars.some(a => a.id === id) ? { ...item.space, id: crypto.randomUUID() } : item.space; return { avatars: [...s.avatars, space], trash: s.trash.filter(t => t.space.id !== id) }; });
 
   const purgeTrash = (id) => commit((s) => ({ ...s, trash: id ? s.trash.filter((t) => t.space.id !== id) : [] }));
 

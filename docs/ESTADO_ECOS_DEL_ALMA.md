@@ -22,9 +22,9 @@ Trabajo en `feat/ecos-del-alma-completo`, desde `790043b9bc346ad39a2ba98b6401d2a
 
 ## Evidencia ejecutada
 
-- `yarn build`: compilación de producción correcta. Verificar última ejecución en la entrega.
+- `yarn build`: última compilación de producción correcta, 15,57 s; verificación de whitespace sin errores.
 - Navegador Chromium real, escritorio 1440 × 1050 y celular 390 × 844 sin desborde horizontal.
-- IndexedDB: 24 JPEG sintéticos de 1800 × 1200, 34.691.540 caracteres codificados (~33,1 MiB); cinco páginas, textos largos y papelera. Lectura completa comprobada y restauración en otro contexto limpio, sin imágenes faltantes. No implica capacidad ilimitada: depende de cuota y dispositivo.
+- IndexedDB: 24 JPEG sintéticos de 1800 × 1200, 34.682.960 caracteres codificados (~33,1 MiB); cinco páginas, textos largos y papelera. Lectura completa comprobada y restauración en otro contexto limpio, sin imágenes faltantes. No implica capacidad ilimitada: depende de cuota y dispositivo.
 - Error de cuota inyectado durante reemplazo: datos anteriores intactos. Error de escritura inyectado en UI: editor y borrador conservados, recuperación y posterior guardado correcto.
 - Lectura con localStorage lleno; rechazo de tres respaldos malformados. Recuperación de foto con archivo tras eliminar y recargar. Opciones de restauración reiniciadas al abrir nuevamente.
 - Edición del libro, mezcla, giro, salto y preferencia de sonido comprobados en navegador, sin errores JavaScript. La salida acústica física no se escucha desde esta máquina.
@@ -54,6 +54,7 @@ require('./frontend/node_modules/webpack')(require('./tests/browser/webpack.cjs'
 JS
 python tests/browser/validate.py
 python tests/browser/ui.py
+python tests/browser/inspect_pdfs.py
 ```
 
 Requieren Playwright, Chromium en `/usr/bin/chromium` y PyMuPDF para inspección de PDF. No requieren MongoDB. El entorno ya tiene estas herramientas. Las pruebas usan contextos aislados y datos sintéticos, nunca el perfil real de la usuaria.
@@ -64,4 +65,4 @@ Requieren Playwright, Chromium en `/usr/bin/chromium` y PyMuPDF para inspección
 - Comprobación geométrica automatizada no reemplaza una prueba física de impresora: doble faz al 100 %, volteo por borde largo y prueba de una hoja antes de imprimir el mazo completo.
 - Los campos editables representan el contenido de la pieza; las continuaciones de textos largos se resuelven al exportar. La pantalla puede desplazarse para leer todo el texto; no es una previsualización de cada salto físico de página.
 - No hay pagos, anuncios, sincronización remota ni integración comercial completa. Faltan URL pública, endpoint de contactos y decisiones legales/comerciales.
-- Estado de PR: por actualizar tras guardar commits y probar publicación de la rama. `gh api user` devolvió Forbidden; `api.github.com` no está permitido en la política del entorno. No se modificó la configuración de red ni se pidió un token.
+- Estado de PR: texto preparado en `docs/PR_ECOS_DEL_ALMA.md`; commits locales guardados. Subida de rama y creación remota pendientes de comprobar. `gh api user` devolvió Forbidden; `api.github.com` no está permitido en la política del entorno. No se modificó la configuración de red ni se pidió un token.

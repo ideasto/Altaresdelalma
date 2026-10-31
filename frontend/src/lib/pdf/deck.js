@@ -50,7 +50,7 @@ async function front(doc, c, x, y, frame) {
   const h = f.lines.length * lh(f.size, 1.25);
   let ty = y + CH / 2 - h / 2 + lh(f.size, 1.25) * 0.75 - 3;
   f.lines.forEach((l) => { doc.text(l, x + CW / 2, ty, { align: "center" }); ty += lh(f.size, 1.25); });
-  if (c.name) { setFont(doc, "Cormorant", "bold", 9.5, [110, 90, 55]); doc.text(c.name, x + CW / 2, y + CH - 15, { align: "center" }); }
+  if (c.name) { setFont(doc, "Cormorant", "bold", 9.5, [110, 90, 55]); lines(doc, c.name, TEXT_W).forEach((l, i) => doc.text(l, x + CW / 2, y + CH - 19 + i * lh(9.5), { align: "center" })); }
   if (c.origin) { setFont(doc, "helvetica", "normal", 8.5, [150, 130, 95]); doc.text(ORIGIN[c.origin], x + CW / 2, y + CH - 9.5, { align: "center" }); }
 }
 

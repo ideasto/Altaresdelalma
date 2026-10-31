@@ -219,7 +219,7 @@ export function validateBackupShape(parsed, allowEmpty = false) {
   else if (isObj(parsed) && "avatars" in parsed) { if (!Array.isArray(parsed.avatars)) errs.push("«avatars» no es una lista."); else list = parsed.avatars; }
   else if (isObj(parsed) && "espacios" in parsed) { if (!Array.isArray(parsed.espacios)) errs.push("«espacios» no es una lista."); else list = parsed.espacios; }
   else errs.push("No tiene la estructura de un respaldo de Ecos del Alma / Mensajes Ancestrales.");
-  if (!allowEmpty && list && list.length === 0) errs.push("El respaldo no contiene ningún espacio.");
+  if (!allowEmpty && list && list.length === 0 && !parsed?.trash?.length) errs.push("El respaldo no contiene ningún espacio.");
   (list || []).forEach((a, i) => {
     const n = `Espacio ${i + 1}`;
     if (!isObj(a)) return errs.push(`${n}: no es un objeto válido.`);
@@ -277,7 +277,8 @@ export function parseBackup(text) {
   try { parsed = JSON.parse(text); } catch { throw new Error("El archivo no es un respaldo legible (JSON dañado o incompleto)."); }
   const errs = validateBackupShape(isObj(parsed) && isObj(parsed.data) ? parsed.data : parsed);
   if (errs.length) throw new Error(`Respaldo rechazado, no se modificó nada: ${errs.slice(0, 3).join(" ")}${errs.length > 3 ? ` (y ${errs.length - 3} problema(s) más)` : ""}`);
-  const version = Number(parsed?.version || 1);
+  const version = Number(parsed?.version || parsed?.data?.version || 1);
+  if (!Number.isInteger(version) || version < 1) throw new Error("Versión de respaldo inválida.");
   if (version > DATA_VERSION) throw new Error(`El respaldo es de una versión más nueva (${version}). Actualizá la app antes de restaurarlo.`);
   const ex = extractSpaces(parsed);
   if (!ex) throw new Error("El archivo no tiene la estructura de un respaldo de Ecos del Alma / Mensajes Ancestrales.");

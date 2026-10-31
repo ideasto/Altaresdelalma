@@ -1,0 +1,7 @@
+# Ecos del Alma: guardado seguro, piezas editables y cinco PDF paginados
+
+Los consumidores cerraban editores y anunciaban éxito antes de terminar las escrituras asíncronas. El reemplazo de IndexedDB también vaciaba datos antes de guardar el nuevo estado. Ahora se espera el resultado real, se conservan editor y borrador ante fallas y el reemplazo es atómico. La migración verifica contenido completo; fotos eliminadas se recuperan con su archivo tras recargar y los respaldos globales incluyen papelera.
+
+Las cinco pantallas usan los exportadores PDF paginados, fuentes locales y texto seleccionable: libro A4 consecutivo, cartas con continuación, mazo de 63 × 90 mm y dorsos espejados, cronología apaisada y galería con proporciones conservadas. La edición usa las piezas, el azul es moderadamente más luminoso y el footer se integra al fondo. Logo, orden de módulos, privacidad local y funciones existentes se conservan. Se agregan favoritos, fechas parciales, orden manual sin fecha y sonido opcional del mazo.
+
+Validación y límites detallados en `docs/ESTADO_ECOS_DEL_ALMA.md`. Evidencia y cinco PDF de ejemplo en `artifacts/`; pruebas reproducibles en `tests/browser/`. No se validaron servicios externos ni impresión física. Sin endpoint real de contactos, pagos, anuncios o sincronización. El marco del mazo es una recreación preexistente; la pantalla no reproduce cada salto físico de página. No se publicó ni se fusionó main.

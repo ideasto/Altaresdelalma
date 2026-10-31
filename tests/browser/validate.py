@@ -44,8 +44,8 @@ with sync_playwright() as p:
  backup=page.evaluate('backup')
  clean=b.new_context(); q=clean.new_page();q.route('**/*',lambda r:r.continue_() if r.request.url.startswith('http://127.0.0.1:3000') else r.abort());q.goto('http://127.0.0.1:3000',wait_until='domcontentloaded');q.add_script_tag(path='/tmp/ecos-validation/validation.js')
  q.evaluate('''async text=>{const a=ecos.parseBackup(text).list;const r=await ecos.writeAll({avatars:a,trash:[]});if(!r.ok)throw Error('restore failed');const read=await ecos.loadAll();if(read.avatars[0].gallery.photos.length!==24||read.missingImages)throw Error('restore incomplete')}''',backup)
- q.reload(wait_until='domcontentloaded');q.get_by_test_id('space-enter-sample').click();q.get_by_test_id('header-name').wait_for();q.screenshot(path=str(OUT/'panel-escritorio.png'),full_page=True)
- q.set_viewport_size({'width':390,'height':844});q.screenshot(path=str(OUT/'panel-celular.png'),full_page=True)
+ q.reload(wait_until='domcontentloaded');q.get_by_test_id('space-enter-sample').click();q.get_by_test_id('header-name').wait_for();q.screenshot(path=str(OUT/'panel-con-fotos-escritorio.png'),full_page=True)
+ q.set_viewport_size({'width':390,'height':844});q.screenshot(path=str(OUT/'panel-con-fotos-celular.png'),full_page=True)
  assert q.evaluate('document.documentElement.scrollWidth <= innerWidth'), 'mobile overflow'
  results.append('Clean browser restore, dashboard desktop/mobile without horizontal overflow')
  (OUT/'validacion.json').write_text(json.dumps(results,indent=2,ensure_ascii=False))

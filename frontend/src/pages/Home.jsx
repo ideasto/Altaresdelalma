@@ -56,7 +56,7 @@ export default function Home() {
   };
 
   const backupAll = () => {
-    if (!avatars.length) return toast.error("Todavía no hay espacios para respaldar.");
+    if (!avatars.length && !trash.length) return toast.error("Todavía no hay espacios para respaldar.");
     exportBackup(avatars, null, trash);
     toast.success("Descargaste tu santuario completo.", { description: "Incluye fotos y textos. No incluye tus datos de contacto." });
   };
@@ -143,8 +143,8 @@ export default function Home() {
       <ConfirmDialog
         open={!!confirmDel}
         onClose={() => setConfirmDel(null)}
-        onConfirm={() => {
-          if (deleteAvatar(confirmDel.id)) toast.success("El espacio pasó a la papelera.", { description: "Podés recuperarlo desde «Papelera»." });
+        onConfirm={async () => {
+          if (await deleteAvatar(confirmDel.id)) toast.success("El espacio pasó a la papelera.", { description: "Podés recuperarlo desde «Papelera»." });
           setConfirmDel(null);
         }}
         title="¿Borrar este espacio?"
