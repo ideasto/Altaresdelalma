@@ -65,4 +65,12 @@ Requieren Playwright, Chromium en `/usr/bin/chromium` y PyMuPDF para inspección
 - Comprobación geométrica automatizada no reemplaza una prueba física de impresora: doble faz al 100 %, volteo por borde largo y prueba de una hoja antes de imprimir el mazo completo.
 - Los campos editables representan el contenido de la pieza; las continuaciones de textos largos se resuelven al exportar. La pantalla puede desplazarse para leer todo el texto; no es una previsualización de cada salto físico de página.
 - No hay pagos, anuncios, sincronización remota ni integración comercial completa. Faltan URL pública, endpoint de contactos y decisiones legales/comerciales.
-- Estado de PR: rama `feat/ecos-del-alma-completo` subida a GitHub con commits `0b9b326` y `18cf48e`. Descripción preparada en `docs/PR_ECOS_DEL_ALMA.md`. `gh pr create` falló: `Post https://api.github.com/graphql: Forbidden`; la API no está permitida en la política del entorno. La PR todavía NO existe. GitHub proporcionó https://github.com/ideasto/Altaresdelalma/pull/new/feat/ecos-del-alma-completo para abrirla. Para crearla automáticamente falta acceso a `api.github.com` y comprobar nuevamente la autenticación que suministra la plataforma; no se solicitó un token ni se modificó la red. Main no fue modificado ni se desplegó la aplicación.
+- La PR ya existe: [PR #1](https://github.com/ideasto/Altaresdelalma/pull/1), confirmada por Sole. No se creó otra. Se conserva la rama `feat/ecos-del-alma-completo` y no se modifica main ni se despliega en producción.
+
+## Vista previa interactiva
+
+Este chat no proporciona publicación de puertos ni URL de vista previa. Se volvió a iniciar la app de esta rama y se verificaron internamente la página y su JavaScript por HTTP. No se presenta un enlace de loopback como si fuera accesible desde el navegador de Sole.
+
+La alternativa preparada es GitHub Codespaces, con instalación, arranque y puerto 3000 automáticos en `.devcontainer/`. La guía para Sole está en [PROBAR_EN_NAVEGADOR.md](PROBAR_EN_NAVEGADOR.md): abrir la rama → Code → Codespaces → Create codespace on feat/ecos-del-alma-completo. Al terminar, Ports → 3000 → Open in Browser si no se abre sola. La creación requiere su cuenta de GitHub; no se lanzó un Codespace desde este chat y no se afirma que exista una URL externa todavía.
+
+La imagen oficial de Node 22 fue comprobada en el registro de Microsoft. JSON y sintaxis de scripts válidos. El helper de arranque reconoce el servidor ya activo y no lo duplica. Compilación correcta con Node 22.23.4 (advertencias de dependencias de hooks ya existentes, sin errores). Se verificó el reinicio con el helper bajo Node 22 y la respuesta de la página y su JavaScript. Codespaces como servicio externo todavía requiere la creación por parte de Sole.
