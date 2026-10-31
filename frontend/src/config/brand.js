@@ -1,7 +1,8 @@
 // Configuración central de marca, enlaces e interruptores.
 export const BRAND = {
-  appName: "Altares del Alma",
+  appName: "Ecos del Alma",
   formerAppName: "Mensajes Ancestrales",
+  formerNames: ["Mensajes Ancestrales", "Altares del Alma"],
   brandName: "La Gata y la Magia",
   editorialCredit: "Editado por La Gata y la Magia",
   email: "lagataylamagia@gmail.com",
@@ -36,7 +37,7 @@ export const CONTACT = {
 export const LIMITS = {
   oracleCards: 21,
   letters: 100,
-  photos: 100,
+  photos: 300,
   folders: 5,
   approxStorageChars: 5 * 1024 * 1024,
 };

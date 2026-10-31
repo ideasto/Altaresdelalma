@@ -49,7 +49,7 @@ export default function Timeline() {
     const file = e.target.files?.[0];
     if (!file) return;
     const d = await fileToDataUrl(file);
-    const s = await shrinkDataUrl(d, 1200, 0.85);
+    const s = await shrinkDataUrl(d, 1600, 0.88);
     setDraft((prev) => ({ ...prev, photo: s }));
   };
 

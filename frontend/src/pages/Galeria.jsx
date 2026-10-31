@@ -43,7 +43,7 @@ export default function Galeria() {
     try {
       const folderId = active === "all" || active === "general" ? null : active;
       const added = [];
-      for (const f of files) added.push({ id: crypto.randomUUID(), src: await shrinkDataUrl(await fileToDataUrl(f), 1600, 0.85), folderId, caption: "" });
+      for (const f of files) added.push({ id: crypto.randomUUID(), src: await shrinkDataUrl(await fileToDataUrl(f), 2400, 0.9), folderId, caption: "" });
       if (setPhotos((ph) => [...ph, ...added])) return toast.success(`${plural(added.length, "foto agregada", "fotos agregadas")}.`);
       let fit = 0;
       for (const p of added) { if (!updateAvatar(id, (a) => ({ gallery: { ...a.gallery, photos: [...a.gallery.photos, p] } }), { silent: true })) break; fit++; }

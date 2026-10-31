@@ -27,7 +27,7 @@ export default function PhotoEditor({ open, onClose, initialPhoto = "", aspect =
     const file = e.target.files?.[0];
     if (!file) return;
     const dataUrl = await fileToDataUrl(file);
-    const shrunk = await shrinkDataUrl(dataUrl, 1600, 0.86);
+    const shrunk = await shrinkDataUrl(dataUrl, 2400, 0.9);
     setSrc(shrunk);
     setCrop({ x: 0, y: 0 });
     setZoom(1);
@@ -38,8 +38,8 @@ export default function PhotoEditor({ open, onClose, initialPhoto = "", aspect =
     setBusy(true);
     try {
       let cropped = src;
-      if (areaPixels) cropped = await getCroppedImg(src, areaPixels, 900);
-      const ok = onSave({ photo: src, photoCropped: cropped, crop: { ...crop, zoom } });
+      if (areaPixels) cropped = await getCroppedImg(src, areaPixels, 1800);
+      const ok = await onSave({ photo: src, photoCropped: cropped, crop: { ...crop, zoom } });
       if (ok !== false) onClose();
     } finally {
       setBusy(false);

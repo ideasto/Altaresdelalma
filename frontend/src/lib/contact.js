@@ -87,7 +87,7 @@ export async function syncContact() {
       consentAt: c.consent.acceptedAt,
       consentVersion: c.consent.version,
       consentScope: c.consent.scope,
-      source: "altares-del-alma",
+      source: "ecos-del-alma",
     };
     const res = await fetch(CONTACT.endpoint, {
       method: "POST",

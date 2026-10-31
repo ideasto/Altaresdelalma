@@ -1,9 +1,10 @@
 import { BRAND, LIMITS } from "../config/brand";
+import { markBackup } from "./backupReminder";
 
 export const KEY = "ma_data_v1";
 export const LEGACY_KEY = "mensajes_ancestrales_v1";
 export const DATA_VERSION = 2;
-export const BACKUP_FORMAT = "altares-del-alma-backup";
+export const BACKUP_FORMAT = "ecos-del-alma-backup";
 
 const uid = () => (crypto.randomUUID && crypto.randomUUID()) || String(Date.now() + Math.random());
 export const newId = uid;
@@ -182,8 +183,9 @@ export function exportBackup(avatars, space = null) {
     exportedAt: new Date().toISOString(),
     avatars: list,
   };
-  const name = space ? `altares-del-alma-${slug(space.name)}-${todayLocal()}.json` : `altares-del-alma-santuario-${todayLocal()}.json`;
+  const name = space ? `ecos-del-alma-${slug(space.name)}-${todayLocal()}.json` : `ecos-del-alma-santuario-${todayLocal()}.json`;
   downloadFile(JSON.stringify(payload), name);
+  if (!space) markBackup();
 }
 
 export function summarize(list) {
@@ -199,13 +201,59 @@ export function summarize(list) {
 }
 
 // Valida y prepara un respaldo. Lanza Error con mensaje legible.
+const isObj = (v) => v && typeof v === "object" && !Array.isArray(v);
+const LISTS = { cards: ["message"], letters: ["body"], timeline: ["title"], book: [] };
+const IMG_FIELDS = ["photo", "photoCropped", "bookCoverPhoto"];
+
+// Rechaza estructuras y tipos incorrectos antes de restaurar (no los convierte en vacíos).
+export function validateBackupShape(parsed) {
+  const errs = [];
+  const okImg = (v) => v == null || v === "" || (typeof v === "string" && v.startsWith("data:image"));
+  let list;
+  if (Array.isArray(parsed)) list = parsed;
+  else if (isObj(parsed) && "avatars" in parsed) { if (!Array.isArray(parsed.avatars)) errs.push("«avatars» no es una lista."); else list = parsed.avatars; }
+  else if (isObj(parsed) && "espacios" in parsed) { if (!Array.isArray(parsed.espacios)) errs.push("«espacios» no es una lista."); else list = parsed.espacios; }
+  else errs.push("No tiene la estructura de un respaldo de Ecos del Alma / Mensajes Ancestrales.");
+  if (list && list.length === 0) errs.push("El respaldo no contiene ningún espacio.");
+  (list || []).forEach((a, i) => {
+    const n = `Espacio ${i + 1}`;
+    if (!isObj(a)) return errs.push(`${n}: no es un objeto válido.`);
+    const name = a.name ?? a.nombre;
+    if (typeof name !== "string" || !name.trim()) errs.push(`${n}: falta el nombre o no es texto.`);
+    if (a.id != null && typeof a.id !== "string" && typeof a.id !== "number") errs.push(`${n}: identificador inválido.`);
+    IMG_FIELDS.forEach((f) => okImg(a[f]) || errs.push(`${n}: la imagen «${f}» no es una imagen incluida en el archivo.`));
+    Object.keys(LISTS).forEach((k) => {
+      if (a[k] == null) return;
+      if (!Array.isArray(a[k])) return errs.push(`${n}: «${k}» no es una lista.`);
+      a[k].forEach((it, j) => {
+        if (!isObj(it)) return errs.push(`${n}: «${k}» ${j + 1} no es válido.`);
+        LISTS[k].forEach((f) => it[f] != null && typeof it[f] !== "string" && errs.push(`${n}: «${k}» ${j + 1} tiene «${f}» que no es texto.`));
+        if (!okImg(it.photo)) errs.push(`${n}: «${k}» ${j + 1} tiene una foto que no está incluida.`);
+      });
+    });
+    if (a.gallery != null) {
+      if (!isObj(a.gallery)) errs.push(`${n}: la galería no es válida.`);
+      else {
+        if (a.gallery.photos != null && !Array.isArray(a.gallery.photos)) errs.push(`${n}: las fotos de la galería no son una lista.`);
+        (a.gallery.photos || []).forEach((p, j) => (!isObj(p) || !okImg(p.src) || !p.src) && errs.push(`${n}: la foto ${j + 1} de la galería no está incluida o es inválida.`));
+        if (a.gallery.folders != null && !Array.isArray(a.gallery.folders)) errs.push(`${n}: las carpetas no son una lista.`);
+      }
+    }
+    if (a.bookMeta != null && !isObj(a.bookMeta)) errs.push(`${n}: los datos del libro no son válidos.`);
+    if (isObj(a.bookMeta) && !okImg(a.bookMeta.coverPhoto)) errs.push(`${n}: la foto de tapa no está incluida.`);
+  });
+  return errs;
+}
+
 export function parseBackup(text) {
   let parsed;
   try { parsed = JSON.parse(text); } catch { throw new Error("El archivo no es un respaldo legible (JSON dañado o incompleto)."); }
+  const errs = validateBackupShape(isObj(parsed) && isObj(parsed.data) ? parsed.data : parsed);
+  if (errs.length) throw new Error(`Respaldo rechazado, no se modificó nada: ${errs.slice(0, 3).join(" ")}${errs.length > 3 ? ` (y ${errs.length - 3} problema(s) más)` : ""}`);
   const version = Number(parsed?.version || 1);
   if (version > DATA_VERSION) throw new Error(`El respaldo es de una versión más nueva (${version}). Actualizá la app antes de restaurarlo.`);
   const ex = extractSpaces(parsed);
-  if (!ex) throw new Error("El archivo no tiene la estructura de un respaldo de Altares del Alma / Mensajes Ancestrales.");
+  if (!ex) throw new Error("El archivo no tiene la estructura de un respaldo de Ecos del Alma / Mensajes Ancestrales.");
   const ids = new Set();
   const warnings = [];
   ex.list.forEach((a) => {

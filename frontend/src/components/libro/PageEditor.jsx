@@ -25,7 +25,7 @@ export default function PageEditor({ open, onClose, editing, spaceId, onSave }) 
     const f = e.target.files?.[0];
     e.target.value = "";
     if (!f) return;
-    const s = await shrinkDataUrl(await fileToDataUrl(f), 1400, 0.85);
+    const s = await shrinkDataUrl(await fileToDataUrl(f), 2400, 0.9);
     setDraft((p) => ({ ...p, photo: s }));
   };
 
