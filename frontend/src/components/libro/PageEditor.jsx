@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Modal, Field, TextInput, TextArea, GoldButton, GhostButton, Plus } from "../common";
+import { Modal, GoldButton, GhostButton, Plus } from "../common";
 import DraftNotices from "../DraftNotices";
 import { SaveFailNotice } from "../StorageBits";
 import useDraft from "../../hooks/useDraft";
@@ -7,11 +7,14 @@ import { copyText, downloadText } from "../../lib/drafts";
 import { fileToDataUrl, shrinkDataUrl } from "../../lib/image";
 import { toast } from "sonner";
 import { BOOK_FONTS } from "../../lib/format";
+import BookPage from "./BookPage";
 import { Image as ImageIcon } from "lucide-react";
 
 const asText = (d) => `${d.title}\n\n${d.text}`.trim();
 
-export default function PageEditor({ open, onClose, editing, spaceId, onSave }) {
+const InlineSurface = ({ children }) => <section data-testid="libro-form-modal">{children}</section>;
+
+export default function PageEditor({ open, onClose, editing, spaceId, onSave, inline = false }) {
   const [draft, setDraft] = useState({ title: "", text: "", photo: "", font: "serif", size: "m" });
   const [fail, setFail] = useState(false);
   const d = useDraft(`pagina-${spaceId}-${editing?.id || "nueva"}`, draft, open);
@@ -39,14 +42,15 @@ export default function PageEditor({ open, onClose, editing, spaceId, onSave }) 
     if (await onSave(draft)) { d.clear(); onClose(); } else setFail(true);
   };
 
+  if (inline && !open) return null;
+  const Surface = inline ? InlineSurface : Modal;
   return (
-    <Modal open={open} onClose={onClose} title={editing ? "Editar página" : "Nueva página"} maxWidth="max-w-xl" testId="libro-form-modal">
+    <Surface open={open} onClose={onClose} title={editing ? "Editar página" : "Nueva página"} maxWidth="max-w-xl" testId="libro-form-modal">
       <DraftNotices draft={d} onApply={(r) => setDraft((p) => ({ ...p, title: r.title, text: r.text, photo: r.photo || p.photo, font: r.font || p.font, size: r.size || p.size }))} onCopy={copy} onDownload={() => downloadText(asText(draft), "pagina")} />
       <SaveFailNotice show={fail} onCopy={copy} onDownload={() => downloadText(asText(draft), "pagina")} />
       <div className="flex gap-3 mb-4"><label>Letra <select className="bg-[#234766]" value={draft.font} onChange={e => setDraft({ ...draft, font: e.target.value })}>{Object.entries(BOOK_FONTS).map(([key, f]) => <option key={key} value={key}>{f.label}</option>)}</select></label><label>Tamaño <select className="bg-[#234766]" value={draft.size} onChange={e => setDraft({ ...draft, size: e.target.value })}><option value="s">Pequeño</option><option value="m">Medio</option><option value="l">Grande</option></select></label></div>
-      <div className="paper-sheet piece-editor rounded-xl p-7 border border-[#e2d9c8]">
-      <Field label="Título (opcional)"><TextInput value={draft.title} onChange={(e) => setDraft({ ...draft, title: e.target.value })} maxLength={90} data-testid="libro-title-input" /></Field>
-      <Field label="Foto (opcional)">
+      <BookPage page={draft} onChange={setDraft}>
+      <div className="flex justify-center mb-5">
         {draft.photo ? (
           <div className="relative inline-block">
             <img src={draft.photo} alt="" className="max-h-72 w-full rounded-xl object-contain bg-[#fdfbf5] p-1" />
@@ -58,13 +62,12 @@ export default function PageEditor({ open, onClose, editing, spaceId, onSave }) 
             <input type="file" accept="image/*" className="hidden" onChange={onPhoto} data-testid="libro-photo-input" />
           </label>
         )}
-      </Field>
-      <Field label="Texto"><TextArea rows={7} value={draft.text} onChange={(e) => setDraft({ ...draft, text: e.target.value })} className={`${(BOOK_FONTS[draft.font] || BOOK_FONTS.serif).css} leading-relaxed resize-y`} style={{ fontSize: (BOOK_FONTS[draft.font] || BOOK_FONTS.serif).px[draft.size] }} placeholder="Aquel día…" data-testid="libro-text-input" /></Field>
       </div>
+      </BookPage>
       <div className="flex justify-end gap-3 mt-5">
         <GhostButton onClick={onClose} testId="libro-form-cancel">Cancelar</GhostButton>
         <GoldButton onClick={save} testId="libro-form-save">{editing ? "Guardar cambios" : "Guardar página"}</GoldButton>
       </div>
-    </Modal>
+    </Surface>
   );
 }

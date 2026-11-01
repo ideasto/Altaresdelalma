@@ -1,6 +1,6 @@
 import React from "react";
 import CardBack from "../CardBack";
-import { fmtDate, sortMoments, bookTitle } from "../../lib/format";
+import { fmtDate, bookTitle } from "../../lib/format";
 import { ImageIcon } from "lucide-react";
 
 const Frame = ({ src, className = "" }) => (

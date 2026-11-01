@@ -3,12 +3,13 @@ Needs the app on port 3000, Playwright, Chromium and /tmp/ecos-validation/valida
 External services are blocked; all data is synthetic and isolated per browser context.
 """
 import json
+import os
 from pathlib import Path
 from playwright.sync_api import sync_playwright
-OUT = Path('/workspace/Altaresdelalma/artifacts'); OUT.mkdir(exist_ok=True)
+OUT = Path(os.environ.get('ECOS_TEST_OUTPUT', str(Path(__file__).resolve().parents[2] / 'artifacts'))); OUT.mkdir(parents=True, exist_ok=True)
 results = []
 with sync_playwright() as p:
- b = p.chromium.launch(executable_path='/usr/bin/chromium', headless=True, args=['--no-sandbox'])
+ b = p.chromium.launch(executable_path=os.environ.get('CHROMIUM_PATH', '/usr/bin/chromium'), headless=True, args=['--no-sandbox'])
  context = b.new_context(accept_downloads=True, viewport={'width':1440,'height':1050})
  page = context.new_page()
  page.route('**/*',lambda r: r.continue_() if r.request.url.startswith(('http://127.0.0.1:3000','data:','blob:')) else r.abort())

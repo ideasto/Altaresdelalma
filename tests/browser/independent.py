@@ -1,14 +1,14 @@
 """Validate the actual production UI with all external requests denied and recorded.
 Start serve_static.py on 3100 using the clean build first. Requires Playwright + Chromium.
 """
-import base64,json
+import base64,json,os
 import fitz
 from pathlib import Path
 from playwright.sync_api import sync_playwright
 ROOT=Path(__file__).resolve().parents[2];OUT=ROOT/'artifacts/independiente';OUT.mkdir(exist_ok=True)
 BASE='http://127.0.0.1:3100'
 with sync_playwright() as p:
- b=p.chromium.launch(executable_path='/usr/bin/chromium',headless=True,args=['--no-sandbox'])
+ b=p.chromium.launch(executable_path=os.environ.get('CHROMIUM_PATH','/usr/bin/chromium'),headless=True,args=['--no-sandbox'])
  c=b.new_context(accept_downloads=True,viewport={'width':1440,'height':1000});page=c.new_page();external=[];errors=[];bad=[]
  def intercept(route):
   if route.request.url.startswith((BASE+'/', 'blob:', 'data:')):route.continue_()

@@ -35,7 +35,7 @@ async function cover(doc, a) {
   doc.setCharSpace(0);
 }
 
-async function interior(doc, p, pageNo) {
+async function interior(doc, p) {
   const f = BOOK_FONTS[p.font] || BOOK_FONTS.serif;
   const size = f.pt[p.size] || f.pt.m;
   const frame = () => { doc.setDrawColor(...GOLD); doc.setLineWidth(0.3); doc.rect(12, 12, W - 24, H - 24); };
@@ -59,6 +59,7 @@ async function interior(doc, p, pageNo) {
       if (y > H - 28) {
         setFont(doc, "helvetica", "italic", 9, MUTED);
         doc.text("continúa en la página siguiente", W - 25, H - 18, { align: "right" });
+        footer(doc, String(doc.getNumberOfPages() - 1));
         doc.addPage(); frame(); y = 30;
         setFont(doc, f.family, f.style, size);
       }
@@ -66,7 +67,7 @@ async function interior(doc, p, pageNo) {
       y += step;
     });
   }
-  footer(doc, String(pageNo));
+  footer(doc, String(doc.getNumberOfPages() - 1));
 }
 
 async function back(doc, a) {

@@ -8,7 +8,7 @@ import SpaceForm from "../components/SpaceForm";
 import { EditPencil } from "../components/common";
 import { GalleryPreview, OraclePreview, TimelinePreview, LettersPreview, BookPreview } from "../components/dashboard/ModulePreviews";
 import { plural } from "../lib/format";
-import { Sparkles, Milestone, Images, Mail, BookOpen, ArrowLeft, ArrowRight } from "lucide-react";
+import { Sparkles, Milestone, Images, Mail, BookOpen, ArrowLeft, ArrowRight, Pencil } from "lucide-react";
 import { toast } from "sonner";
 
 const MODULES = [
@@ -25,6 +25,7 @@ const MODULES = [
 ];
 
 function ModuleCard({ m, a, onFavorite }) {
+  const [personalizing, setPersonalizing] = useState(false);
   const to = `/espacio/${a.id}/${m.key}`;
   const Icon = m.icon;
   const count = m.count(a);
@@ -40,7 +41,10 @@ function ModuleCard({ m, a, onFavorite }) {
         {count ? <span className="font-ui text-xs text-[#a9bacb]" data-testid={`portal-count-${m.key}`}>{count}</span> : null}
       </div>
       <div className="relative z-10 pointer-events-none flex-1 py-4 min-h-[110px]"><m.Preview a={a} /></div>
-      {items.length > 0 && <select className="relative z-10 bg-transparent text-xs text-[#d5dfea] w-full mb-2" aria-label={`Vista favorita de ${m.title}`} value={a.favorites?.[m.key] || ""} onChange={e => onFavorite(m.key, e.target.value)}><option className="bg-[#234766]" value="">Más reciente</option>{items.map(x => <option className="bg-[#234766]" key={x.id} value={x.id}>{(x.title || x.caption || x.message || x.body || "Foto").slice(0, 45)}</option>)}</select>}
+      {items.length > 0 && <div className="relative z-10 self-end">
+        <button className="icon-btn" aria-label={`Personalizar vista de ${m.title}`} aria-expanded={personalizing} onClick={() => setPersonalizing(v => !v)}><Pencil className="w-3.5 h-3.5" /></button>
+        {personalizing && <select autoFocus className="bg-[#234766] text-xs text-[#d5dfea] w-full mb-2" aria-label={`Vista favorita de ${m.title}`} value={a.favorites?.[m.key] || ""} onChange={async e => { if (await onFavorite(m.key, e.target.value)) setPersonalizing(false); }}><option value="">Más reciente</option>{items.map(x => <option key={x.id} value={x.id}>{(x.title || x.caption || x.message || x.body || "Foto").slice(0, 45)}</option>)}</select>}
+      </div>}
       <Link to={to + (m.query ? m.query(a) : "")} className="relative z-10 self-start inline-flex items-center gap-1 gold-text text-sm hover:text-[#fde68a]" data-testid={`portal-action-${m.key}`}>
         {m.action(a)} <ArrowRight className="w-4 h-4" />
       </Link>

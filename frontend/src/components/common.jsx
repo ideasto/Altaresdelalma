@@ -106,13 +106,14 @@ export function GoldButton({ children, onClick, className = "", testId, type = "
   );
 }
 
-export function GhostButton({ children, onClick, className = "", testId, type = "button" }) {
+export function GhostButton({ children, onClick, className = "", testId, type = "button", disabled = false }) {
   return (
     <button
       type={type}
       onClick={onClick}
+      disabled={disabled}
       data-testid={testId}
-      className={`ghost-gold rounded-full px-6 py-3 text-sm inline-flex items-center justify-center gap-2 ${className}`}
+      className={`ghost-gold rounded-full px-6 py-3 text-sm inline-flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed ${className}`}
     >
       {children}
     </button>
