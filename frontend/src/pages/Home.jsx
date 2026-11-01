@@ -31,15 +31,15 @@ export default function Home() {
   const [trashOpen, setTrashOpen] = useState(false);
   const [contactOpen, setContactOpen] = useState(false);
 
-  const onCreate = (data) => {
-    const a = createAvatar(data);
+  const onCreate = async (data) => {
+    const a = await createAvatar(data);
     if (!a) return false;
     toast.success(`Creaste el espacio de ${a.name}.`);
     setPhotoFor(a);
     return true;
   };
-  const onUpdate = (data) => {
-    const ok = updateAvatar(editing.id, data);
+  const onUpdate = async (data) => {
+    const ok = await updateAvatar(editing.id, data);
     if (ok) toast.success("Espacio actualizado.");
     return ok;
   };
@@ -56,8 +56,8 @@ export default function Home() {
   };
 
   const backupAll = () => {
-    if (!avatars.length) return toast.error("Todavía no hay espacios para respaldar.");
-    exportBackup(avatars);
+    if (!avatars.length && !trash.length) return toast.error("Todavía no hay espacios para respaldar.");
+    exportBackup(avatars, null, trash);
     toast.success("Descargaste tu santuario completo.", { description: "Incluye fotos y textos. No incluye tus datos de contacto." });
   };
 
@@ -143,8 +143,8 @@ export default function Home() {
       <ConfirmDialog
         open={!!confirmDel}
         onClose={() => setConfirmDel(null)}
-        onConfirm={() => {
-          if (deleteAvatar(confirmDel.id)) toast.success("El espacio pasó a la papelera.", { description: "Podés recuperarlo desde «Papelera»." });
+        onConfirm={async () => {
+          if (await deleteAvatar(confirmDel.id)) toast.success("El espacio pasó a la papelera.", { description: "Podés recuperarlo desde «Papelera»." });
           setConfirmDel(null);
         }}
         title="¿Borrar este espacio?"

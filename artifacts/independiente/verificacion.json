@@ -1,0 +1,25 @@
+{
+  "build": "clean Node 22 + frozen yarn.lock",
+  "routes_and_reload": [
+    "/",
+    "/espacio/independent",
+    "/espacio/independent/galeria",
+    "/espacio/independent/oraculo",
+    "/espacio/independent/linea",
+    "/espacio/independent/cartas",
+    "/espacio/independent/libro",
+    "/terminos",
+    "/privacidad"
+  ],
+  "legacy_route": true,
+  "modules_and_pdf": 5,
+  "photo_upload": true,
+  "letter_save_and_reload": true,
+  "book_cover_edit": true,
+  "local_fonts": true,
+  "external_requests": [],
+  "javascript_errors": [],
+  "http_errors": [],
+  "blocked_external_network": true,
+  "vercel_deployed": false
+}

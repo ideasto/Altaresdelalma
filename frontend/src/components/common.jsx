@@ -84,11 +84,20 @@ export function TrashButton({ onClick, testId, title = "Eliminar" }) {
 }
 
 export function GoldButton({ children, onClick, className = "", testId, type = "button", disabled }) {
+  const [busy, setBusy] = React.useState(false);
+  const locked = React.useRef(false);
+  const click = async (event) => {
+    if (locked.current) return;
+    locked.current = true; setBusy(true);
+    try { await onClick?.(event); }
+    finally { locked.current = false; setBusy(false); }
+  };
   return (
     <button
       type={type}
-      onClick={onClick}
-      disabled={disabled}
+      onClick={click}
+      aria-busy={busy}
+      disabled={disabled || busy}
       data-testid={testId}
       className={`gold-btn rounded-full px-6 py-3 text-sm sm:text-base inline-flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed ${className}`}
     >
@@ -97,13 +106,14 @@ export function GoldButton({ children, onClick, className = "", testId, type = "
   );
 }
 
-export function GhostButton({ children, onClick, className = "", testId, type = "button" }) {
+export function GhostButton({ children, onClick, className = "", testId, type = "button", disabled = false }) {
   return (
     <button
       type={type}
       onClick={onClick}
+      disabled={disabled}
       data-testid={testId}
-      className={`ghost-gold rounded-full px-6 py-3 text-sm inline-flex items-center justify-center gap-2 ${className}`}
+      className={`ghost-gold rounded-full px-6 py-3 text-sm inline-flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed ${className}`}
     >
       {children}
     </button>

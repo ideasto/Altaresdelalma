@@ -3,7 +3,7 @@ import { useParams, Link, useSearchParams } from "react-router-dom";
 import { useStore } from "../store/StoreContext";
 import { PageHeader, Modal, ConfirmDialog, GoldButton, GhostButton } from "../components/common";
 import LetterEditor, { letterText } from "../components/cartas/LetterEditor";
-import { makeSheet, renderPdf } from "../lib/pdf";
+import { lettersPdf } from "../lib/pdf/letters";
 import { copyText, shareText, downloadText } from "../lib/drafts";
 import { fmtDate, plural } from "../lib/format";
 import { LIMITS } from "../config/brand";
@@ -42,26 +42,15 @@ export default function Cartas() {
     setEditorOpen(true);
   };
 
-  const save = (draft) => {
+  const save = async (draft) => {
     const ok = editing
-      ? updateAvatar(id, (a) => ({ letters: a.letters.map((l) => (l.id === editing.id ? { ...l, ...draft } : l)) }))
-      : updateAvatar(id, (a) => ({ letters: [{ id: crypto.randomUUID(), ...draft }, ...a.letters] }));
+      ? await updateAvatar(id, (a) => ({ letters: a.letters.map((l) => (l.id === editing.id ? { ...l, ...draft } : l)) }))
+      : await updateAvatar(id, (a) => ({ letters: [{ id: crypto.randomUUID(), ...draft }, ...a.letters] }));
     if (ok) { toast.success(editing ? "Carta actualizada." : "Carta guardada."); if (editing) setReading({ ...editing, ...draft }); }
     return ok;
   };
 
-  const sheetFor = (l) => {
-    const { sheet, content } = makeSheet({});
-    const el = document.createElement("div");
-    el.innerHTML = `
-      <div style="text-align:right;font-size:15px;color:#6b5a3e;font-family:'Plus Jakarta Sans',sans-serif;margin-bottom:24px;">${esc(fmtDate(l.date))}</div>
-      <div style="text-align:center;font-size:34px;color:#2b2114;margin-bottom:22px;">Para ${esc(l.to || avatar.name)}</div>
-      <div style="font-family:'Caveat',cursive;font-size:28px;line-height:1.5;color:#2b2114;white-space:pre-wrap;">${esc(l.body)}</div>
-      ${l.sign ? `<div style="font-family:'Caveat',cursive;font-size:28px;text-align:right;color:#2b2114;margin-top:28px;">${esc(l.sign)}</div>` : ""}`;
-    content.appendChild(el);
-    return sheet;
-  };
-  const pdf = (list, name) => toast.promise(renderPdf(list.map(sheetFor), name), { loading: "Generando PDF…", success: "PDF descargado.", error: "Error al generar el PDF." });
+  const pdf = (list, name) => toast.promise(lettersPdf(list, name), { loading: "Generando PDF…", success: "PDF descargado.", error: "Error al generar el PDF." });
 
   const share = async (l) => {
     const r = await shareText(`Carta para ${l.to}`, letterText(l));
@@ -99,7 +88,7 @@ export default function Cartas() {
             <div className="paper-sheet rounded-2xl p-6 sm:p-9 select-text" data-testid="carta-reader-sheet">
               <p className="text-right text-sm text-[#6b5a3e] mb-4">{fmtDate(reading.date)}</p>
               <p className="font-heading text-3xl text-center text-[#2b2114] mb-5">Para {reading.to}</p>
-              <p className="font-hand text-[26px] leading-relaxed text-[#2b2114] whitespace-pre-wrap">{reading.body}</p>
+              <p className="font-hand text-[26px] ruled-letter text-[#2b2114] whitespace-pre-wrap">{reading.body}</p>
               {reading.sign && <p className="font-hand text-[26px] text-right text-[#2b2114] mt-6">{reading.sign}</p>}
             </div>
             <div className="flex flex-wrap gap-2 mt-5 justify-end">

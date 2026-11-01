@@ -14,7 +14,9 @@ function measure(doc, l) {
   setFont(doc, "Caveat", "normal", BODY);
   const body = lines(doc, l.body, CW);
   const sign = l.sign ? lines(doc, l.sign, CW) : [];
-  return { body, sign, h: 8 + lh(18, 1.3) + 4 + body.length * STEP + (sign.length ? 6 + sign.length * STEP : 0) };
+  setFont(doc, "Cormorant", "bold", 18);
+  const heading = lines(doc, `Para ${l.to}`, CW);
+  return { body, sign, heading, h: 8 + heading.length * lh(18, 1.3) + 4 + body.length * STEP + STEP * 0.6 + (sign.length ? 6 + sign.length * STEP : 0) };
 }
 
 // Cada carta completa empieza en la hoja actual si entra; si no, en una nueva. Las largas continúan.
@@ -32,8 +34,8 @@ export async function lettersPdf(list, filename) {
     doc.text(fmtDate(l.date), W - X, y + 4, { align: "right" });
     y += 8;
     setFont(doc, "Cormorant", "bold", 18, INK);
-    doc.text(`Para ${l.to}`, X, y + 4);
-    y += lh(18, 1.3) + 4;
+    m.heading.forEach(t => { if (y + lh(18, 1.3) > BOTTOM) { doc.addPage(); paper(doc); y = TOP; setFont(doc, "Cormorant", "bold", 18, INK); } doc.text(t, X, y + 4); y += lh(18, 1.3); });
+    y += 4;
     const row = (text, align) => {
       if (y + STEP > BOTTOM) { doc.addPage(); paper(doc); y = TOP; }
       doc.setDrawColor(...GOLD_SOFT); doc.setLineWidth(0.2);

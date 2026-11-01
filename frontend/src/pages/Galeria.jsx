@@ -5,7 +5,7 @@ import { PageHeader, Modal, ConfirmDialog, GoldButton, GhostButton, Field, TextI
 import FolderCards from "../components/galeria/FolderCards";
 import PhotoTile from "../components/galeria/PhotoTile";
 import { StorageMeter } from "../components/StorageBits";
-import { makeSheet, renderPdf } from "../lib/pdf";
+import { galleryPdf } from "../lib/pdf/gallery";
 import { fileToDataUrl, shrinkDataUrl } from "../lib/image";
 import { plural } from "../lib/format";
 import { LIMITS } from "../config/brand";
@@ -14,10 +14,11 @@ import { Images, FileDown, Upload, ChevronLeft, ChevronRight, Share2, X } from "
 
 export default function Galeria() {
   const { id } = useParams();
-  const { getAvatar, updateAvatar, removeItem } = useStore();
+  const { getAvatar, updateAvatar, removeItem, undoRemoved } = useStore();
   const avatar = getAvatar(id);
   const fileRef = useRef(null);
 
+  const [printFrame, setPrintFrame] = useState(true);
   const [active, setActive] = useState("all");
   const [folderForm, setFolderForm] = useState(null);
   const [delFolder, setDelFolder] = useState(null);
@@ -44,9 +45,9 @@ export default function Galeria() {
       const folderId = active === "all" || active === "general" ? null : active;
       const added = [];
       for (const f of files) added.push({ id: crypto.randomUUID(), src: await shrinkDataUrl(await fileToDataUrl(f), 2400, 0.9), folderId, caption: "" });
-      if (setPhotos((ph) => [...ph, ...added])) return toast.success(`${plural(added.length, "foto agregada", "fotos agregadas")}.`);
+      if (await setPhotos((ph) => [...ph, ...added])) return toast.success(`${plural(added.length, "foto agregada", "fotos agregadas")}.`);
       let fit = 0;
-      for (const p of added) { if (!updateAvatar(id, (a) => ({ gallery: { ...a.gallery, photos: [...a.gallery.photos, p] } }), { silent: true })) break; fit++; }
+      for (const p of added) { if (!await updateAvatar(id, (a) => ({ gallery: { ...a.gallery, photos: [...a.gallery.photos, p] } }), { silent: true })) break; fit++; }
       toast.error(fit ? `Solo entraron ${fit} de ${added.length} fotos: el navegador no tiene más lugar.` : "No entró ninguna foto: el navegador no tiene más lugar.", { description: "Descargá un respaldo y liberá espacio borrando fotos de esta app que ya no necesites acá." });
     } catch {
       toast.error("No se pudo leer alguna de las fotos.");
@@ -55,18 +56,18 @@ export default function Galeria() {
     }
   };
 
-  const saveFolder = () => {
+  const saveFolder = async () => {
     const name = folderForm.name.trim();
     if (!name) return toast.error("Poné un nombre a la carpeta.");
     const ok = folderForm.mode === "create"
-      ? updateAvatar(id, (a) => ({ gallery: { ...a.gallery, folders: [...a.gallery.folders, { id: crypto.randomUUID(), name }] } }))
-      : updateAvatar(id, (a) => ({ gallery: { ...a.gallery, folders: a.gallery.folders.map((f) => (f.id === folderForm.id ? { ...f, name } : f)) } }));
+      ? await updateAvatar(id, (a) => ({ gallery: { ...a.gallery, folders: [...a.gallery.folders, { id: crypto.randomUUID(), name }] } }))
+      : await updateAvatar(id, (a) => ({ gallery: { ...a.gallery, folders: a.gallery.folders.map((f) => (f.id === folderForm.id ? { ...f, name } : f)) } }));
     if (ok) { toast.success(folderForm.mode === "create" ? "Carpeta creada." : "Carpeta renombrada."); setFolderForm(null); }
   };
 
-  const removeFolder = (moveToGeneral) => {
+  const removeFolder = async (moveToGeneral) => {
     const fid = delFolder.id;
-    const ok = updateAvatar(id, (a) => ({
+    const ok = await updateAvatar(id, (a) => ({
       gallery: {
         folders: a.gallery.folders.filter((f) => f.id !== fid),
         photos: moveToGeneral ? a.gallery.photos.map((p) => (p.folderId === fid ? { ...p, folderId: null } : p)) : a.gallery.photos.filter((p) => p.folderId !== fid),
@@ -77,24 +78,7 @@ export default function Galeria() {
 
   const exportPdf = (list, label) => {
     if (!list.length) return toast.error("No hay fotos para exportar.");
-    const chunks = [];
-    for (let i = 0; i < list.length; i += 6) chunks.push(list.slice(i, i + 6));
-    const sheets = chunks.map((chunk) => {
-      const { sheet, content } = makeSheet({ title: "Galería", subtitle: `${avatar.name} · ${label}` });
-      const grid = document.createElement("div");
-      Object.assign(grid.style, { display: "grid", gridTemplateColumns: "1fr 1fr", gridTemplateRows: "1fr 1fr 1fr", gap: "16px", height: "100%" });
-      chunk.forEach((p) => {
-        const box = document.createElement("div");
-        Object.assign(box.style, { border: "1px solid #c9a94a", borderRadius: "6px", overflow: "hidden", background: "#f0ead9", display: "flex", alignItems: "center", justifyContent: "center" });
-        const img = document.createElement("img");
-        img.src = p.src;
-        Object.assign(img.style, { maxWidth: "100%", maxHeight: "100%", objectFit: "contain" });
-        box.appendChild(img); grid.appendChild(box);
-      });
-      content.appendChild(grid);
-      return sheet;
-    });
-    toast.promise(renderPdf(sheets, `galeria-${avatar.name}.pdf`), { loading: "Generando galería…", success: "PDF descargado.", error: "Error al generar el PDF." });
+    return toast.promise(galleryPdf(list, { perPage: 2, frame: printFrame, title: `${avatar.name} · ${label}` }, `galeria-${avatar.name}.pdf`), { loading: "Generando galería…", success: "PDF descargado.", error: "No se pudo generar el PDF." });
   };
 
   const sharePhoto = async (p) => {
@@ -147,6 +131,8 @@ export default function Galeria() {
             ))}
           </div>
         )}
+        <label className="flex gap-2 items-center mt-6 text-sm"><input type="checkbox" checked={printFrame} onChange={e => setPrintFrame(e.target.checked)} /> Marco fino en el PDF de fotos</label>
+        {(avatar.removedItems || []).filter(r => r.path === "gallery.photos").map(r => <button key={r.item.id} className="ghost-gold rounded-full px-4 py-2 mt-3 mr-2" onClick={() => undoRemoved(id, r.item.id)}>Recuperar foto eliminada {r.item.caption}</button>)}
         <StorageMeter className="max-w-md mt-8" />
         <p className="text-xs text-[#7f93a8] mt-2 max-w-xl">Las fotos se guardan como copias reducidas para que entren en el navegador; para imprimir en grande conservá tus originales.</p>
       </div>
@@ -174,7 +160,7 @@ export default function Galeria() {
         <div className="flex flex-col gap-2">
           {[{ id: null, name: "General" }, ...folders].map((f) => (
             <button key={f.id || "general"} className={`text-left rounded-xl px-4 py-3 border ${(movePhoto?.folderId || null) === f.id ? "border-[#d4af37] gold-text" : "border-[#d4af37]/25 text-[#d5dfea] hover:border-[#d4af37]/60"}`}
-              onClick={() => { if (setPhotos((ph) => ph.map((p) => (p.id === movePhoto.id ? { ...p, folderId: f.id } : p)))) { toast.success("Foto movida."); setMovePhoto(null); } }} data-testid={`galeria-move-to-${f.id || "general"}`}>
+              onClick={async () => { if (await setPhotos((ph) => ph.map((p) => (p.id === movePhoto.id ? { ...p, folderId: f.id } : p)))) { toast.success("Foto movida."); setMovePhoto(null); } }} data-testid={`galeria-move-to-${f.id || "general"}`}>
               {f.name}
             </button>
           ))}
@@ -185,7 +171,7 @@ export default function Galeria() {
         <TextInput value={caption?.text || ""} onChange={(e) => setCaption({ ...caption, text: e.target.value })} maxLength={120} placeholder="Opcional" data-testid="galeria-caption-input" />
         <div className="flex justify-end gap-3 mt-5">
           <GhostButton onClick={() => setCaption(null)} testId="galeria-caption-cancel">Cancelar</GhostButton>
-          <GoldButton onClick={() => { if (setPhotos((ph) => ph.map((p) => (p.id === caption.id ? { ...p, caption: caption.text.trim() } : p)))) { toast.success("Pie guardado."); setCaption(null); } }} testId="galeria-caption-save">Guardar</GoldButton>
+          <GoldButton onClick={async () => { if (await setPhotos((ph) => ph.map((p) => (p.id === caption.id ? { ...p, caption: caption.text.trim() } : p)))) { toast.success("Pie guardado."); setCaption(null); } }} testId="galeria-caption-save">Guardar</GoldButton>
         </div>
       </Modal>
 

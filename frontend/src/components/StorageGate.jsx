@@ -19,7 +19,7 @@ export default function StorageGate({ children }) {
     if (!f) return;
     try {
       const parsed = parseBackup(await f.text());
-      if (!resetStorage(parsed.list)) toast.error("No entró en el almacenamiento. El contenido anterior sigue sin tocar.");
+      if (!await resetStorage(parsed.list)) toast.error("No entró en el almacenamiento. El contenido anterior sigue sin tocar.");
       else toast.success(`Restauramos ${parsed.summary.spaces} espacio(s).`);
     } catch (err) {
       toast.error(err.message);
@@ -63,7 +63,7 @@ export default function StorageGate({ children }) {
       <ConfirmDialog
         open={confirm}
         onClose={() => setConfirm(false)}
-        onConfirm={() => { setConfirm(false); if (resetStorage([])) toast.success("Empezaste de cero."); }}
+        onConfirm={async () => { setConfirm(false); if (await resetStorage([])) toast.success("Empezaste de cero."); }}
         title="¿Empezar de cero?"
         message="Esto borra definitivamente el contenido ilegible de este navegador. Te recomendamos descargarlo antes."
         confirmLabel="Borrar y empezar"
