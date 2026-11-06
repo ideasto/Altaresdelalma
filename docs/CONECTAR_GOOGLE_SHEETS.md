@@ -24,3 +24,9 @@ El formulario ya está en la aplicación. Falta conectar un destino real; los re
 El script registra altas/bajas y evita fórmulas en celdas. Su URL es pública y puede recibir solicitudes ajenas al formulario: no demuestra que quien escribe un email sea su titular. Para campañas futuras, revisar confirmación del correo, bajas y medidas contra registros abusivos. No colocar claves privadas en el frontend.
 
 Si se modifica el script después, actualizar la implementación a una versión nueva conservando la misma URL.
+
+## Estado de conexión
+
+La persona usuaria ejecutó inicializar sin errores, implementó como aplicación web (ejecutar como su cuenta, acceso Cualquiera) y proporcionó la URL /exec. Se guardó en REACT_APP_CONTACT_ENDPOINT para producción y Preview del mismo proyecto, ahora llamado mensajesancestrales. La dirección principal real es https://mensajesansestrales.vercel.app; el dominio anterior redirige allí.
+
+Se inició una recompilación de producción para incorporar la variable. Queda pendiente comprobar un registro real y su estado en la pestaña Contactos. La política de red de este entorno no permite todavía los dominios de Apps Script: no se afirma entrega ni lectura de filas en Google Sheets desde esta tarea. La URL de recepción está en la configuración de Vercel y en la implementación de Apps Script; no es necesario incrustarla en el código fuente.
