@@ -36,3 +36,9 @@ Los recuerdos se guardan por navegador y dirección. Mantener la URL estable de 
 ## Primera sesión
 
 Pendiente: abrir Inicio en la vista previa y recoger la primera observación. Todavía no se introdujeron cambios visuales o funcionales como parte de esta revisión.
+
+## Acceso y contactos
+
+El enlace principal ya abre sin cuenta Vercel; comprobado con un navegador limpio. Se mantiene el mismo proyecto. La persona usuaria quiere que el futuro cambio de nombre abarque la aplicación, la URL de Vercel y el repositorio GitHub; aún no eligió entre Espacio para la Memoria y Santuario para la Memoria. No renombrar por suposición.
+
+El formulario de contactos existe, pero no tiene endpoint y no recoge contactos en una lista central. Pendiente elegir destino real. Se preguntó por Google Sheets o un servicio de email ya utilizado. El primer espacio actualmente exige aceptar novedades: revisar esa decisión de producto al conectar la captura de mails. La revisión visual conjunta y la impresión física siguen pendientes.
