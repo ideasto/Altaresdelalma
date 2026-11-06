@@ -97,3 +97,9 @@ Validación de esta revisión: compilación estricta con Node 22; Chromium contr
 Evidencia nueva de edición en `artifacts/revision-inline/`. Prueba reproducible: instalar Playwright para Node y ejecutar `ECOS_TEST_BASE_URL=http://127.0.0.1:3100 CHROMIUM_PATH=/ruta/a/chromium node tests/browser/inline-edit.cjs` contra el build servido. `tests/browser/validate.py` admite `CHROMIUM_PATH` y `ECOS_TEST_OUTPUT`; `independent.py` admite `CHROMIUM_PATH`.
 
 La vista en pantalla crece con el texto; el PDF conserva A4 y pagina el contenido. No se simula una previsualización exacta de cada salto de imprenta. Vercel, impresión física, envío de contactos y percepción acústica del sonido siguen pendientes de verificación externa. Esta revisión no activa pagos ni publica la aplicación.
+
+## Vista previa activa en Vercel
+
+El entorno volvió a estar operativo y la credencial de Vercel fue validada. Se creó el único proyecto altaresdelalma en LaGataylaMagia, asociado al repositorio existente, Node 22 y raíz frontend. Hay una vista previa READY de a257360 con target staging; no se fusionó main. El intento inicial que Vercel marcó production fue cancelado. Pruebas funcionales reales del despliegue remoto pasadas, con acceso temporal de pruebas revocado y protección de Vercel conservada.
+
+Enlace estable, identificadores no secretos, procedimientos y alcance: [VISTA_PREVIA_VERCEL.md](VISTA_PREVIA_VERCEL.md). La preferencia de trato quedó incorporada en AGENTS.md para futuras tareas de este repositorio.
