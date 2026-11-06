@@ -103,3 +103,7 @@ La vista en pantalla crece con el texto; el PDF conserva A4 y pagina el contenid
 El entorno volvió a estar operativo y la credencial de Vercel fue validada. Se creó el único proyecto altaresdelalma en LaGataylaMagia, asociado al repositorio existente, Node 22 y raíz frontend. Hay una vista previa READY de a257360 con target staging; no se fusionó main. El intento inicial que Vercel marcó production fue cancelado. Pruebas funcionales reales del despliegue remoto pasadas, con acceso temporal de pruebas revocado y protección de Vercel conservada.
 
 Enlace estable, identificadores no secretos, procedimientos y alcance: [VISTA_PREVIA_VERCEL.md](VISTA_PREVIA_VERCEL.md). La preferencia de trato quedó incorporada en AGENTS.md para futuras tareas de este repositorio.
+
+## Publicación principal autorizada · 2026-11-06
+
+Tras solicitar un único enlace principal para continuar revisando y editando la aplicación, la persona usuaria respondió «autorizo» a la publicación en producción. La revisión 40d3dc0 alcanzó READY en https://altaresdelalma.vercel.app, despliegue dpl_Hj3nVQkJDZNMTCrNHYWsSfWiyzKn. No se creó otro proyecto ni se fusionó main. La protección SSO existente permanece activa. Esta actualización sustituye las restricciones históricas de solo Preview para esta publicación autorizada; no convierte pendientes de producto en terminados.

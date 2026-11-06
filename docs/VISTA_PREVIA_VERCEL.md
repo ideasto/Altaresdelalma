@@ -1,3 +1,15 @@
+# Enlace principal activo
+
+Desde el 2026-11-06 se usa **https://altaresdelalma.vercel.app** como enlace principal único. La persona usuaria autorizó publicar la revisión 40d3dc0; el despliegue dpl_Hj3nVQkJDZNMTCrNHYWsSfWiyzKn alcanzó READY con target production. No se creó otro proyecto ni se fusionó main.
+
+La protección SSO existente sigue activa y puede pedir iniciar sesión. El cambio a protección estándar para abrir el dominio principal sin cuenta fue bloqueado por la revisión automática de permisos y no se ejecutó; requiere aprobación explícita de ese cambio de acceso.
+
+La rama de trabajo sigue generando Previews al hacer push. Para actualizar el enlace principal hay que desplegar explícitamente una revisión aprobada en producción; un push a la rama de trabajo por sí solo no lo actualiza. Las versiones previas son historial del mismo proyecto, no proyectos duplicados. Las instrucciones históricas siguientes describen la preparación inicial, anterior a esta autorización.
+
+Si se cargaron recuerdos en otro enlace, exportar un respaldo desde ese enlace e importarlo en el principal: el almacenamiento del navegador está separado por dirección.
+
+---
+
 # Vista previa de Ecos del Alma en Vercel
 
 ## Abrir la aplicación
