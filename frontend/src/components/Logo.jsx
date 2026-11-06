@@ -9,7 +9,7 @@ export function BrandLogo({ variant = "goldFull", className = "", style, alt = B
 
 export function BrandLockup({ compact = false }) {
   return (
-    <Link to="/" className="flex items-center gap-3" data-testid="brand-lockup" aria-label="Ecos del Alma, inicio">
+    <Link to="/" className="flex items-center gap-3" data-testid="brand-lockup" aria-label={`${BRAND.appName}, inicio`}>
       <BrandLogo variant="goldFull" className={compact ? "h-10 w-auto" : "h-14 sm:h-16 w-auto"} alt="" />
       <div className="leading-tight">
         <div className="font-heading gold-gradient-text text-xl sm:text-2xl tracking-wide">{BRAND.appName}</div>

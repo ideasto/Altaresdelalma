@@ -42,3 +42,13 @@ Pendiente: abrir Inicio en la vista previa y recoger la primera observación. To
 El enlace principal ya abre sin cuenta Vercel; comprobado con un navegador limpio. Se mantiene el mismo proyecto. La persona usuaria quiere que el futuro cambio de nombre abarque la aplicación, la URL de Vercel y el repositorio GitHub; aún no eligió entre Espacio para la Memoria y Santuario para la Memoria. No renombrar por suposición.
 
 El formulario de contactos existe, pero no tiene endpoint y no recoge contactos en una lista central. Pendiente elegir destino real. Se preguntó por Google Sheets o un servicio de email ya utilizado. El primer espacio actualmente exige aceptar novedades: revisar esa decisión de producto al conectar la captura de mails. La revisión visual conjunta y la impresión física siguen pendientes.
+
+## Primera revisión aplicada
+
+Nombre visible elegido: Espacio para la Memoria (marca, pestaña, bienvenida, pie y exportadores que usan BRAND). Se mantienen identificadores de almacenamiento y formatos de respaldo para conservar compatibilidad. No se cambió aún la dirección ni el nombre del repositorio.
+
+Inicio centrado: presentación y creación del primer espacio rectangular de hasta 672 px; filas posteriores centradas. Fondo azul elevado ligeramente, especialmente en el extremo inferior. Compilación estricta Node 22 correcta; comprobación geométrica del centrado a 1440 y 390 px, sin desborde. Regresión de rutas, edición, fotos, guardado y cinco PDF pasada. Evidencia en artifacts/revision-inicio/.
+
+Google Sheets: receptor preparado en integrations/google-sheets/Code.gs y guía en docs/CONECTAR_GOOGLE_SHEETS.md. Validación con una planilla simulada de alta, actualización sin duplicados, baja, campos inválidos y neutralización de fórmulas. No se creó una planilla real ni se configuró el endpoint: hace falta la implementación en la cuenta de Google de la persona usuaria y su URL /exec. El formulario conserva por ahora su comportamiento; se solicitó aclaración sobre separar datos obligatorios de novedades opcionales.
+
+Emergent: no se dispone de un respaldo real de sus recuerdos; los respaldos presentes en artifacts son pruebas sintéticas. El importador admite listas de espacios, avatars/espacios y algunos alias anteriores. Hay que inspeccionar un JSON real antes de prometer compatibilidad. No confundir respaldo de datos con exportación del código fuente.

@@ -4,9 +4,9 @@
 
 /* Paleta recuperada de la versión anterior (HSL verificados en el prompt maestro) */
 :root {
-  --bg-deep: hsl(214 49% 19%);
-  --bg-soft: hsl(210 45% 26%);
-  --bg-lift: hsl(205 47% 32%);
+  --bg-deep: hsl(212 50% 23%);
+  --bg-soft: hsl(209 47% 28%);
+  --bg-lift: hsl(205 49% 34%);
   --gold: hsl(46 65% 52%);
   --gold-soft: hsl(46 55% 62%);
   --gold-glow: hsl(46 80% 65%);
@@ -21,9 +21,9 @@
 
 @layer base {
   :root {
-    --background: 214 49% 19%;
-    --background-soft: 210 45% 26%;
-    --background-lift: 205 47% 32%;
+    --background: 212 50% 23%;
+    --background-soft: 209 47% 28%;
+    --background-lift: 205 49% 34%;
     --foreground: 210 40% 98%;
     --card: 210 45% 26%;
     --card-foreground: 210 40% 98%;

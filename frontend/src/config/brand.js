@@ -1,8 +1,8 @@
 // Configuración central de marca, enlaces e interruptores.
 export const BRAND = {
-  appName: "Ecos del Alma",
+  appName: "Espacio para la Memoria",
   formerAppName: "Mensajes Ancestrales",
-  formerNames: ["Mensajes Ancestrales", "Altares del Alma"],
+  formerNames: ["Ecos del Alma", "Mensajes Ancestrales", "Altares del Alma"],
   brandName: "La Gata y la Magia",
   editorialCredit: "Editado por La Gata y la Magia",
   email: "lagataylamagia@gmail.com",
