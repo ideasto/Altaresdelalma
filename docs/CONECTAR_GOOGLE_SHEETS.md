@@ -30,3 +30,7 @@ Si se modifica el script después, actualizar la implementación a una versión 
 La persona usuaria ejecutó inicializar sin errores, implementó como aplicación web (ejecutar como su cuenta, acceso Cualquiera) y proporcionó la URL /exec. Se guardó en REACT_APP_CONTACT_ENDPOINT para producción y Preview del mismo proyecto, ahora llamado mensajesancestrales. La dirección principal real es https://mensajesansestrales.vercel.app; el dominio anterior redirige allí.
 
 Se inició una recompilación de producción para incorporar la variable. Queda pendiente comprobar un registro real y su estado en la pestaña Contactos. La política de red de este entorno no permite todavía los dominios de Apps Script: no se afirma entrega ni lectura de filas en Google Sheets desde esta tarea. La URL de recepción está en la configuración de Vercel y en la implementación de Apps Script; no es necesario incrustarla en el código fuente.
+
+## Entrega confirmada por la persona usuaria
+
+El 2026-11-06 la persona usuaria confirmó que funciona y mostró una fila en la pestaña Contactos con estado Suscrito. Se considera confirmada la entrega real de ese registro. No se copiaron los datos personales de la captura. Esto no verifica por sí solo todos los casos de baja, registro sin novedades y control de duplicados en la planilla real.
