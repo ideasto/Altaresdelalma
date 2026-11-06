@@ -52,3 +52,5 @@ Inicio centrado: presentación y creación del primer espacio rectangular de has
 Google Sheets: receptor preparado en integrations/google-sheets/Code.gs y guía en docs/CONECTAR_GOOGLE_SHEETS.md. Validación con una planilla simulada de alta, actualización sin duplicados, baja, campos inválidos y neutralización de fórmulas. No se creó una planilla real ni se configuró el endpoint: hace falta la implementación en la cuenta de Google de la persona usuaria y su URL /exec. El formulario conserva por ahora su comportamiento; se solicitó aclaración sobre separar datos obligatorios de novedades opcionales.
 
 Emergent: no se dispone de un respaldo real de sus recuerdos; los respaldos presentes en artifacts son pruebas sintéticas. El importador admite listas de espacios, avatars/espacios y algunos alias anteriores. Hay que inspeccionar un JSON real antes de prometer compatibilidad. No confundir respaldo de datos con exportación del código fuente.
+
+La persona usuaria confirmó datos obligatorios y novedades opcionales. Se retiró el bloqueo por no aceptar novedades, se ajustaron los textos y el receptor distingue registro sin novedades, suscripción y baja.

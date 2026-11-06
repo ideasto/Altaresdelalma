@@ -1,6 +1,6 @@
 # Recibir contactos en Google Sheets
 
-El formulario ya está en la aplicación. Falta conectar un destino real; los registros actuales guardados en cada navegador no aparecen todavía en una planilla central. Google Sheets almacenará nombre, email, estado de suscripción, consentimiento y fecha; no fotos, cartas ni recuerdos. Esto no envía campañas de email.
+El formulario ya está en la aplicación. Falta conectar un destino real; los registros actuales guardados en cada navegador no aparecen todavía en una planilla central. Google Sheets almacenará nombre, email, estado de suscripción, consentimiento y fecha; no fotos, cartas ni recuerdos. Esto no envía campañas de email. Nombre y email son obligatorios al crear el primer espacio; recibir novedades es opcional. La columna Estado distingue Suscrito, Registrado sin novedades y Baja solicitada. Usar para futuras novedades únicamente las filas Suscrito.
 
 ## Preparación en tu cuenta de Google
 

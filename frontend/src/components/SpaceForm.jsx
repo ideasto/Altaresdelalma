@@ -18,8 +18,8 @@ export default function SpaceForm({ open, onClose, editing, onCreate, onUpdate }
     if (!open) return;
     setForm(editing ? { name: editing.name, symbol: editing.symbol, birth: editing.birth, passing: editing.passing } : empty);
     const c = getContact();
-    setKnown(c && c.consent ? c : null);
-    setContact({ name: c?.name || "", email: c?.email || "", accepted: !!c?.consent });
+    setKnown(c?.name && validEmail(c.email) ? c : null);
+    setContact({ name: c?.name || "", email: c?.email || "", accepted: !!c?.consent && !c?.unsubscribeRequested });
     setFixing(false);
   }, [open, editing]);
 
@@ -30,7 +30,6 @@ export default function SpaceForm({ open, onClose, editing, onCreate, onUpdate }
     if (needContact) {
       if (!contact.name.trim()) return toast.error("Escribí tu nombre.");
       if (!validEmail(contact.email)) return toast.error("Revisá tu email, parece incompleto.");
-      if (!contact.accepted) return toast.error("Para crear el espacio necesitamos tu aceptación explícita.");
     }
     const data = { ...form, name: form.name.trim() };
     const ok = editing ? await onUpdate(data) : await onCreate(data);

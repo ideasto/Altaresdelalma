@@ -27,10 +27,10 @@ export const FEATURES = {
 export const CONTACT = {
   // Vacío = los contactos quedan pendientes en el navegador (no llegan a ninguna planilla).
   endpoint: process.env.REACT_APP_CONTACT_ENDPOINT || "",
-  consentVersion: "2026-06-v1",
+  consentVersion: "2026-11-v1",
   consentScope: "novedades, propuestas y otras herramientas de La Gata y la Magia por email",
   consentText:
-    "Acepto que La Gata y la Magia use mi nombre y email para enviarme novedades, propuestas y otras herramientas del proyecto. Puedo pedir la baja cuando quiera.",
+    "Quiero recibir por email novedades, propuestas y otras herramientas de La Gata y la Magia (opcional). Puedo pedir la baja cuando quiera.",
 };
 
 // Límites técnicos de seguridad/capacidad (no comerciales).

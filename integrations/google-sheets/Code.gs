@@ -34,13 +34,13 @@ function doPost(e) {
     var raw = e && e.postData && e.postData.contents;
     if (!raw || raw.length > 8192) return respuesta_(false, 'Solicitud inválida');
     var data = JSON.parse(raw);
-    if (!data || !['subscribe', 'unsubscribe'].includes(data.action)) return respuesta_(false, 'Acción inválida');
+    if (!data || !['register', 'subscribe', 'unsubscribe'].includes(data.action)) return respuesta_(false, 'Acción inválida');
     var email = String(data.email || '').trim().toLowerCase();
     var name = String(data.name || '').trim();
     if (email.length > 120 || !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email) || !name || name.length > 80) {
       return respuesta_(false, 'Nombre o email inválido');
     }
-    if (!data.consentAt || !isFinite(Date.parse(data.consentAt)) || !data.consentVersion || !data.consentScope) {
+    if (data.action !== 'register' && (!data.consentAt || !isFinite(Date.parse(data.consentAt)) || !data.consentVersion || !data.consentScope)) {
       return respuesta_(false, 'Falta consentimiento válido');
     }
     if (!lock.tryLock(10000)) return respuesta_(false, 'Reintentar');
@@ -52,7 +52,7 @@ function doPost(e) {
     for (var i = 1; i < values.length; i++) {
       if (String(values[i][0]).toLowerCase() === email) { row = i + 1; break; }
     }
-    var record = [texto_(email, 120), texto_(name, 80), data.action === 'unsubscribe' ? 'Baja solicitada' : 'Suscrito',
+    var record = [texto_(email, 120), texto_(name, 80), data.action === 'unsubscribe' ? 'Baja solicitada' : data.action === 'subscribe' ? 'Suscrito' : 'Registrado sin novedades',
       texto_(data.consentAt, 40), texto_(data.consentVersion, 80), texto_(data.consentScope, 500),
       texto_(data.source, 80), new Date().toISOString()];
     if (row) sheet.getRange(row, 1, 1, record.length).setValues([record]);
