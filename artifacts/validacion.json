@@ -1,0 +1,14 @@
+[
+  {
+    "checks": [
+      "IndexedDB full roundtrip + trash",
+      "Atomic writeAll under injected quota failure",
+      "localStorage read under quota",
+      "3 malformed backups rejected",
+      "24 complete backup images"
+    ],
+    "photos": 24,
+    "bytes": 34682960
+  },
+  "Clean browser restore, dashboard desktop/mobile without horizontal overflow"
+]

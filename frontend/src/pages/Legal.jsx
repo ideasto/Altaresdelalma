@@ -16,7 +16,7 @@ const TEXTS = {
     title: "Privacidad",
     body: [
       "Tus cartas, fotos, nombres de seres amados y demás contenido de los espacios no salen de tu navegador ni se envían a ningún servidor de La Gata y la Magia.",
-      `Al crear tu primer espacio te pedimos tu nombre y email. Con tu aceptación, ${BRAND.brandName} los usa para enviarte ${CONTACT.consentScope}. Registramos la fecha y la versión del texto aceptado (${CONTACT.consentVersion}).`,
+      `Al crear tu primer espacio te pedimos tu nombre y email para registrar tus datos en ${BRAND.brandName}. Se guardan en tu navegador y, cuando se conecta la planilla de contactos, se envían a esa planilla. Recibir ${CONTACT.consentScope} es opcional: solo te suscribimos si marcás la casilla. Registramos la fecha y la versión del texto aceptado (${CONTACT.consentVersion}).`,
       `Podés corregir tus datos o pedir la baja desde «Tus datos» en el inicio, o escribiendo a ${BRAND.email}.`,
       "Los respaldos que descargás incluyen tus recuerdos y no incluyen tu registro de contacto.",
     ],

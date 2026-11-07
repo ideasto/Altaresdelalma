@@ -1,9 +1,11 @@
+import WritingIdeas from "../WritingIdeas";
 import React, { useEffect, useState } from "react";
 import { Modal, GoldButton, GhostButton } from "../common";
 import DraftNotices from "../DraftNotices";
 import { SaveFailNotice } from "../StorageBits";
 import useDraft from "../../hooks/useDraft";
 import { copyText, downloadText } from "../../lib/drafts";
+import { getContact } from "../../lib/contact";
 import { todayLocal } from "../../lib/storage";
 import { toast } from "sonner";
 
@@ -13,25 +15,29 @@ export default function LetterEditor({ open, onClose, editing, spaceId, spaceNam
   const [draft, setDraft] = useState({ date: todayLocal(), to: "", body: "", sign: "" });
   const [fail, setFail] = useState(false);
   const d = useDraft(`carta-${spaceId}-${editing?.id || "nueva"}`, draft, open);
+  const { rebase } = d;
 
   useEffect(() => {
     if (!open) return;
     setFail(false);
-    setDraft(editing ? { date: editing.date, to: editing.to, body: editing.body, sign: editing.sign } : { date: todayLocal(), to: spaceName, body: "", sign: "" });
-  }, [open, editing, spaceName]);
+    const initial = editing ? { date: editing.date, to: editing.to, body: editing.body, sign: editing.sign } : { date: todayLocal(), to: spaceName, body: "", sign: getContact()?.name || "" };
+    rebase(initial);
+    setDraft(initial);
+  }, [open, editing, spaceName, rebase]);
 
   const copy = async () => toast[(await copyText(letterText(draft))) ? "success" : "error"]("Texto copiado.");
   const download = () => downloadText(letterText(draft), "carta");
 
-  const save = () => {
+  const save = async () => {
     if (!draft.body.trim()) return toast.error("Escribí el cuerpo de la carta.");
-    if (onSave(draft)) { d.clear(); onClose(); } else setFail(true);
+    if (await onSave(draft)) { d.clear(); onClose(); } else setFail(true);
   };
 
   return (
     <Modal open={open} onClose={onClose} title={editing ? "Editar carta" : "Nueva carta"} maxWidth="max-w-2xl" testId="cartas-form-modal">
       <DraftNotices draft={d} onApply={(r) => setDraft({ date: r.date, to: r.to, body: r.body, sign: r.sign })} onCopy={copy} onDownload={download} />
       <SaveFailNotice show={fail} onCopy={copy} onDownload={download} />
+      <WritingIdeas letter onChoose={idea => setDraft(prev => ({ ...prev, body: prev.body.trim() ? `${prev.body}\n\n${idea}` : idea }))} />
       <div className="paper-sheet rounded-2xl p-5 sm:p-7">
         <div className="grid grid-cols-2 gap-4">
           <label className="block"><span className="text-xs uppercase tracking-wider text-[#6b5a3e]">Fecha</span>

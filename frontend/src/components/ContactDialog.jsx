@@ -13,12 +13,11 @@ export default function ContactDialog({ open, onClose }) {
     if (!open) return;
     const cur = getContact();
     setC(cur);
-    setV({ name: cur?.name || "", email: cur?.email || "", accepted: !!cur?.consent });
+    setV({ name: cur?.name || "", email: cur?.email || "", accepted: !!cur?.consent && !cur?.unsubscribeRequested });
   }, [open]);
 
   const save = async () => {
     if (!v.name.trim() || !validEmail(v.email)) return toast.error("Revisá tu nombre y email.");
-    if (!v.accepted) return toast.error("Necesitamos tu aceptación explícita.");
     if (!saveContact(v)) return toast.error("No se pudieron guardar tus datos en este navegador.");
     setC(await syncContact());
     toast.success("Tus datos quedaron guardados en este navegador.");
@@ -36,7 +35,7 @@ export default function ContactDialog({ open, onClose }) {
       {c?.consent && <p className="text-xs text-[#7f93a8] mb-2">Aceptado el {new Date(c.consent.acceptedAt).toLocaleString("es-AR")} · texto {c.consent.version}</p>}
       <ContactFields value={v} onChange={setV} />
       <div className="flex flex-wrap justify-between gap-3 mt-5">
-        {c && !c.unsubscribeRequested ? (
+        {c?.consent && !c.unsubscribeRequested ? (
           <button className="text-sm text-[#a9bacb] underline" onClick={unsubscribe} data-testid="contact-unsubscribe">Pedir la baja de comunicaciones</button>
         ) : c?.unsubscribeRequested ? (
           <span className="text-sm text-[#a9bacb]" data-testid="contact-unsubscribed">Baja solicitada · <a className="gold-text underline" href={`mailto:${BRAND.email}?subject=Baja`}>escribir por email</a></span>

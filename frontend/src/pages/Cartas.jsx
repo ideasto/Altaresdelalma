@@ -1,10 +1,11 @@
+import ShareDialog from "../components/ShareDialog";
 import React, { useState } from "react";
 import { useParams, Link, useSearchParams } from "react-router-dom";
 import { useStore } from "../store/StoreContext";
 import { PageHeader, Modal, ConfirmDialog, GoldButton, GhostButton } from "../components/common";
 import LetterEditor, { letterText } from "../components/cartas/LetterEditor";
-import { makeSheet, renderPdf } from "../lib/pdf";
-import { copyText, shareText, downloadText } from "../lib/drafts";
+import { lettersPdf } from "../lib/pdf/letters";
+import { copyText, downloadText } from "../lib/drafts";
 import { fmtDate, plural } from "../lib/format";
 import { LIMITS } from "../config/brand";
 import { toast } from "sonner";
@@ -32,6 +33,7 @@ export default function Cartas() {
   const [editing, setEditing] = useState(null);
   const [reading, setReading] = useState(null);
   const [del, setDel] = useState(null);
+  const [shareItems, setShareItems] = useState(null);
 
   if (!avatar) return <Link to="/" className="gold-text underline block p-10">Volver</Link>;
   const letters = avatar.letters;
@@ -42,31 +44,16 @@ export default function Cartas() {
     setEditorOpen(true);
   };
 
-  const save = (draft) => {
+  const save = async (draft) => {
     const ok = editing
-      ? updateAvatar(id, (a) => ({ letters: a.letters.map((l) => (l.id === editing.id ? { ...l, ...draft } : l)) }))
-      : updateAvatar(id, (a) => ({ letters: [{ id: crypto.randomUUID(), ...draft }, ...a.letters] }));
+      ? await updateAvatar(id, (a) => ({ letters: a.letters.map((l) => (l.id === editing.id ? { ...l, ...draft } : l)) }))
+      : await updateAvatar(id, (a) => ({ letters: [{ id: crypto.randomUUID(), ...draft }, ...a.letters] }));
     if (ok) { toast.success(editing ? "Carta actualizada." : "Carta guardada."); if (editing) setReading({ ...editing, ...draft }); }
     return ok;
   };
 
-  const sheetFor = (l) => {
-    const { sheet, content } = makeSheet({});
-    const el = document.createElement("div");
-    el.innerHTML = `
-      <div style="text-align:right;font-size:15px;color:#6b5a3e;font-family:'Plus Jakarta Sans',sans-serif;margin-bottom:24px;">${esc(fmtDate(l.date))}</div>
-      <div style="text-align:center;font-size:34px;color:#2b2114;margin-bottom:22px;">Para ${esc(l.to || avatar.name)}</div>
-      <div style="font-family:'Caveat',cursive;font-size:28px;line-height:1.5;color:#2b2114;white-space:pre-wrap;">${esc(l.body)}</div>
-      ${l.sign ? `<div style="font-family:'Caveat',cursive;font-size:28px;text-align:right;color:#2b2114;margin-top:28px;">${esc(l.sign)}</div>` : ""}`;
-    content.appendChild(el);
-    return sheet;
-  };
-  const pdf = (list, name) => toast.promise(renderPdf(list.map(sheetFor), name), { loading: "Generando PDF…", success: "PDF descargado.", error: "Error al generar el PDF." });
+  const pdf = (list, name) => toast.promise(lettersPdf(list, name), { loading: "Generando PDF…", success: "PDF descargado.", error: "Error al generar el PDF." });
 
-  const share = async (l) => {
-    const r = await shareText(`Carta para ${l.to}`, letterText(l));
-    if (r === "copied") toast.success("Tu dispositivo no permite compartir directo: copiamos el texto.");
-  };
 
   return (
     <div className="pb-10">
@@ -76,7 +63,7 @@ export default function Cartas() {
       </PageHeader>
 
       <div className="max-w-6xl mx-auto px-4 sm:px-8 pt-8">
-        <p className="text-[#d5dfea] mb-8 font-hand text-2xl">Lo que no alcanzaste a decir, lo que te pasa hoy, lo que quieras contarle.</p>
+        <p className="text-[#d5dfea] mb-8 font-hand text-2xl">Algo que hoy quieras contarle, recordar o dejar escrito. Podés parar y volver cuando quieras.</p>
         {letters.length === 0 ? (
           <div className="glass rounded-3xl py-16 text-center">
             <div className="envelope w-56 h-32 mx-auto mb-6"><div className="envelope-inner" /><div className="envelope-sheet h-24" /></div>
@@ -99,14 +86,14 @@ export default function Cartas() {
             <div className="paper-sheet rounded-2xl p-6 sm:p-9 select-text" data-testid="carta-reader-sheet">
               <p className="text-right text-sm text-[#6b5a3e] mb-4">{fmtDate(reading.date)}</p>
               <p className="font-heading text-3xl text-center text-[#2b2114] mb-5">Para {reading.to}</p>
-              <p className="font-hand text-[26px] leading-relaxed text-[#2b2114] whitespace-pre-wrap">{reading.body}</p>
+              <p className="font-hand text-[26px] ruled-letter text-[#2b2114] whitespace-pre-wrap">{reading.body}</p>
               {reading.sign && <p className="font-hand text-[26px] text-right text-[#2b2114] mt-6">{reading.sign}</p>}
             </div>
             <div className="flex flex-wrap gap-2 mt-5 justify-end">
               <GhostButton className="py-2" onClick={async () => toast.success((await copyText(letterText(reading))) ? "Texto copiado." : "No se pudo copiar.")} testId="carta-copy"><Copy className="w-4 h-4" /> Copiar</GhostButton>
               <GhostButton className="py-2" onClick={() => downloadText(letterText(reading), "carta")} testId="carta-txt"><FileText className="w-4 h-4" /> Texto</GhostButton>
               <GhostButton className="py-2" onClick={() => pdf([reading], `carta-${avatar.name}.pdf`)} testId={`carta-pdf-${reading.id}`}><FileDown className="w-4 h-4" /> PDF</GhostButton>
-              <GhostButton className="py-2" onClick={() => share(reading)} testId="carta-share"><Share2 className="w-4 h-4" /> Compartir</GhostButton>
+              <GhostButton className="py-2" onClick={() => setShareItems([{ title: `Para ${reading.to}`, subtitle: fmtDate(reading.date), text: [reading.body, reading.sign].filter(Boolean).join("\n\n"), handwritten: true }])} testId="carta-share"><Share2 className="w-4 h-4" /> Compartir</GhostButton>
               <GhostButton className="py-2" onClick={() => { setEditing(reading); setEditorOpen(true); }} testId={`carta-edit-${reading.id}`}><Pencil className="w-4 h-4" /> Editar</GhostButton>
               <button className="rounded-full px-4 py-2 text-sm text-red-200 border border-red-400/50 hover:bg-red-500/15 inline-flex items-center gap-2" onClick={() => setDel(reading)} data-testid={`carta-delete-${reading.id}`}><Trash2 className="w-4 h-4" /> Eliminar</button>
             </div>
@@ -115,6 +102,8 @@ export default function Cartas() {
       </Modal>
 
       <LetterEditor open={editorOpen} onClose={() => setEditorOpen(false)} editing={editing} spaceId={id} spaceName={avatar.name} onSave={save} />
+
+      <ShareDialog items={shareItems} onClose={() => setShareItems(null)} />
 
       <ConfirmDialog
         open={!!del}

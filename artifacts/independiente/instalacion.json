@@ -1,0 +1,9 @@
+{
+  "requests": 1499,
+  "hosts": [
+    "registry.yarnpkg.com"
+  ],
+  "lock_sha256": "c9e3286781a45d0f7bd6c6358f932b41612498092251ee151b12fa4459c65d91",
+  "node": "22.23.4",
+  "cache": "empty before install"
+}

@@ -1,0 +1,14 @@
+{
+  "project": "altaresdelalma",
+  "projectId": "prj_c5tb83IggVe72A7ju7J7L1YXNJte",
+  "branch": "feat/ecos-del-alma-completo",
+  "verifiedCommit": "a257360df96a0c71f2a42cd80e4b78a5500e7adc",
+  "deploymentId": "dpl_D8ngksUuYYK7zifEWNg127qxRQ4F",
+  "target": "staging",
+  "state": "READY",
+  "url": "https://altaresdelalma-f2aybee9b-la-gatayla-magia.vercel.app",
+  "stableBranchUrl": "https://altaresdelalma-git-feat-ecos-del-alma-completo-la-gatayla-magia.vercel.app",
+  "temporaryTestAccessRevoked": true,
+  "initialProductionAttemptCanceled": true,
+  "mainMerged": false
+}

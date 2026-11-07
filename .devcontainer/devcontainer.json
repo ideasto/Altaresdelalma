@@ -1,0 +1,27 @@
+{
+  "name": "Ecos del Alma · vista previa",
+  "image": "mcr.microsoft.com/devcontainers/javascript-node:1-22-bookworm",
+  "forwardPorts": [3000],
+  "portsAttributes": {
+    "3000": {
+      "label": "Ecos del Alma · abrir aplicación",
+      "onAutoForward": "openBrowser",
+      "protocol": "http"
+    }
+  },
+  "postCreateCommand": "bash .devcontainer/install.sh",
+  "postAttachCommand": "bash .devcontainer/start-preview.sh",
+  "remoteEnv": {
+    "BROWSER": "none",
+    "HOST": "0.0.0.0",
+    "PORT": "3000"
+  },
+  "customizations": {
+    "vscode": {
+      "settings": {
+        "remote.autoForwardPorts": true,
+        "remote.restoreForwardedPorts": true
+      }
+    }
+  }
+}

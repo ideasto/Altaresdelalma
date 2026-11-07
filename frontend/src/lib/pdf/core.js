@@ -65,7 +65,7 @@ const fmt = (src) => (src.startsWith("data:image/png") ? "PNG" : "JPEG");
 export async function drawContain(doc, src, x, y, w, h, alias) {
   const data = await asDataUrl(src);
   const s = await imgSize(data);
-  if (!s) return null;
+  if (!s) throw new Error("No se pudo leer una imagen del documento; no se exportó un PDF incompleto.");
   const r = Math.min(w / s.w, h / s.h);
   const dw = s.w * r, dh = s.h * r;
   const dx = x + (w - dw) / 2, dy = y + (h - dh) / 2;

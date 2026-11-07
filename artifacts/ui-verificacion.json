@@ -1,0 +1,16 @@
+{
+  "passed": [
+    "migration",
+    "desktop/mobile",
+    "failed save",
+    "draft recovery",
+    "successful save",
+    "book editing",
+    "deck shuffle, skip, flip",
+    "sound toggle",
+    "photo delete/reload/undo",
+    "restore options reset"
+  ],
+  "external_services": "blocked; no contact transmission verified",
+  "errors": []
+}

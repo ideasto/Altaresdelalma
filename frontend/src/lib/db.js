@@ -36,7 +36,8 @@ function dehydrate(obj, fresh) {
   return walk(obj, (s) => {
     if (!isImg(s)) return s;
     let k = keyOf.get(s);
-    if (!k) { k = newKey(); keyOf.set(s, k); urlOf.set(k, s); fresh.set(k, s); }
+    if (!k) { k = newKey(); keyOf.set(s, k); urlOf.set(k, s); }
+    fresh.set(k, s);
     return REF + k;
   });
 }
@@ -44,7 +45,7 @@ function dehydrate(obj, fresh) {
 const hydrate = (obj, missing) => walk(obj, (s) => {
   if (typeof s !== "string" || !s.startsWith(REF)) return s;
   const u = urlOf.get(s.slice(REF.length));
-  if (!u) { missing.n++; return ""; }
+  if (!u) { missing.n++; return s; }
   return u;
 });
 
@@ -70,6 +71,7 @@ export async function loadAll() {
     reqP(tx.objectStore("images").getAll()),
   ]);
   if (!meta) return null;
+  keyOf.clear(); urlOf.clear();
   iKeys.forEach((k, i) => { urlOf.set(k, iVals[i]); keyOf.set(iVals[i], k); });
   const missing = { n: 0 };
   const byId = new Map(sKeys.map((k, i) => [k, hydrate(sVals[i], missing)]));
@@ -80,7 +82,7 @@ export async function loadAll() {
 }
 
 // Escribe solo lo que cambió, en una única transacción (todo o nada).
-export async function saveState(next, prev, extraMeta = {}) {
+export async function saveState(next, prev, extraMeta = {}, replace = false) {
   const db = await openDb();
   const fresh = new Map();
   const prevA = new Map((prev?.avatars || []).map((a) => [a.id, a]));
@@ -93,6 +95,8 @@ export async function saveState(next, prev, extraMeta = {}) {
   return new Promise((resolve) => {
     const tx = db.transaction(["spaces", "trash", "images", "meta"], "readwrite");
     const S = tx.objectStore("spaces"), T = tx.objectStore("trash"), I = tx.objectStore("images");
+    try {
+    if (replace) { S.clear(); T.clear(); I.clear(); }
     fresh.forEach((url, k) => I.put(url, k));
     writesA.forEach(([id, v]) => S.put(v, id));
     writesT.forEach(([id, v]) => T.put(v, id));
@@ -100,26 +104,20 @@ export async function saveState(next, prev, extraMeta = {}) {
     prevT.forEach((_, id) => nextT.has(id) || T.delete(id));
     I.getAllKeys().onsuccess = (e) => e.target.result.forEach((k) => used.has(k) || I.delete(k));
     tx.objectStore("meta").put({ version: 2, order: next.avatars.map((a) => a.id), updatedAt: new Date().toISOString(), ...extraMeta }, "main");
+    } catch (error) { tx.abort(); resolve({ ok: false, quota: error.name === "QuotaExceededError", error }); return; }
     tx.oncomplete = () => resolve({ ok: true });
     const fail = () => {
-      fresh.forEach((url, k) => { keyOf.delete(url); urlOf.delete(k); });
+
       const err = tx.error;
       resolve({ ok: false, quota: err && err.name === "QuotaExceededError", blocked: !err || err.name !== "QuotaExceededError", error: err });
     };
-    tx.onerror = (e) => e.preventDefault();
+    tx.onerror = () => { /* Default IndexedDB behavior aborts the whole transaction. */ };
     tx.onabort = fail;
   });
 }
 
 export async function writeAll(state, extraMeta) {
-  const db = await openDb();
-  await new Promise((res, rej) => {
-    const tx = db.transaction(["spaces", "trash", "images"], "readwrite");
-    ["spaces", "trash", "images"].forEach((s) => tx.objectStore(s).clear());
-    tx.oncomplete = res; tx.onabort = () => rej(tx.error);
-  });
-  keyOf.clear(); urlOf.clear();
-  return saveState(state, { avatars: [], trash: [] }, extraMeta);
+  return saveState(state, null, extraMeta, true);
 }
 
 export async function storageEstimate() {

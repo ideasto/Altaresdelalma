@@ -11,8 +11,8 @@ export default function HeaderPhrase({ phrase, onSave }) {
   const [draft, setDraft] = useState(phrase);
   useEffect(() => { if (open) setDraft(phrase); }, [open, phrase]);
 
-  const save = (value) => {
-    if (onSave(value.trim())) {
+  const save = async (value) => {
+    if (await onSave(value.trim())) {
       toast.success(value.trim() ? "Frase guardada." : "Frase quitada.");
       setOpen(false);
     }

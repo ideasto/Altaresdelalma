@@ -17,7 +17,7 @@ export function StorageMeter({ className = "" }) {
   return (
     <div className={`text-xs ${className}`} data-testid="storage-meter">
       <div className="flex justify-between gap-3 text-[#a9bacb] mb-1">
-        <span>Guardado en este navegador · {photos} foto{photos === 1 ? "" : "s"} en galerías</span>
+        <span>Guardado en este navegador · sin sincronización en la nube · {photos} foto{photos === 1 ? "" : "s"} en galerías</span>
         <span className={warn ? "text-amber-300" : ""} data-testid="storage-meter-usage">{mb(est.used)} usados de ~{gb(est.quota)} disponibles</span>
       </div>
       <div className="h-1.5 rounded-full bg-[#152438]/70 overflow-hidden">

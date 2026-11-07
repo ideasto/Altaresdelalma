@@ -18,7 +18,7 @@ function createImage(url) {
 }
 
 // Produce a baked cropped dataURL from source + croppedAreaPixels (react-easy-crop)
-export async function getCroppedImg(imageSrc, cropPixels, maxSize = 900) {
+export async function getCroppedImg(imageSrc, cropPixels, maxSize = 2400) {
   const image = await createImage(imageSrc);
   const canvas = document.createElement("canvas");
   const ctx = canvas.getContext("2d");
@@ -40,11 +40,11 @@ export async function getCroppedImg(imageSrc, cropPixels, maxSize = 900) {
     canvas.height
   );
 
-  return canvas.toDataURL("image/jpeg", 0.88);
+  return canvas.toDataURL("image/jpeg", 0.92);
 }
 
 // Downscale any dataURL to keep localStorage lighter
-export async function shrinkDataUrl(dataUrl, maxSize = 1400, quality = 0.82) {
+export async function shrinkDataUrl(dataUrl, maxSize = 2400, quality = 0.92) {
   const image = await createImage(dataUrl);
   const scale = Math.min(1, maxSize / Math.max(image.width, image.height));
   if (scale === 1 && dataUrl.length < 400000) return dataUrl;

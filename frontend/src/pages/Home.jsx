@@ -31,15 +31,15 @@ export default function Home() {
   const [trashOpen, setTrashOpen] = useState(false);
   const [contactOpen, setContactOpen] = useState(false);
 
-  const onCreate = (data) => {
-    const a = createAvatar(data);
+  const onCreate = async (data) => {
+    const a = await createAvatar(data);
     if (!a) return false;
     toast.success(`Creaste el espacio de ${a.name}.`);
     setPhotoFor(a);
     return true;
   };
-  const onUpdate = (data) => {
-    const ok = updateAvatar(editing.id, data);
+  const onUpdate = async (data) => {
+    const ok = await updateAvatar(editing.id, data);
     if (ok) toast.success("Espacio actualizado.");
     return ok;
   };
@@ -56,9 +56,9 @@ export default function Home() {
   };
 
   const backupAll = () => {
-    if (!avatars.length) return toast.error("Todavía no hay espacios para respaldar.");
-    exportBackup(avatars);
-    toast.success("Descargaste tu santuario completo.", { description: "Incluye fotos y textos. No incluye tus datos de contacto." });
+    if (!avatars.length && !trash.length) return toast.error("Todavía no hay espacios para respaldar.");
+    exportBackup(avatars, null, trash);
+    toast.success("Descargaste una copia para restaurar tus recuerdos.", { description: "Incluye fotos y textos. No incluye tus datos de contacto." });
   };
 
   return (
@@ -66,7 +66,7 @@ export default function Home() {
       <div className="flex items-center justify-between gap-4 flex-wrap mb-10">
         <BrandLockup />
         <div className="flex items-center gap-2 flex-wrap">
-          <button className={pill} onClick={backupAll} data-testid="backup-button"><Download className="w-4 h-4" /> Descargar mi santuario</button>
+          <button className={pill} onClick={backupAll} data-testid="backup-button"><Download className="w-4 h-4" /> Descargar respaldo</button>
           <button className={pill} onClick={() => fileRef.current?.click()} data-testid="restore-button"><Upload className="w-4 h-4" /> Restaurar</button>
           <button className={pill} onClick={() => setTrashOpen(true)} data-testid="trash-button"><Trash2 className="w-4 h-4" /> Papelera{trash.length ? ` (${trash.length})` : ""}</button>
           <button className={pill} onClick={() => setContactOpen(true)} data-testid="contact-button"><UserRound className="w-4 h-4" /> Tus datos</button>
@@ -75,18 +75,18 @@ export default function Home() {
         </div>
       </div>
 
-      <div className="mb-12 fade-up max-w-3xl">
+      <div className="mb-10 fade-up max-w-3xl mx-auto text-center">
         <h1 className="font-heading text-4xl sm:text-5xl lg:text-6xl text-[#f8fafc] mb-4">
-          Un lugar para alojar <span className="gold-gradient-text">a quienes amamos</span>
+          Un lugar para los recuerdos <span className="gold-gradient-text">que querés conservar</span>
         </h1>
         <p className="text-[#d5dfea] leading-relaxed text-base">
-          Creá un espacio para cada ser amado. Escribile cartas, guardá sus fotos, armá su historia, creá un mazo con sus frases y un libro para imprimir.
+          Podés empezar con una foto, una frase o algo que hoy quieras escribir. Reuní tus recuerdos y dales forma en un libro para imprimir. Lo demás puede esperar.
         </p>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+      <div className="flex flex-wrap justify-center gap-6 mb-8">
         {avatars.map((a) => (
-          <div key={a.id} className="glass portal-card rounded-3xl p-6 text-center relative" data-testid={`space-card-${a.id}`}>
+          <div key={a.id} className="glass portal-card rounded-3xl p-6 text-center relative w-full sm:w-[calc(50%-0.75rem)] lg:w-[calc(33.333%-1rem)]" data-testid={`space-card-${a.id}`}>
             <div className="absolute top-3 right-3 flex gap-1">
               <button className="icon-btn" title="Descargar respaldo de este espacio" aria-label="Respaldo de este espacio" onClick={() => exportBackup(avatars, a)} data-testid={`space-backup-${a.id}`}><Download className="w-4 h-4" /></button>
               <EditPencil onClick={() => { setEditing(a); setFormOpen(true); }} testId={`space-edit-${a.id}`} />
@@ -112,17 +112,17 @@ export default function Home() {
         <button
           onClick={() => { setEditing(null); setFormOpen(true); }}
           data-testid="create-space-button"
-          className="glass portal-card rounded-3xl p-6 min-h-[320px] flex flex-col items-center justify-center gap-4 border-dashed border-[#d4af37]/45 group"
+          className={`glass portal-card rounded-3xl p-6 flex flex-col items-center justify-center gap-4 border-dashed border-[#d4af37]/45 group w-full ${avatars.length ? "sm:w-[calc(50%-0.75rem)] lg:w-[calc(33.333%-1rem)] min-h-[320px]" : "max-w-2xl min-h-[250px] sm:min-h-[270px]"}`}
         >
           <span className="rounded-full p-5 border border-[#d4af37]/55 gold-text group-hover:shadow-[0_0_22px_rgba(212,175,55,0.45)] transition-shadow">
             <Plus className="w-8 h-8" />
           </span>
           <span className="font-heading text-2xl text-[#f8fafc]">Crear un espacio</span>
-          <span className="text-[#a9bacb] text-sm">Para alguien que querés recordar</span>
+          <span className="text-[#a9bacb] text-sm">Para alguien que querés recordar · no hace falta completarlo hoy</span>
         </button>
       </div>
 
-      <StorageMeter className="max-w-md mb-10" />
+      <StorageMeter className="max-w-md mx-auto mb-10" />
       <AdSlot placement="home-after-spaces" />
 
       <SpaceForm open={formOpen} onClose={() => setFormOpen(false)} editing={editing} onCreate={onCreate} onUpdate={onUpdate} />
@@ -143,8 +143,8 @@ export default function Home() {
       <ConfirmDialog
         open={!!confirmDel}
         onClose={() => setConfirmDel(null)}
-        onConfirm={() => {
-          if (deleteAvatar(confirmDel.id)) toast.success("El espacio pasó a la papelera.", { description: "Podés recuperarlo desde «Papelera»." });
+        onConfirm={async () => {
+          if (await deleteAvatar(confirmDel.id)) toast.success("El espacio pasó a la papelera.", { description: "Podés recuperarlo desde «Papelera»." });
           setConfirmDel(null);
         }}
         title="¿Borrar este espacio?"
