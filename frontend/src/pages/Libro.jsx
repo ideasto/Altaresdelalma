@@ -1,3 +1,4 @@
+import ShareDialog from "../components/ShareDialog";
 import React, { useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { AnimatePresence, motion } from "framer-motion";
@@ -12,7 +13,7 @@ import BookPage from "../components/libro/BookPage";
 import { bookTitle } from "../lib/format";
 import { BRAND } from "../config/brand";
 import { toast } from "sonner";
-import { FileDown, Plus, ChevronLeft, ChevronRight, ArrowUp, ArrowDown, Import } from "lucide-react";
+import { FileDown, Plus, ChevronLeft, ChevronRight, ArrowUp, ArrowDown, Import, Share2 } from "lucide-react";
 
 export default function Libro() {
   const { id } = useParams();
@@ -25,6 +26,7 @@ export default function Libro() {
   const [meta, setMeta] = useState(null);
   const [importOpen, setImportOpen] = useState(false);
   const [del, setDel] = useState(null);
+  const [shareItems, setShareItems] = useState(null);
 
   if (!avatar) return <Link to="/" className="gold-text underline block p-10">Volver</Link>;
   const pages = avatar.book;
@@ -65,6 +67,7 @@ export default function Libro() {
   return (
     <div className="pb-10">
       <PageHeader title="Libro de Recuerdos" subtitle={bookTitle(avatar)}>
+        <GhostButton disabled={isEditing} onClick={() => setShareItems([view === "cover" ? { title: bookTitle(avatar), subtitle: avatar.bookMeta.subtitle || "", photo: avatar.bookMeta.coverPhoto || avatar.photoCropped } : view === "back" ? { title: bookTitle(avatar), text: [avatar.bookMeta.backText, avatar.bookMeta.closing].filter(Boolean).join("\n\n") } : { title: view.title || bookTitle(avatar), subtitle: `${avatar.name} · Página ${i}`, text: view.text, photo: view.photo, handwritten: view.font === "manuscrita" }])} testId="libro-share"><Share2 className="w-4 h-4" /> Compartir {view === "cover" ? "tapa" : view === "back" ? "contratapa" : "página"}</GhostButton>
         <GhostButton disabled={isEditing} onClick={exportPdf} testId="libro-pdf"><FileDown className="w-4 h-4" /> PDF</GhostButton>
         <GhostButton disabled={isEditing} onClick={() => setImportOpen(true)} testId="libro-import"><Import className="w-4 h-4" /> Traer recuerdos</GhostButton>
         <GoldButton onClick={() => { setEditing(null); setPageOpen(true); }} disabled={isEditing} testId="libro-add" className="px-5 py-2.5"><Plus className="w-4 h-4" /> Agregar página</GoldButton>
@@ -104,6 +107,8 @@ export default function Libro() {
 
       <div className="flex justify-center mt-8"><GoldButton onClick={() => { setEditing(null); setPageOpen(true); }} disabled={isEditing} testId="libro-add-bottom">Agregar página</GoldButton></div>
       <ImportDialog open={importOpen} onClose={() => setImportOpen(false)} a={avatar} onImport={importPages} />
+
+      <ShareDialog items={shareItems} onClose={() => setShareItems(null)} />
 
       <ConfirmDialog
         open={!!del}

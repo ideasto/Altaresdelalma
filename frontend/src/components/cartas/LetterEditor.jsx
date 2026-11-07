@@ -1,3 +1,4 @@
+import WritingIdeas from "../WritingIdeas";
 import React, { useEffect, useState } from "react";
 import { Modal, GoldButton, GhostButton } from "../common";
 import DraftNotices from "../DraftNotices";
@@ -36,6 +37,7 @@ export default function LetterEditor({ open, onClose, editing, spaceId, spaceNam
     <Modal open={open} onClose={onClose} title={editing ? "Editar carta" : "Nueva carta"} maxWidth="max-w-2xl" testId="cartas-form-modal">
       <DraftNotices draft={d} onApply={(r) => setDraft({ date: r.date, to: r.to, body: r.body, sign: r.sign })} onCopy={copy} onDownload={download} />
       <SaveFailNotice show={fail} onCopy={copy} onDownload={download} />
+      <WritingIdeas letter onChoose={idea => setDraft(prev => ({ ...prev, body: prev.body.trim() ? `${prev.body}\n\n${idea}` : idea }))} />
       <div className="paper-sheet rounded-2xl p-5 sm:p-7">
         <div className="grid grid-cols-2 gap-4">
           <label className="block"><span className="text-xs uppercase tracking-wider text-[#6b5a3e]">Fecha</span>

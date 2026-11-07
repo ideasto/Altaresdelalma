@@ -1,10 +1,11 @@
+import ShareDialog from "../components/ShareDialog";
 import React, { useState } from "react";
 import { useParams, Link, useSearchParams } from "react-router-dom";
 import { useStore } from "../store/StoreContext";
 import { PageHeader, Modal, ConfirmDialog, GoldButton, GhostButton } from "../components/common";
 import LetterEditor, { letterText } from "../components/cartas/LetterEditor";
 import { lettersPdf } from "../lib/pdf/letters";
-import { copyText, shareText, downloadText } from "../lib/drafts";
+import { copyText, downloadText } from "../lib/drafts";
 import { fmtDate, plural } from "../lib/format";
 import { LIMITS } from "../config/brand";
 import { toast } from "sonner";
@@ -32,6 +33,7 @@ export default function Cartas() {
   const [editing, setEditing] = useState(null);
   const [reading, setReading] = useState(null);
   const [del, setDel] = useState(null);
+  const [shareItems, setShareItems] = useState(null);
 
   if (!avatar) return <Link to="/" className="gold-text underline block p-10">Volver</Link>;
   const letters = avatar.letters;
@@ -52,10 +54,6 @@ export default function Cartas() {
 
   const pdf = (list, name) => toast.promise(lettersPdf(list, name), { loading: "Generando PDF…", success: "PDF descargado.", error: "Error al generar el PDF." });
 
-  const share = async (l) => {
-    const r = await shareText(`Carta para ${l.to}`, letterText(l));
-    if (r === "copied") toast.success("Tu dispositivo no permite compartir directo: copiamos el texto.");
-  };
 
   return (
     <div className="pb-10">
@@ -65,7 +63,7 @@ export default function Cartas() {
       </PageHeader>
 
       <div className="max-w-6xl mx-auto px-4 sm:px-8 pt-8">
-        <p className="text-[#d5dfea] mb-8 font-hand text-2xl">Lo que no alcanzaste a decir, lo que te pasa hoy, lo que quieras contarle.</p>
+        <p className="text-[#d5dfea] mb-8 font-hand text-2xl">Algo que hoy quieras contarle, recordar o dejar escrito. Podés parar y volver cuando quieras.</p>
         {letters.length === 0 ? (
           <div className="glass rounded-3xl py-16 text-center">
             <div className="envelope w-56 h-32 mx-auto mb-6"><div className="envelope-inner" /><div className="envelope-sheet h-24" /></div>
@@ -95,7 +93,7 @@ export default function Cartas() {
               <GhostButton className="py-2" onClick={async () => toast.success((await copyText(letterText(reading))) ? "Texto copiado." : "No se pudo copiar.")} testId="carta-copy"><Copy className="w-4 h-4" /> Copiar</GhostButton>
               <GhostButton className="py-2" onClick={() => downloadText(letterText(reading), "carta")} testId="carta-txt"><FileText className="w-4 h-4" /> Texto</GhostButton>
               <GhostButton className="py-2" onClick={() => pdf([reading], `carta-${avatar.name}.pdf`)} testId={`carta-pdf-${reading.id}`}><FileDown className="w-4 h-4" /> PDF</GhostButton>
-              <GhostButton className="py-2" onClick={() => share(reading)} testId="carta-share"><Share2 className="w-4 h-4" /> Compartir</GhostButton>
+              <GhostButton className="py-2" onClick={() => setShareItems([{ title: `Para ${reading.to}`, subtitle: fmtDate(reading.date), text: [reading.body, reading.sign].filter(Boolean).join("\n\n"), handwritten: true }])} testId="carta-share"><Share2 className="w-4 h-4" /> Compartir</GhostButton>
               <GhostButton className="py-2" onClick={() => { setEditing(reading); setEditorOpen(true); }} testId={`carta-edit-${reading.id}`}><Pencil className="w-4 h-4" /> Editar</GhostButton>
               <button className="rounded-full px-4 py-2 text-sm text-red-200 border border-red-400/50 hover:bg-red-500/15 inline-flex items-center gap-2" onClick={() => setDel(reading)} data-testid={`carta-delete-${reading.id}`}><Trash2 className="w-4 h-4" /> Eliminar</button>
             </div>
@@ -104,6 +102,8 @@ export default function Cartas() {
       </Modal>
 
       <LetterEditor open={editorOpen} onClose={() => setEditorOpen(false)} editing={editing} spaceId={id} spaceName={avatar.name} onSave={save} />
+
+      <ShareDialog items={shareItems} onClose={() => setShareItems(null)} />
 
       <ConfirmDialog
         open={!!del}

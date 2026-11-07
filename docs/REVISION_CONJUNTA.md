@@ -54,3 +54,11 @@ Google Sheets: receptor preparado en integrations/google-sheets/Code.gs y guía 
 Emergent: no se dispone de un respaldo real de sus recuerdos; los respaldos presentes en artifacts son pruebas sintéticas. El importador admite listas de espacios, avatars/espacios y algunos alias anteriores. Hay que inspeccionar un JSON real antes de prometer compatibilidad. No confundir respaldo de datos con exportación del código fuente.
 
 La persona usuaria confirmó datos obligatorios y novedades opcionales. Se retiró el bloqueo por no aceptar novedades, se ajustaron los textos y el receptor distingue registro sin novedades, suscripción y baja.
+
+## Compartir y fortalecer la experiencia
+
+Se agregó compartir como archivos visuales para carta del mazo, carta escrita, tapa/página/contratapa del libro, cronología completa o momento y varias fotos seleccionadas. Hay vista previa, menú nativo cuando se admite y descarga por imagen. Textos largos paginados, sin capturar botones ni el resto del espacio. Guía y pruebas en docs/COMPARTIR_RECUERDOS.md.
+
+Inicio y bienvenida explican un primer paso pequeño, respaldo frente a PDF y ausencia de cuenta de recuperación. El mazo se presenta como Mazo de recuerdos y conserva la explicación simbólica de la selección al azar. Cartas y libro tienen ideas opcionales que se agregan al final sin reemplazar lo escrito. Fondo y superficies azules más saturados y luminosos; papel y dorado conservados. Identificadores de datos, dirección, contactos y funciones de impresión preservados.
+
+La investigación web sigue bloqueada por la red del entorno. Una nueva solicitud explícita de la persona usuaria motivó un nuevo intento por el flujo de configuración; devolvió otra vez CONFLICT/draft_not_editable. No se añadieron dominios ni se consultaron nuevas fuentes. La continuación requiere una nueva sesión de configuración del entorno o una sesión con búsqueda. No se debe presentar la investigación de base como una revisión actualizada del mercado.

@@ -1,0 +1,14 @@
+{
+  "modules": 5,
+  "multiple_photos": true,
+  "long_content_paginated": true,
+  "native_share_simulated": true,
+  "explicit_user_activation": true,
+  "cancel_and_error_handled": true,
+  "download_fallback": true,
+  "writing_ideas_preserve_text": true,
+  "mobile_overflow": false,
+  "javascript_errors": [],
+  "external_requests": [],
+  "actual_social_network_posting_tested": false
+}

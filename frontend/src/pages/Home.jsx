@@ -58,7 +58,7 @@ export default function Home() {
   const backupAll = () => {
     if (!avatars.length && !trash.length) return toast.error("Todavía no hay espacios para respaldar.");
     exportBackup(avatars, null, trash);
-    toast.success("Descargaste tu santuario completo.", { description: "Incluye fotos y textos. No incluye tus datos de contacto." });
+    toast.success("Descargaste una copia para restaurar tus recuerdos.", { description: "Incluye fotos y textos. No incluye tus datos de contacto." });
   };
 
   return (
@@ -66,7 +66,7 @@ export default function Home() {
       <div className="flex items-center justify-between gap-4 flex-wrap mb-10">
         <BrandLockup />
         <div className="flex items-center gap-2 flex-wrap">
-          <button className={pill} onClick={backupAll} data-testid="backup-button"><Download className="w-4 h-4" /> Descargar mi santuario</button>
+          <button className={pill} onClick={backupAll} data-testid="backup-button"><Download className="w-4 h-4" /> Descargar respaldo</button>
           <button className={pill} onClick={() => fileRef.current?.click()} data-testid="restore-button"><Upload className="w-4 h-4" /> Restaurar</button>
           <button className={pill} onClick={() => setTrashOpen(true)} data-testid="trash-button"><Trash2 className="w-4 h-4" /> Papelera{trash.length ? ` (${trash.length})` : ""}</button>
           <button className={pill} onClick={() => setContactOpen(true)} data-testid="contact-button"><UserRound className="w-4 h-4" /> Tus datos</button>
@@ -77,10 +77,10 @@ export default function Home() {
 
       <div className="mb-10 fade-up max-w-3xl mx-auto text-center">
         <h1 className="font-heading text-4xl sm:text-5xl lg:text-6xl text-[#f8fafc] mb-4">
-          Un lugar para alojar <span className="gold-gradient-text">a quienes amamos</span>
+          Un lugar para los recuerdos <span className="gold-gradient-text">que querés conservar</span>
         </h1>
         <p className="text-[#d5dfea] leading-relaxed text-base">
-          Creá un espacio para cada ser amado. Escribile cartas, guardá sus fotos, armá su historia, creá un mazo con sus frases y un libro para imprimir.
+          Podés empezar con una foto, una frase o algo que hoy quieras escribir. Reuní tus recuerdos y dales forma en un libro para imprimir. Lo demás puede esperar.
         </p>
       </div>
 
@@ -118,7 +118,7 @@ export default function Home() {
             <Plus className="w-8 h-8" />
           </span>
           <span className="font-heading text-2xl text-[#f8fafc]">Crear un espacio</span>
-          <span className="text-[#a9bacb] text-sm">Para alguien que querés recordar</span>
+          <span className="text-[#a9bacb] text-sm">Para alguien que querés recordar · no hace falta completarlo hoy</span>
         </button>
       </div>
 

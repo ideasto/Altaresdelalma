@@ -4,9 +4,9 @@
 
 /* Paleta recuperada de la versión anterior (HSL verificados en el prompt maestro) */
 :root {
-  --bg-deep: hsl(212 50% 23%);
-  --bg-soft: hsl(209 47% 28%);
-  --bg-lift: hsl(205 49% 34%);
+  --bg-deep: hsl(211 62% 27%);
+  --bg-soft: hsl(208 58% 32%);
+  --bg-lift: hsl(204 58% 37%);
   --gold: hsl(46 65% 52%);
   --gold-soft: hsl(46 55% 62%);
   --gold-glow: hsl(46 80% 65%);
@@ -21,9 +21,9 @@
 
 @layer base {
   :root {
-    --background: 212 50% 23%;
-    --background-soft: 209 47% 28%;
-    --background-lift: 205 49% 34%;
+    --background: 211 62% 27%;
+    --background-soft: 208 58% 32%;
+    --background-lift: 204 58% 37%;
     --foreground: 210 40% 98%;
     --card: 210 45% 26%;
     --card-foreground: 210 40% 98%;
@@ -69,7 +69,7 @@ h1, h2, h3, h4, .font-heading { font-family: 'Cormorant Garamond', Georgia, seri
   inset: 0;
   z-index: -2;
   background:
-    radial-gradient(1100px 650px at 85% -5%, hsl(205 50% 40% / 0.45), transparent 60%),
+    radial-gradient(1100px 650px at 85% -5%, hsl(202 68% 45% / 0.3), transparent 60%),
     radial-gradient(900px 600px at 5% 105%, hsl(46 65% 52% / 0.10), transparent 60%),
     linear-gradient(170deg, var(--bg-lift) 0%, var(--bg-soft) 42%, var(--bg-deep) 100%);
 }
@@ -92,7 +92,7 @@ h1, h2, h3, h4, .font-heading { font-family: 'Cormorant Garamond', Georgia, seri
 
 /* ---------- Superficies ---------- */
 .glass {
-  background: linear-gradient(145deg, hsl(207 47% 34% / 0.85), hsl(212 46% 26% / 0.9));
+  background: linear-gradient(145deg, hsl(207 58% 33% / 0.94), hsl(211 55% 28% / 0.97));
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
   border: 1px solid hsl(46 65% 52% / 0.25);

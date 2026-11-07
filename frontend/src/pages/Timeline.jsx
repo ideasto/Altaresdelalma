@@ -1,3 +1,4 @@
+import ShareDialog from "../components/ShareDialog";
 import React, { useEffect, useState } from "react";
 import { useParams, Link, useSearchParams } from "react-router-dom";
 import { useStore } from "../store/StoreContext";
@@ -8,7 +9,7 @@ import { shrinkDataUrl, fileToDataUrl } from "../lib/image";
 import { toast } from "sonner";
 import { fmtDate, sortMoments } from "../lib/format";
 import {
-  Clock, FileDown, Plus, Home, Heart, Star, Plane, Cake, Music, Camera, Sun, Moon, MapPin, Gift, PawPrint, GraduationCap, Baby, Image as ImageIcon,
+  Clock, Share2, FileDown, Plus, Home, Heart, Star, Plane, Cake, Music, Camera, Sun, Moon, MapPin, Gift, PawPrint, GraduationCap, Baby, Image as ImageIcon,
 } from "lucide-react";
 
 const ICONS = { dot: () => <span className="w-3 h-3 rounded-full bg-current block" />, star: Star, heart: Heart, home: Home, plane: Plane, cake: Cake, music: Music, camera: Camera, sun: Sun, moon: Moon, pin: MapPin, gift: Gift, paw: PawPrint, grad: GraduationCap, baby: Baby };
@@ -27,6 +28,7 @@ export default function Timeline() {
   const [draft, setDraft] = useState({ date: "", icon: "dot", title: "", description: "", photo: "" });
   const [del, setDel] = useState(null);
   const [exportOpen, setExportOpen] = useState(false);
+  const [shareItems, setShareItems] = useState(null);
   const [headerImg, setHeaderImg] = useState("");
   const [headerEdit, setHeaderEdit] = useState(false);
 
@@ -65,6 +67,7 @@ export default function Timeline() {
   return (
     <div className="pb-10">
       <PageHeader title="Línea de Tiempo" subtitle={avatar.name}>
+        <GhostButton disabled={!events.length} onClick={() => setShareItems(events.map(e => ({ title: e.title, subtitle: [avatar.name, fmt(e.date)].filter(Boolean).join(" · "), text: e.description || "", photo: e.photo })))} testId="timeline-share"><Share2 className="w-4 h-4" /> Compartir historia</GhostButton>
         <GhostButton onClick={openExport} testId="timeline-pdf"><FileDown className="w-4 h-4" /> PDF</GhostButton>
         <GoldButton onClick={openCreate} testId="timeline-add" className="px-5 py-2.5"><Plus className="w-4 h-4" /> Nuevo momento</GoldButton>
       </PageHeader>
@@ -93,6 +96,7 @@ export default function Timeline() {
                   <div className={`ml-16 md:ml-0 glass rounded-2xl p-5 pt-10 relative ${left ? "md:col-start-1 md:text-right" : "md:col-start-2"}`}>
                     <div className={`absolute top-3 ${left ? "left-3 md:left-auto md:right-3" : "right-3"} flex gap-1`}>
                       {!e.date && [-1, 1].map(delta => <button key={delta} className="icon-btn" aria-label={delta < 0 ? "Mover antes" : "Mover después"} onClick={() => updateAvatar(id, a => { const list = [...a.timeline]; const from = list.findIndex(x => x.id === e.id); const candidates = list.map((x, i) => !x.date ? i : -1).filter(i => i >= 0); const to = candidates[candidates.indexOf(from) + delta]; if (to === undefined) return {}; [list[from], list[to]] = [list[to], list[from]]; return { timeline: list }; })}>{delta < 0 ? "↑" : "↓"}</button>)}
+                      <button className="icon-btn" title="Compartir momento" aria-label="Compartir momento" onClick={() => setShareItems([{ title: e.title, subtitle: [avatar.name, fmt(e.date)].filter(Boolean).join(" · "), text: e.description || "", photo: e.photo }])} data-testid={`timeline-share-${e.id}`}><Share2 className="w-4 h-4" /></button>
                       <EditPencil onClick={() => openEdit(e)} testId={`timeline-edit-${e.id}`} />
                       <TrashButton onClick={() => setDel(e)} testId={`timeline-delete-${e.id}`} />
                     </div>
@@ -159,6 +163,8 @@ export default function Timeline() {
       </Modal>
 
       <PhotoEditor open={headerEdit} onClose={() => setHeaderEdit(false)} initialPhoto={headerImg} round title="Imagen de cabecera" onSave={(d) => setHeaderImg(d.photoCropped)} />
+
+      <ShareDialog items={shareItems} onClose={() => setShareItems(null)} />
 
       <ConfirmDialog
         open={!!del}

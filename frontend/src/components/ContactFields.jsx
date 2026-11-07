@@ -18,7 +18,7 @@ export default function ContactFields({ value, onChange, showConsent = true }) {
         </Field>
       </div>
       <p className="text-[#d5dfea] text-sm leading-relaxed mb-3">
-        Tu nombre y email son necesarios para registrar tus datos en {BRAND.brandName}. Recibir novedades es opcional: podés crear tu espacio sin marcar la casilla. No se envían tus cartas, fotos ni el nombre de tu ser amado.
+        Tu nombre y email son necesarios para registrar tus datos en {BRAND.brandName}. Dejar estos datos no crea una cuenta ni permite recuperar tus recuerdos. Recibir novedades es opcional: podés crear tu espacio sin marcar la casilla. No se envían tus cartas, fotos ni el nombre de tu ser amado.
       </p>
       {showConsent && (
         <label className="flex items-start gap-3 cursor-pointer" data-testid="contact-consent-label">

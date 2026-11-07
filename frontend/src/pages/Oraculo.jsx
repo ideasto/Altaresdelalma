@@ -1,3 +1,4 @@
+import ShareDialog from "../components/ShareDialog";
 import React, { useEffect, useRef, useState } from "react";
 import { useParams, Link, useSearchParams } from "react-router-dom";
 import { useStore } from "../store/StoreContext";
@@ -9,7 +10,7 @@ import { copyText } from "../lib/drafts";
 import { plural } from "../lib/format";
 import { LIMITS } from "../config/brand";
 import { toast } from "sonner";
-import { Sparkles, FileDown, Plus, Star, Copy, SkipForward } from "lucide-react";
+import { Sparkles, FileDown, Plus, Star, Copy, SkipForward, Share2 } from "lucide-react";
 
 const HINTS = ["Una frase que decía", "Un chiste o expresión suya", "Su esencia", "Algo que dejó en vos", "Palabras que vos escribís hoy"];
 const ORIGIN_LABEL = { recordada: "Palabras suyas", escrita: "Escrita por mí" };
@@ -113,6 +114,7 @@ export default function Oraculo() {
   const [editing, setEditing] = useState(null);
   const [draft, setDraft] = useState({ message: "", name: "", origin: "", hint: "" });
   const [delCard, setDelCard] = useState(null);
+  const [shareItems, setShareItems] = useState(null);
 
   const openCreate = () => {
     if (avatar.cards.length >= LIMITS.oracleCards) return toast.error(`El mazo llegó a su máximo de ${LIMITS.oracleCards} cartas.`);
@@ -145,7 +147,7 @@ export default function Oraculo() {
 
   return (
     <div className="pb-10">
-      <PageHeader title="Mazo Oráculo" subtitle={avatar.name}>
+      <PageHeader title="Mazo de recuerdos" subtitle={avatar.name}>
         <GhostButton onClick={exportPdf} testId="oraculo-pdf"><FileDown className="w-4 h-4" /> PDF</GhostButton>
         <GoldButton onClick={openCreate} testId="oraculo-add" className="px-5 py-2.5"><Plus className="w-4 h-4" /> Nueva carta</GoldButton>
       </PageHeader>
@@ -167,6 +169,7 @@ export default function Oraculo() {
                 <div className="aspect-[7/10]"><CardFace card={c} /></div>
                 <div className="flex justify-center gap-1 mt-2">
                   <button className="icon-btn" title="Copiar texto" aria-label="Copiar texto" onClick={async () => toast.success((await copyText(c.message)) ? "Frase copiada." : "No se pudo copiar.")} data-testid={`oraculo-copy-${c.id}`}><Copy className="w-4 h-4" /></button>
+                  <button className="icon-btn" title="Compartir carta" aria-label="Compartir carta" onClick={() => setShareItems([{ kind: "card", title: c.name || avatar.name, text: c.message }])} data-testid={`oraculo-share-${c.id}`}><Share2 className="w-4 h-4" /></button>
                   <EditPencil onClick={() => openEdit(c)} testId={`oraculo-edit-${c.id}`} />
                   <TrashButton onClick={() => setDelCard(c)} testId={`oraculo-delete-${c.id}`} />
                 </div>
@@ -200,6 +203,8 @@ export default function Oraculo() {
           <GoldButton onClick={saveCard} testId="oraculo-form-save">{editing ? "Guardar" : "Sumar al mazo"}</GoldButton>
         </div>
       </Modal>
+
+      <ShareDialog items={shareItems} onClose={() => setShareItems(null)} />
 
       <ConfirmDialog
         open={!!delCard}

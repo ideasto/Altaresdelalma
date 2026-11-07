@@ -41,3 +41,13 @@ Requisitos:
 - Matriz de fuentes vacía de supuestos resultados actuales.
 
 La investigación no continuará automáticamente en segundo plano después de terminar el turno. Se reanuda cuando haya una sesión con acceso a las fuentes. La revisión de la app por la persona usuaria puede continuar mientras tanto.
+
+## Reintento solicitado y pasos para desbloquear
+
+La persona usuaria pidió explícitamente habilitar el acceso y continuar. Se leyó el borrador vigente antes de proponer la lista de dominios conservada. La nueva operación volvió a devolver CONFLICT/draft_not_editable; no se guardó el cambio. El escritorio figura habilitado en el entorno, pero este chat no ofrece su herramienta de control ni un buscador. Ejecutar pruebas de Chromium de la aplicación no equivale a tener acceso a las fuentes externas.
+
+Desde Editar entorno, abrir una nueva sesión de configuración para resolver el borrador bloqueado. Encargo breve para esa sesión:
+
+> Habilitá la consulta de fuentes públicas para la investigación de duelo y memoria digital. El borrador anterior devuelve draft_not_editable. Leé la configuración vigente, conservá repositorio, credenciales y reglas existentes y agregá los destinos de docs/investigacion/ACCESO_WEB_PROPUESTO.json. Prepará el cambio para que pueda guardarlo y publicarlo. No modifiques ni despliegues la aplicación. Comprobá el acceso de lectura a una fuente pública después de aplicar el cambio.
+
+Habilitar red permite consultar fuentes con las herramientas del entorno; no instala automáticamente Investigación profunda en ChatGPT ni agrega una función que no esté disponible en la cuenta. La alternativa sigue siendo una sesión que ya tenga búsqueda, con el encargo de este documento. No hace falta otro token de Vercel o Google para leer fuentes públicas.

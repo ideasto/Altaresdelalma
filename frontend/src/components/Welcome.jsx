@@ -21,10 +21,10 @@ export default function Welcome({ open, onClose }) {
     <Modal open={open} onClose={close} title={`Bienvenida a ${BRAND.appName}`} maxWidth="max-w-lg" testId="welcome-modal">
       <div className="flex justify-center mb-4"><BrandLogo variant="goldFull" className="h-24 w-auto" /></div>
       <p className="text-[#d5dfea] leading-relaxed mb-3">
-        Un lugar para alojar el amor y los recuerdos de quienes querés: escribir, guardar fotos, armar su historia, crear un mazo propio y un libro para imprimir.
+        Podés guardar una foto, escribir algo o reunir recuerdos en un libro para imprimir. No hace falta contar una vida entera para empezar.
       </p>
       <p className="text-[#a9bacb] text-sm leading-relaxed mb-4">
-        Cabe todo: ternura, nostalgia, humor, tristeza o todo junto. No hay tareas ni orden obligatorio. Tus recuerdos se guardan solo en este navegador; descargá un respaldo cada tanto.
+        Cabe todo: ternura, nostalgia, humor, tristeza o todo junto. No hay tareas ni orden obligatorio. Tus recuerdos se guardan solo en este navegador. Tu email no es una cuenta de recuperación. El PDF sirve para leer o imprimir; el respaldo permite restaurar el contenido editable en otro navegador.
       </p>
       <p className="font-ui text-xs uppercase tracking-wider text-[#a9bacb] mb-2">Si querés una idea para empezar</p>
       <ul className="mb-6 space-y-1" data-testid="welcome-prompts">

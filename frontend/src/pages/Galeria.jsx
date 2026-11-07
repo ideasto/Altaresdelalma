@@ -1,3 +1,4 @@
+import ShareDialog from "../components/ShareDialog";
 import React, { useState, useRef } from "react";
 import { useParams, Link } from "react-router-dom";
 import { useStore } from "../store/StoreContext";
@@ -26,6 +27,7 @@ export default function Galeria() {
   const [movePhoto, setMovePhoto] = useState(null);
   const [caption, setCaption] = useState(null);
   const [lightbox, setLightbox] = useState(-1);
+  const [shareItems, setShareItems] = useState(null);
   const [uploading, setUploading] = useState(false);
   const [selected, setSelected] = useState([]);
 
@@ -81,15 +83,7 @@ export default function Galeria() {
     return toast.promise(galleryPdf(list, { perPage: 2, frame: printFrame, title: `${avatar.name} · ${label}` }, `galeria-${avatar.name}.pdf`), { loading: "Generando galería…", success: "PDF descargado.", error: "No se pudo generar el PDF." });
   };
 
-  const sharePhoto = async (p) => {
-    try {
-      const blob = await (await fetch(p.src)).blob();
-      const file = new File([blob], "foto.jpg", { type: blob.type || "image/jpeg" });
-      if (navigator.canShare && navigator.canShare({ files: [file] })) return await navigator.share({ files: [file], title: p.caption || avatar.name });
-      const a = document.createElement("a"); a.href = p.src; a.download = "foto.jpg"; a.click();
-      toast.success("Tu dispositivo no permite compartir directo: descargamos la foto.");
-    } catch (e) { if (e?.name !== "AbortError") toast.error("No se pudo compartir la foto."); }
-  };
+  const sharePhoto = (p) => setShareItems([{ kind: "photo", title: p.caption || "", photo: p.src }]);
 
   const toggle = (pid) => setSelected((s) => (s.includes(pid) ? s.filter((x) => x !== pid) : [...s, pid]));
   const selPhotos = photos.filter((p) => selected.includes(p.id));
@@ -112,7 +106,7 @@ export default function Galeria() {
           <div className="glass-strong rounded-2xl px-4 py-3 mb-5 flex flex-wrap items-center gap-3 sticky top-24 z-30" data-testid="galeria-selection-bar">
             <span className="text-sm text-[#f8fafc]">{plural(selected.length, "foto seleccionada", "fotos seleccionadas")}</span>
             <GhostButton className="py-1.5" onClick={() => exportPdf(selPhotos, "Selección")} testId="galeria-export-selection"><FileDown className="w-4 h-4" /> PDF</GhostButton>
-            {selected.length === 1 && <GhostButton className="py-1.5" onClick={() => sharePhoto(selPhotos[0])} testId="galeria-share-selection"><Share2 className="w-4 h-4" /> Compartir</GhostButton>}
+            {selected.length > 0 && <GhostButton className="py-1.5" onClick={() => setShareItems(selPhotos.map(p => ({ kind: "photo", title: p.caption || "", photo: p.src })))} testId="galeria-share-selection"><Share2 className="w-4 h-4" /> Compartir</GhostButton>}
             <button className="icon-btn ml-auto" onClick={() => setSelected([])} aria-label="Quitar selección" data-testid="galeria-clear-selection"><X className="w-4 h-4" /></button>
           </div>
         )}
@@ -199,6 +193,7 @@ export default function Galeria() {
         message="Se borra de la galería. Vas a poder deshacerlo unos segundos."
         testId="galeria-photo-delete-confirm"
       />
+      <ShareDialog items={shareItems} onClose={() => setShareItems(null)} />
     </div>
   );
 }

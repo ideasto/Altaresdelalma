@@ -14,7 +14,7 @@ import { toast } from "sonner";
 const MODULES = [
   { key: "galeria", title: "Galería de Fotos", icon: Images, Preview: GalleryPreview, span: "sm:col-span-2 lg:row-span-2", minH: "min-h-[300px] lg:min-h-0",
     count: (a) => a.gallery.photos.length && plural(a.gallery.photos.length, "foto", "fotos"), action: (a) => (a.gallery.photos.length ? "Ver fotos y carpetas" : "Agregar fotos") },
-  { key: "oraculo", title: "Mazo Oráculo", icon: Sparkles, Preview: OraclePreview,
+  { key: "oraculo", title: "Mazo de recuerdos", icon: Sparkles, Preview: OraclePreview,
     count: (a) => a.cards.length && plural(a.cards.length, "carta", "cartas"), action: (a) => (a.cards.length ? "Sacar una carta" : "Crear mi primera carta"), query: (a) => (a.cards.length ? "?consultar=1" : "?nueva=1") },
   { key: "linea", title: "Línea de Tiempo", icon: Milestone, Preview: TimelinePreview,
     count: (a) => a.timeline.length && plural(a.timeline.length, "momento", "momentos"), action: (a) => (a.timeline.length ? "Ver su historia" : "Agregar un momento"), query: (a) => (a.timeline.length ? "" : "?nueva=1") },

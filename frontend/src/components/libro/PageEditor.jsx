@@ -1,3 +1,4 @@
+import WritingIdeas from "../WritingIdeas";
 import React, { useEffect, useState } from "react";
 import { Modal, GoldButton, GhostButton, Plus } from "../common";
 import DraftNotices from "../DraftNotices";
@@ -49,6 +50,7 @@ export default function PageEditor({ open, onClose, editing, spaceId, onSave, in
       <DraftNotices draft={d} onApply={(r) => setDraft((p) => ({ ...p, title: r.title, text: r.text, photo: r.photo || p.photo, font: r.font || p.font, size: r.size || p.size }))} onCopy={copy} onDownload={() => downloadText(asText(draft), "pagina")} />
       <SaveFailNotice show={fail} onCopy={copy} onDownload={() => downloadText(asText(draft), "pagina")} />
       <div className="flex gap-3 mb-4"><label>Letra <select className="bg-[#234766]" value={draft.font} onChange={e => setDraft({ ...draft, font: e.target.value })}>{Object.entries(BOOK_FONTS).map(([key, f]) => <option key={key} value={key}>{f.label}</option>)}</select></label><label>Tamaño <select className="bg-[#234766]" value={draft.size} onChange={e => setDraft({ ...draft, size: e.target.value })}><option value="s">Pequeño</option><option value="m">Medio</option><option value="l">Grande</option></select></label></div>
+      <WritingIdeas onChoose={idea => setDraft(prev => ({ ...prev, text: prev.text.trim() ? `${prev.text}\n\n${idea}` : idea }))} />
       <BookPage page={draft} onChange={setDraft}>
       <div className="flex justify-center mb-5">
         {draft.photo ? (
