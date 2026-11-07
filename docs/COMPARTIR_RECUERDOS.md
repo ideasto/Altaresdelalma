@@ -21,3 +21,9 @@ El PDF y el respaldo cumplen otras funciones: el primero es para leer/imprimir; 
 - `python tests/browser/sharing.py`: cinco módulos; dos fotos; tapa/página; historia/momento; PNG descargable; interacción nativa simulada con activación explícita; cancelación y error; alternativa de descarga; sin desborde a 390 px; ideas que conservan texto previo.
 - Regresión de rutas, recargas, imágenes, edición, guardado de carta y cinco PDF con Chromium y contenido sintético. Cero solicitudes externas y errores JavaScript en esas pruebas locales.
 - No se envió contenido a redes sociales reales ni se usaron recuerdos personales en las pruebas.
+
+## Estado de publicación
+
+Código funcional: revisión 0d8f66a, en la rama y PR existentes. Vista previa de Vercel READY dpl_FdFT2Ww2iPAW2kvDaGUFbm44w6UE. Las mismas pruebas de compartir pasaron contra ese despliegue, con acceso temporal de automatización revocado al terminar.
+
+La actualización de producción no se ejecutó: la revisión automática de permisos la rechazó y, tras una reevaluación con las pruebas remotas, volvió a exigir aprobación directa para esta revisión. No se intentaron rutas alternativas de publicación. El enlace principal sigue con la versión anterior hasta recibir esa aprobación. No presentar los nuevos controles como ya disponibles en producción.
