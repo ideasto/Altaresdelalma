@@ -5,7 +5,7 @@ import { BRAND } from "../../config/brand";
 import { bookTitle } from "../../lib/format";
 import { Image as ImageIcon, Pencil } from "lucide-react";
 
-const coverBg = { background: "linear-gradient(150deg, hsl(205 58% 43%), hsl(211 58% 29%))" };
+const coverBg = { background: "linear-gradient(150deg, hsl(204 70% 48%), hsl(211 68% 34%))" };
 
 export function BookCover({ a, onEdit, onChange, onPhoto }) {
   const cover = a.bookMeta.coverPhoto || a.photoCropped;

@@ -2,11 +2,11 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Paleta recuperada de la versión anterior (HSL verificados en el prompt maestro) */
+/* Azul luminoso y vibrante, con contraste suficiente para marfil y dorado. */
 :root {
-  --bg-deep: hsl(211 64% 30%);
-  --bg-soft: hsl(208 62% 36%);
-  --bg-lift: hsl(204 64% 43%);
+  --bg-deep: hsl(211 70% 33%);
+  --bg-soft: hsl(207 72% 40%);
+  --bg-lift: hsl(203 76% 48%);
   --gold: hsl(46 65% 52%);
   --gold-soft: hsl(46 55% 62%);
   --gold-glow: hsl(46 80% 65%);
@@ -21,9 +21,9 @@
 
 @layer base {
   :root {
-    --background: 211 64% 30%;
-    --background-soft: 208 62% 36%;
-    --background-lift: 204 64% 43%;
+    --background: 211 70% 33%;
+    --background-soft: 207 72% 40%;
+    --background-lift: 203 76% 48%;
     --foreground: 210 40% 98%;
     --card: 210 45% 26%;
     --card-foreground: 210 40% 98%;
@@ -69,7 +69,7 @@ h1, h2, h3, h4, .font-heading { font-family: 'Cormorant Garamond', Georgia, seri
   inset: 0;
   z-index: -2;
   background:
-    radial-gradient(1100px 650px at 85% -5%, hsl(202 70% 49% / 0.34), transparent 60%),
+    radial-gradient(1100px 650px at 85% -5%, hsl(201 76% 55% / 0.36), transparent 60%),
     radial-gradient(900px 600px at 5% 105%, hsl(46 65% 52% / 0.10), transparent 60%),
     linear-gradient(170deg, var(--bg-lift) 0%, var(--bg-soft) 42%, var(--bg-deep) 100%);
 }
