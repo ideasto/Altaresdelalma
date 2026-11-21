@@ -47,10 +47,17 @@ export async function prepareShareImages(items, signal) {
       if (signal?.aborted) throw new DOMException("Preparación cancelada", "AbortError");
       canvas.width = 1080; canvas.height = 1350;
       if (item.kind === "photo") {
-        await loadPhoto(item.photo);
-        const blob = await (await fetch(item.photo)).blob();
-        const extension = blob.type === "image/png" ? "png" : blob.type === "image/webp" ? "webp" : "jpg";
-        files.push(new File([blob], `foto-${files.length + 1}.${extension}`, { type: blob.type }));
+        const photo = await loadPhoto(item.photo);
+        ctx.fillStyle = "#fdfbf5"; ctx.fillRect(0, 0, 1080, 1350);
+        const ratio = Math.min(960 / photo.naturalWidth, 1050 / photo.naturalHeight);
+        const w = photo.naturalWidth * ratio, h = photo.naturalHeight * ratio;
+        ctx.drawImage(photo, (1080 - w) / 2, 65 + (1050 - h) / 2, w, h);
+        ctx.fillStyle = "#244966"; ctx.fillRect(0, 1190, 1080, 160);
+        ctx.fillStyle = "#fff"; ctx.font = '24px "Plus Jakarta Sans", sans-serif';
+        wrapShareText(ctx, item.title || BRAND.brandName, 950).slice(0, 2).forEach((line, i) => ctx.fillText(line, 60, 1230 + i * 29));
+        ctx.font = '22px "Plus Jakarta Sans", sans-serif'; ctx.fillText(BRAND.appUrl, 60, 1310);
+        const blob = await new Promise((resolve, reject) => canvas.toBlob(b => b ? resolve(b) : reject(new Error("No se pudo crear la imagen.")), "image/png"));
+        files.push(new File([blob], `foto-${files.length + 1}.png`, { type: "image/png" }));
         continue;
       }
       if (item.kind === "card") {
@@ -69,7 +76,8 @@ export async function prepareShareImages(items, signal) {
           y += 60; ctx.font = 'bold 44px "Cormorant Garamond", Georgia, serif';
           name.forEach(line => { ctx.fillText(line, 540, y); y += 58; });
           ctx.fillStyle = "#806d47"; ctx.font = '24px "Plus Jakarta Sans", sans-serif';
-          ctx.fillText(BRAND.brandName, 540, 1420); ctx.textAlign = "left";
+          ctx.fillText(BRAND.brandName, 540, 1400);
+          ctx.font = '21px "Plus Jakarta Sans", sans-serif'; ctx.fillText(BRAND.appUrl, 540, 1440); ctx.textAlign = "left";
           const blob = await new Promise((resolve, reject) => canvas.toBlob(b => b ? resolve(b) : reject(new Error("No se pudo crear la imagen.")), "image/png"));
           files.push(new File([blob], `carta-${files.length + 1}.png`, { type: "image/png" }));
           continue;
@@ -108,7 +116,8 @@ export async function prepareShareImages(items, signal) {
           ctx.fillText(body[bi++], 100, y); y += lineHeight;
         }
         ctx.fillStyle = "#806d47"; ctx.font = '22px "Plus Jakarta Sans", sans-serif';
-        ctx.fillText(BRAND.brandName, 100, 1275);
+        ctx.fillText(BRAND.brandName, 100, 1250);
+        ctx.font = '19px "Plus Jakarta Sans", sans-serif'; ctx.fillText(BRAND.appUrl, 100, 1285);
         ctx.textAlign = "right"; ctx.fillText(String(++part), 980, 1275); ctx.textAlign = "left";
         const blob = await new Promise((resolve, reject) => canvas.toBlob(b => b ? resolve(b) : reject(new Error("No se pudo crear la imagen.")), "image/png"));
         files.push(new File([blob], `recuerdo-${files.length + 1}.png`, { type: "image/png" }));

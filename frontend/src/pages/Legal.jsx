@@ -9,13 +9,14 @@ const TEXTS = {
       `${BRAND.appName} es una herramienta de ${BRAND.brandName}, gratuita en esta etapa, para alojar recuerdos de seres amados: escribir, guardar fotos, armar una historia, crear un mazo personal y editar un libro imprimible.`,
       "No promete sanar el duelo ni recibir comunicaciones de alguien fallecido. El mazo es un juego simbólico con frases escritas por vos.",
       "Tus recuerdos se guardan solo en este navegador. Si borrás los datos del navegador o cambiás de dispositivo, se pierden salvo que tengas un respaldo descargado. No hay sincronización ni recuperación remota.",
+      "La aplicación gratuita puede cambiar o dejar de estar disponible. Descargá periódicamente tus PDF y el respaldo completo con fotos y textos. El PDF sirve para leer o imprimir; el respaldo permite restaurar el espacio editable.",
       "Sos responsable del contenido que cargás y de tener derecho a usar las fotos.",
     ],
   },
   privacidad: {
     title: "Privacidad",
     body: [
-      "Tus cartas, fotos, nombres de seres amados y demás contenido de los espacios no salen de tu navegador ni se envían a ningún servidor de La Gata y la Magia.",
+      "Tus cartas, fotos, nombres de seres amados y demás contenido de los espacios se guardan en este navegador y no se envían a ningún servidor de La Gata y la Magia. Si elegís compartir un recuerdo, el archivo se entrega a la aplicación o destino que selecciones.",
       `Al crear tu primer espacio te pedimos tu nombre y email para registrar tus datos en ${BRAND.brandName}. Se guardan en tu navegador y, cuando se conecta la planilla de contactos, se envían a esa planilla. Recibir ${CONTACT.consentScope} es opcional: solo te suscribimos si marcás la casilla. Registramos la fecha y la versión del texto aceptado (${CONTACT.consentVersion}).`,
       `Podés corregir tus datos o pedir la baja desde «Tus datos» en el inicio, o escribiendo a ${BRAND.email}.`,
       "Los respaldos que descargás incluyen tus recuerdos y no incluyen tu registro de contacto.",

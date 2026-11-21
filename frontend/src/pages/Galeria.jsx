@@ -87,7 +87,7 @@ export default function Galeria() {
 
   const toggle = (pid) => setSelected((s) => (s.includes(pid) ? s.filter((x) => x !== pid) : [...s, pid]));
   const selPhotos = photos.filter((p) => selected.includes(p.id));
-  const activeLabel = active === "all" ? "Todas las fotos" : active === "general" ? "General" : folderName(active);
+  const activeLabel = active === "all" || active === "general" ? "Todas las fotos" : folderName(active);
   const lb = visible[lightbox];
 
   return (
@@ -144,7 +144,7 @@ export default function Galeria() {
       <Modal open={!!delFolder} onClose={() => setDelFolder(null)} title="Eliminar carpeta" maxWidth="max-w-md" testId="galeria-folder-delete-modal">
         <p className="text-[#d5dfea] mb-6">¿Qué hacemos con las fotos de <span className="gold-text">{delFolder?.name}</span>?</p>
         <div className="flex flex-col gap-3">
-          <GoldButton onClick={() => removeFolder(true)} testId="galeria-folder-move-general">Moverlas a General</GoldButton>
+          <GoldButton onClick={() => removeFolder(true)} testId="galeria-folder-move-general">Dejarlas en Todas, sin carpeta</GoldButton>
           <button className="rounded-full px-5 py-3 text-sm font-semibold bg-red-500/90 text-white hover:bg-red-500" onClick={() => removeFolder(false)} data-testid="galeria-folder-delete-all">Eliminar la carpeta y sus fotos (definitivo)</button>
           <GhostButton onClick={() => setDelFolder(null)} testId="galeria-folder-delete-cancel">Cancelar</GhostButton>
         </div>
@@ -152,7 +152,7 @@ export default function Galeria() {
 
       <Modal open={!!movePhoto} onClose={() => setMovePhoto(null)} title="Mover foto" maxWidth="max-w-md" testId="galeria-move-modal">
         <div className="flex flex-col gap-2">
-          {[{ id: null, name: "General" }, ...folders].map((f) => (
+          {[{ id: null, name: "Sin carpeta (en Todas)" }, ...folders].map((f) => (
             <button key={f.id || "general"} className={`text-left rounded-xl px-4 py-3 border ${(movePhoto?.folderId || null) === f.id ? "border-[#d4af37] gold-text" : "border-[#d4af37]/25 text-[#d5dfea] hover:border-[#d4af37]/60"}`}
               onClick={async () => { if (await setPhotos((ph) => ph.map((p) => (p.id === movePhoto.id ? { ...p, folderId: f.id } : p)))) { toast.success("Foto movida."); setMovePhoto(null); } }} data-testid={`galeria-move-to-${f.id || "general"}`}>
               {f.name}

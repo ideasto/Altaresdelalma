@@ -2,13 +2,15 @@
 
 La aplicación prepara archivos; no publica contenido automáticamente ni convierte un espacio privado en una página pública.
 
-- Galería: seleccionar una o varias fotos y pulsar Compartir. Desde la foto ampliada también se comparte esa foto. Se conserva la copia guardada de la foto, sin fotografiar los controles de pantalla.
+- Galería: seleccionar una o varias fotos y pulsar Compartir. Desde la foto ampliada también se comparte esa foto. La imagen respeta la foto guardada dentro de un lienzo con el enlace de la app, sin fotografiar los controles de pantalla.
 - Mazo de recuerdos: botón Compartir carta debajo de cada pieza. Se genera una imagen con marco y frase.
 - Cartas: al abrir una carta, Compartir prepara imágenes del texto. Permanecen Copiar, Texto y PDF.
 - Libro: Compartir tapa, página o contratapa actúa sobre lo que se está viendo. Se desactiva mientras se edita para no confundir un borrador con el contenido guardado.
 - Línea de tiempo: Compartir historia prepara los momentos en su orden; cada momento tiene además su propio botón para compartir solo ese contenido.
 
 La vista previa muestra todas las imágenes preparadas. Los textos largos se reparten a un tamaño legible. No se incluyen los datos de contacto ni recuerdos de otros módulos. Si el navegador admite compartir archivos, un segundo clic abre el menú nativo; los destinos dependen del dispositivo y de las aplicaciones instaladas. No se promete que Instagram u otra red aparezca en todos los equipos.
+
+Cada imagen incluye el enlace público de la aplicación. El texto del menú nativo y la acción Copiar texto también lo llevan. Es una invitación a crear un espacio propio, no un enlace público al recuerdo privado.
 
 Si el navegador no lo admite, o rechaza los archivos, se puede descargar cada imagen y adjuntarla desde la aplicación elegida. El botón de descarga corresponde a la imagen visible, con navegación Anterior/Siguiente. Copiar texto sigue disponible. Cancelar el menú nativo no se muestra como error ni como publicación completada.
 

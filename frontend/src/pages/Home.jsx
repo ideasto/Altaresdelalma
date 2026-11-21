@@ -84,7 +84,7 @@ export default function Home() {
         </p>
       </div>
 
-      <div className="flex flex-wrap justify-center gap-6 mb-8">
+      <div className={`flex flex-wrap justify-center gap-6 mb-8 ${avatars.length === 1 ? "max-w-md mx-auto" : ""}`}>
         {avatars.map((a) => (
           <div key={a.id} className="glass portal-card rounded-3xl p-6 text-center relative w-full sm:w-[calc(50%-0.75rem)] lg:w-[calc(33.333%-1rem)]" data-testid={`space-card-${a.id}`}>
             <div className="absolute top-3 right-3 flex gap-1">
@@ -109,7 +109,7 @@ export default function Home() {
           </div>
         ))}
 
-        <button
+        {avatars.length === 0 && <button
           onClick={() => { setEditing(null); setFormOpen(true); }}
           data-testid="create-space-button"
           className={`glass portal-card rounded-3xl p-6 flex flex-col items-center justify-center gap-4 border-dashed border-[#d4af37]/45 group w-full ${avatars.length ? "sm:w-[calc(50%-0.75rem)] lg:w-[calc(33.333%-1rem)] min-h-[320px]" : "max-w-2xl min-h-[250px] sm:min-h-[270px]"}`}
@@ -119,8 +119,10 @@ export default function Home() {
           </span>
           <span className="font-heading text-2xl text-[#f8fafc]">Crear un espacio</span>
           <span className="text-[#a9bacb] text-sm">Para alguien que querés recordar · no hace falta completarlo hoy</span>
-        </button>
+        </button>}
       </div>
+
+      {avatars.length > 0 && <div className="flex justify-center mb-8"><button type="button" className="text-sm text-[#d5dfea] underline underline-offset-4 hover:text-white" onClick={() => { setEditing(null); setFormOpen(true); }} data-testid="create-space-button">Crear otro espacio</button></div>}
 
       <StorageMeter className="max-w-md mx-auto mb-10" />
       <AdSlot placement="home-after-spaces" />

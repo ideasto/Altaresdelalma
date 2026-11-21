@@ -8,8 +8,7 @@ export const BRAND = {
   email: "lagataylamagia@gmail.com",
   instagram: "lagataylamagia",
   instagramUrl: "https://www.instagram.com/lagataylamagia",
-  // PENDIENTE: completar la URL pública definitiva antes de publicar.
-  appUrl: "",
+  appUrl: "https://mensajesansestrales.vercel.app",
   logos: {
     goldFull: "/brand/logo-gold-full.png",
     goldHorizontal: "/brand/logo-gold-horizontal.png",

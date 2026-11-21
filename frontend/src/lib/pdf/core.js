@@ -4,7 +4,7 @@ import { BRAND } from "../../config/brand";
 export const INK = [43, 33, 20];
 export const GOLD = [196, 160, 64];
 export const GOLD_SOFT = [228, 214, 176];
-export const BLUE = [33, 60, 86];
+export const BLUE = [35, 77, 116];
 export const MUTED = [120, 105, 80];
 export const PT = 0.3528; // mm por punto
 

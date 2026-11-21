@@ -5,7 +5,7 @@ import { BRAND } from "../../config/brand";
 import { bookTitle } from "../../lib/format";
 import { Image as ImageIcon, Pencil } from "lucide-react";
 
-const coverBg = { background: "linear-gradient(150deg, hsl(205 47% 35%), hsl(214 49% 23%))" };
+const coverBg = { background: "linear-gradient(150deg, hsl(205 58% 43%), hsl(211 58% 29%))" };
 
 export function BookCover({ a, onEdit, onChange, onPhoto }) {
   const cover = a.bookMeta.coverPhoto || a.photoCropped;
@@ -18,7 +18,7 @@ export function BookCover({ a, onEdit, onChange, onPhoto }) {
       <button disabled={!onPhoto} onClick={onPhoto} aria-label="Elegir foto de tapa" className="bg-[#fdfbf5] p-1 rounded-sm shadow-xl my-5 w-[75%] aspect-square" data-testid="libro-meta-photo">
         {cover ? <img src={cover} alt="" className="w-full h-full object-contain" /> : <ImageIcon className="w-10 h-10 text-[#b39a5a] mx-auto" />}
       </button>
-      {onChange ? <WritingArea maxLength={100} aria-label="Frase opcional" placeholder="Frase opcional" className="w-full bg-transparent font-hand text-2xl text-center" value={a.bookMeta.subtitle} onChange={e => onChange({ ...a.bookMeta, subtitle: e.target.value })} data-testid="libro-meta-subtitle" /> : a.bookMeta.subtitle && <p className="font-hand text-2xl text-[#e7eef6] text-center">{a.bookMeta.subtitle}</p>}
+      {onChange ? <WritingArea maxLength={100} aria-label="Frase opcional" placeholder="Frase opcional" className="w-full bg-transparent font-hand text-3xl gold-text text-center whitespace-pre-wrap" value={a.bookMeta.subtitle} onChange={e => onChange({ ...a.bookMeta, subtitle: e.target.value })} data-testid="libro-meta-subtitle" /> : a.bookMeta.subtitle && <p className="font-hand text-3xl text-[#f1da93] text-center whitespace-pre-wrap">{a.bookMeta.subtitle}</p>}
       <div className="absolute bottom-8 left-0 right-0 flex flex-col items-center gap-1">
         <BrandLogo variant="goldFull" className="h-12 w-auto" alt="" />
         <p className="font-ui text-[9px] tracking-[0.25em] uppercase text-[#d4bf75]">{BRAND.editorialCredit}</p>
@@ -43,7 +43,7 @@ export function BookBack({ a, onEdit, onChange }) {
             Ejemplo orientativo (no se imprime): «Este libro reúne fotos, palabras y momentos de una vida querida…». Tocá el lápiz para escribir tu propia reseña.
           </p>
         )}
-        {onChange ? <textarea aria-label="Cierre opcional" className="w-full bg-transparent font-hand text-2xl gold-text mt-5" value={closing} placeholder="Cierre opcional" onChange={e => onChange({ ...a.bookMeta, closing: e.target.value })} data-testid="libro-meta-closing" /> : closing && <p className="font-hand text-2xl text-[#fde68a] text-center mt-5" data-testid="libro-back-closing">{closing}</p>}
+        {onChange ? <textarea aria-label="Cierre opcional" className="w-full bg-transparent font-hand text-2xl gold-text mt-5" value={closing} placeholder="Cierre opcional" onChange={e => onChange({ ...a.bookMeta, closing: e.target.value })} data-testid="libro-meta-closing" /> : closing && <p className="font-hand text-2xl text-[#fde68a] text-center whitespace-pre-wrap mt-5" data-testid="libro-back-closing">{closing}</p>}
       </div>
       <div className="flex flex-col items-center gap-1 mt-4">
         <BrandLogo variant="goldHorizontal" className="h-7 w-auto" alt="" />

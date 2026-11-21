@@ -2,7 +2,7 @@ import ShareDialog from "../components/ShareDialog";
 import React, { useEffect, useRef, useState } from "react";
 import { useParams, Link, useSearchParams } from "react-router-dom";
 import { useStore } from "../store/StoreContext";
-import { PageHeader, Modal, ConfirmDialog, GoldButton, GhostButton, EditPencil, TrashButton, Field, TextInput, TextArea } from "../components/common";
+import { PageHeader, Modal, ConfirmDialog, GoldButton, GhostButton, EditPencil, TrashButton, TextInput, TextArea } from "../components/common";
 import { DECK_FRAME_URL } from "../lib/deckFrame";
 import CardBack from "../components/CardBack";
 import { deckPdf, deckFits, initDeckProbe } from "../lib/pdf/deck";
@@ -13,18 +13,13 @@ import { toast } from "sonner";
 import { Sparkles, FileDown, Plus, Star, Copy, SkipForward, Share2 } from "lucide-react";
 
 const HINTS = ["Una frase que decía", "Un chiste o expresión suya", "Su esencia", "Algo que dejó en vos", "Palabras que vos escribís hoy"];
-const ORIGIN_LABEL = { recordada: "Palabras suyas", escrita: "Escrita por mí" };
 
 function CardFace({ card }) {
   return (
     <div className="w-full h-full paper-sheet rounded-xl flex flex-col items-center justify-center p-4 relative" style={{ backgroundImage: `url("${DECK_FRAME_URL}")`, backgroundSize: "100% 100%" }}>
-      <div className="absolute inset-2 rounded-lg border border-[#c9a94a]/70 pointer-events-none" />
-      <div className="absolute inset-[10px] rounded-lg border border-[#c9a94a]/30 pointer-events-none" />
-
-      <p className="font-heading italic text-center text-xl sm:text-2xl leading-snug text-[#2b2114] px-2 break-words">{card.message}</p>
+      <p className="font-heading italic text-center text-2xl sm:text-3xl leading-snug text-[#2b2114] px-2 break-words">{card.message}</p>
       <div className="w-10 h-px bg-[#c9a94a] my-2.5" />
       <p className="font-ui text-[11px] tracking-[0.2em] uppercase text-[#6b5a3e] text-center">{card.name}</p>
-      {card.origin && <p className="absolute bottom-3 text-[9px] tracking-wider uppercase text-[#9c8a66]">{ORIGIN_LABEL[card.origin]}</p>}
     </div>
   );
 }
@@ -112,14 +107,14 @@ export default function Oraculo() {
   useEffect(() => { initDeckProbe(); }, []);
   const [formOpen, setFormOpen] = useState(false);
   const [editing, setEditing] = useState(null);
-  const [draft, setDraft] = useState({ message: "", name: "", origin: "", hint: "" });
+  const [draft, setDraft] = useState({ message: "", name: "" });
   const [delCard, setDelCard] = useState(null);
   const [shareItems, setShareItems] = useState(null);
 
   const openCreate = () => {
     if (avatar.cards.length >= LIMITS.oracleCards) return toast.error(`El mazo llegó a su máximo de ${LIMITS.oracleCards} cartas.`);
     setEditing(null);
-    setDraft({ message: "", name: avatar.name, origin: "", hint: "" });
+    setDraft({ message: "", name: avatar.name });
     setFormOpen(true);
   };
   useEffect(() => { if (avatar && params.get("nueva") === "1") openCreate(); }, []); // eslint-disable-line react-hooks/exhaustive-deps
@@ -127,7 +122,7 @@ export default function Oraculo() {
   if (!avatar) return <Link to="/" className="gold-text underline block p-10">Volver</Link>;
   const cards = avatar.cards;
 
-  const openEdit = (c) => { setEditing(c); setDraft({ message: c.message, name: c.name, origin: c.origin, hint: c.hint }); setFormOpen(true); };
+  const openEdit = (c) => { setEditing(c); setDraft({ message: c.message, name: c.name }); setFormOpen(true); };
 
   const saveCard = async () => {
     const card = { ...draft, message: draft.message.trim(), name: draft.name.trim() };
@@ -180,24 +175,13 @@ export default function Oraculo() {
       </div>
 
       <Modal open={formOpen} onClose={() => setFormOpen(false)} title={editing ? "Editar carta" : "Nueva carta"} testId="oraculo-form-modal">
-        <p className="font-ui text-xs uppercase tracking-wider text-[#a9bacb] mb-2">Ideas (opcional)</p>
-        <div className="flex flex-wrap gap-2 mb-4">
-          {HINTS.map((h) => (
-            <button key={h} onClick={() => setDraft({ ...draft, hint: draft.hint === h ? "" : h })} className={`rounded-full px-3 py-1 text-xs border transition-colors ${draft.hint === h ? "border-[#d4af37] gold-text bg-[#d4af37]/10" : "border-[#d4af37]/30 text-[#d5dfea]"}`} data-testid={`oraculo-hint-${HINTS.indexOf(h)}`}>{h}</button>
-          ))}
-        </div>
+        <p className="text-sm text-[#d5dfea] mb-2">Escribí una frase para este mazo. Si necesitás una idea para empezar, puede ser:</p>
+        <p className="text-xs text-[#e7d5a0] mb-4 leading-relaxed">{HINTS.join(" · ")}. Son ejemplos; escribí libremente en la carta.</p>
         <div className="paper-sheet piece-editor rounded-xl border border-[#e2d9c8] p-7 max-w-xs mx-auto aspect-[7/10] flex flex-col justify-center mb-5">
           <textarea aria-label="Frase sobre la carta" className="bg-transparent text-center font-heading italic text-2xl w-full resize-none" rows={6} value={draft.message} onChange={e => setDraft({ ...draft, message: e.target.value })} placeholder="Una frase breve…" data-testid="oraculo-message-input" />
           <input maxLength={40} aria-label="Firma" className="bg-transparent text-center w-full" value={draft.name} onChange={e => setDraft({ ...draft, name: e.target.value })} data-testid="oraculo-name-input" />
         </div>
         {!deckFits(draft.message).fits && <p role="alert" className="text-amber-200 text-sm mb-4">Esta frase excede la carta física de 63 × 90 mm. Acortala antes de guardar.</p>}
-        <Field label="¿De quién son estas palabras?">
-          <div className="grid grid-cols-2 gap-2">
-            {[["recordada", "Las decía de verdad"], ["escrita", "Las escribo yo"]].map(([v, l]) => (
-              <button key={v} onClick={() => setDraft({ ...draft, origin: draft.origin === v ? "" : v })} className={`rounded-xl border px-3 py-2.5 text-sm ${draft.origin === v ? "border-[#d4af37] gold-text bg-[#d4af37]/10" : "border-[#d4af37]/25 text-[#d5dfea]"}`} data-testid={`oraculo-origin-${v}`}>{l}</button>
-            ))}
-          </div>
-        </Field>
         <div className="flex justify-end gap-3">
           <GhostButton onClick={() => setFormOpen(false)} testId="oraculo-form-cancel">Cancelar</GhostButton>
           <GoldButton onClick={saveCard} testId="oraculo-form-save">{editing ? "Guardar" : "Sumar al mazo"}</GoldButton>

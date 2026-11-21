@@ -23,7 +23,6 @@ export default function FolderCards({ folders, photos, active, setActive, onRena
   return (
     <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-6 gap-3 mb-8" data-testid="galeria-folders">
       <FolderCard name="Todas" photos={photos} active={active === "all"} onOpen={() => setActive("all")} testId="galeria-folder-all" />
-      <FolderCard name="General" photos={photos.filter((p) => !p.folderId)} active={active === "general"} onOpen={() => setActive("general")} testId="galeria-folder-general" />
       {folders.map((f) => (
         <FolderCard
           key={f.id}

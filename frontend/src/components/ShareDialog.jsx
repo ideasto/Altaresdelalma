@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Modal, GoldButton, GhostButton } from "./common";
 import { prepareShareImages } from "../lib/shareImages";
 import { copyText } from "../lib/drafts";
+import { BRAND } from "../config/brand";
 
 export default function ShareDialog({ items, onClose }) {
   const [files, setFiles] = useState([]);
@@ -28,7 +29,7 @@ export default function ShareDialog({ items, onClose }) {
     // Called by a second explicit click, after image generation, preserving the
     // user activation that mobile browsers require for the native share sheet.
     setSharing(true); setNotice("");
-    try { await navigator.share({ files }); }
+    try { await navigator.share({ files, text: `Creá tu propio espacio de recuerdos: ${BRAND.appUrl}` }); }
     catch (e) { if (e.name !== "AbortError") setNotice("No se abrió el menú de compartir. Podés descargar las imágenes y adjuntarlas desde tu red social."); }
     finally { setSharing(false); }
   };
@@ -48,7 +49,7 @@ export default function ShareDialog({ items, onClose }) {
       </div>
       <p className="text-sm text-[#d5dfea] mb-4">{canShare ? `Se abrirá el menú de tu dispositivo con ${files.length === 1 ? "esta imagen" : `las ${files.length} imágenes`}. Las aplicaciones disponibles dependen de tu dispositivo.` : "Este navegador no permite compartir estos archivos directamente. Descargá cada imagen y adjuntala en Instagram, WhatsApp u otra aplicación."} Los textos largos se reparten en varias imágenes, sin cortarlos.</p>
       <div className="flex flex-wrap justify-end gap-2">
-        <GhostButton onClick={async () => setNotice((await copyText(items.map(x => [x.title, x.subtitle, x.text].filter(Boolean).join("\n")).join("\n\n"))) ? "Texto copiado." : "No se pudo copiar el texto.")} testId="share-copy">Copiar texto</GhostButton>
+        <GhostButton onClick={async () => setNotice((await copyText(`${items.map(x => [x.title, x.subtitle, x.text].filter(Boolean).join("\n")).join("\n\n")}\n\nCreá tu propio espacio de recuerdos: ${BRAND.appUrl}`)) ? "Texto y enlace copiados." : "No se pudo copiar el texto.")} testId="share-copy">Copiar texto</GhostButton>
         <GhostButton onClick={download} testId="share-download">Descargar imagen {files.length > 1 ? index + 1 : ""}</GhostButton>
         {canShare && <GoldButton disabled={sharing} onClick={share} testId="share-native">Compartir {files.length > 1 ? "todas" : "imagen"}</GoldButton>}
       </div>

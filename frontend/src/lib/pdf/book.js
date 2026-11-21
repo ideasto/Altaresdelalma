@@ -3,8 +3,6 @@ import { bookTitle, BOOK_FONTS } from "../format";
 import { BRAND } from "../../config/brand";
 
 const W = 210, H = 297;
-const CREAM = [236, 228, 205];
-
 async function cover(doc, a) {
   fillPage(doc, BLUE);
   doubleBorder(doc, 10);
@@ -14,8 +12,8 @@ async function cover(doc, a) {
   let y = 34;
   t.forEach((l) => { doc.text(l, W / 2, y, { align: "center" }); y += lh(30, 1.15); });
   const photo = m.coverPhoto || a.photoCropped;
-  const subLines = m.subtitle ? (setFont(doc, "Caveat", "normal", 20), lines(doc, m.subtitle, 150)) : [];
-  const bottom = 232 - subLines.length * lh(20, 1.2);
+  const subLines = m.subtitle ? (setFont(doc, "Caveat", "normal", 22), lines(doc, m.subtitle, 150)) : [];
+  const bottom = 232 - subLines.length * lh(22, 1.2);
   if (photo) {
     const box = await drawContain(doc, photo, 32, y + 4, W - 64, bottom - y - 8);
     if (box) {
@@ -25,8 +23,8 @@ async function cover(doc, a) {
     }
   } else y += 10;
   if (subLines.length) {
-    setFont(doc, "Caveat", "normal", 20, CREAM);
-    subLines.forEach((l) => { doc.text(l, W / 2, y, { align: "center" }); y += lh(20, 1.2); });
+    setFont(doc, "Caveat", "normal", 22, GOLD);
+    subLines.forEach((l) => { doc.text(l, W / 2, y, { align: "center" }); y += lh(22, 1.2); });
   }
   await drawContain(doc, logoUrl(), W / 2 - 13, 242, 26, 30, "logo");
   setFont(doc, "helvetica", "normal", 9, GOLD);
