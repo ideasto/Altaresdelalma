@@ -17,7 +17,7 @@ La compilación de producción pasó. Comprobé en el enlace principal, en un na
 | Tapa, página y PDF | La frase de tapa y el texto de página conservaron saltos de línea; el PDF del libro se descargó. |
 | Compartir carta | Mostró una vista previa de la pieza elegida y la alternativa de descargar la imagen cuando el navegador no admite compartir archivos. |
 
-Al recorrer formularios detecté y corregí controles sin nombre accesible: la selección de íconos del momento, el cuerpo y la firma de una carta, y el botón para quitar la foto del momento. La comprobación visual se realizó en una ventana de escritorio; la vista móvil y la impresión física siguen requiriendo una comprobación con un dispositivo y papel reales.
+Al recorrer formularios detecté y corregí controles sin nombre accesible: la selección de íconos del momento, el cuerpo y la firma de una carta, y el botón para quitar la foto del momento. El selector de íconos pasa de siete a cinco columnas bajo 640 px para que sus botones no se superpongan en pantallas angostas. La comprobación visual se realizó en una ventana de escritorio; la vista móvil y la impresión física siguen requiriendo una comprobación con un dispositivo y papel reales.
 
 ## Investigación y decisiones de diseño
 

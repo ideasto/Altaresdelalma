@@ -123,7 +123,7 @@ export default function Timeline() {
         </div>
         <fieldset className="mb-4">
           <legend className="font-ui text-xs uppercase tracking-wider text-[#a9bacb] mb-1.5">Ícono representativo</legend>
-          <div className="grid grid-cols-7 gap-2">
+          <div className="grid grid-cols-5 sm:grid-cols-7 gap-2">
             {ICON_KEYS.map((k) => {
               const I = ICONS[k];
               return (
