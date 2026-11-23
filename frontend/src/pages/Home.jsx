@@ -84,16 +84,16 @@ export default function Home() {
         </p>
       </div>
 
-      <div className={`flex flex-wrap justify-center gap-6 mb-8 ${avatars.length === 1 ? "max-w-md mx-auto" : ""}`}>
+      <div className={`flex flex-wrap justify-center gap-6 mb-8 ${avatars.length === 1 ? "max-w-2xl mx-auto" : ""}`}>
         {avatars.map((a) => (
-          <div key={a.id} className="glass portal-card rounded-3xl p-6 text-center relative w-full sm:w-[calc(50%-0.75rem)] lg:w-[calc(33.333%-1rem)]" data-testid={`space-card-${a.id}`}>
+          <div key={a.id} className={`glass portal-card rounded-3xl p-6 sm:p-8 text-center relative w-full ${avatars.length === 1 ? "min-h-[380px]" : avatars.length === 2 ? "sm:w-[calc(50%-0.75rem)]" : "sm:w-[calc(50%-0.75rem)] lg:w-[calc(33.333%-1rem)]"}`} data-testid={`space-card-${a.id}`}>
             <div className="absolute top-3 right-3 flex gap-1">
               <button className="icon-btn" title="Descargar respaldo de este espacio" aria-label="Respaldo de este espacio" onClick={() => exportBackup(avatars, a)} data-testid={`space-backup-${a.id}`}><Download className="w-4 h-4" /></button>
               <EditPencil onClick={() => { setEditing(a); setFormOpen(true); }} testId={`space-edit-${a.id}`} />
               <TrashButton onClick={() => setConfirmDel(a)} testId={`space-delete-${a.id}`} />
             </div>
             <div className="relative inline-block mt-6">
-              <SpacePhoto space={a} size={150} />
+              <SpacePhoto space={a} size={avatars.length === 1 ? 180 : 150} />
               <button className="absolute bottom-1 right-1 icon-btn bg-[#1d3349] border border-[#d4af37]/50" onClick={() => setPhotoFor(a)} data-testid={`space-photo-edit-${a.id}`} title="Foto y recorte" aria-label="Foto y recorte">
                 <Pencil className="w-4 h-4" />
               </button>
@@ -112,7 +112,7 @@ export default function Home() {
         {avatars.length === 0 && <button
           onClick={() => { setEditing(null); setFormOpen(true); }}
           data-testid="create-space-button"
-          className={`glass portal-card rounded-3xl p-6 flex flex-col items-center justify-center gap-4 border-dashed border-[#d4af37]/45 group w-full ${avatars.length ? "sm:w-[calc(50%-0.75rem)] lg:w-[calc(33.333%-1rem)] min-h-[320px]" : "max-w-2xl min-h-[250px] sm:min-h-[270px]"}`}
+          className="glass portal-card rounded-3xl p-6 flex flex-col items-center justify-center gap-4 border-dashed border-[#d4af37]/45 group w-full max-w-2xl min-h-[250px] sm:min-h-[270px]"
         >
           <span className="rounded-full p-5 border border-[#d4af37]/55 gold-text group-hover:shadow-[0_0_22px_rgba(212,175,55,0.45)] transition-shadow">
             <Plus className="w-8 h-8" />
