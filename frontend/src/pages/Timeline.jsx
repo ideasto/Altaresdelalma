@@ -14,6 +14,7 @@ import {
 
 const ICONS = { dot: () => <span className="w-3 h-3 rounded-full bg-current block" />, star: Star, heart: Heart, home: Home, plane: Plane, cake: Cake, music: Music, camera: Camera, sun: Sun, moon: Moon, pin: MapPin, gift: Gift, paw: PawPrint, grad: GraduationCap, baby: Baby };
 const ICON_KEYS = Object.keys(ICONS);
+const ICON_LABELS = { dot: "Punto", star: "Estrella", heart: "Corazón", home: "Casa", plane: "Viaje", cake: "Cumpleaños", music: "Música", camera: "Foto", sun: "Sol", moon: "Luna", pin: "Lugar", gift: "Regalo", paw: "Huellita", grad: "Graduación", baby: "Bebé" };
 
 const fmt = (d) => fmtDate(d, "short");
 
@@ -120,25 +121,26 @@ export default function Timeline() {
           <Field label="Fecha"><TextInput type="text" placeholder="AAAA, AAAA-MM o AAAA-MM-DD" value={draft.date} onChange={(e) => setDraft({ ...draft, date: e.target.value })} data-testid="timeline-date-input" /></Field>
           <Field label="Título"><TextInput value={draft.title} onChange={(e) => setDraft({ ...draft, title: e.target.value })} placeholder="Ej: Su casamiento" data-testid="timeline-title-input" /></Field>
         </div>
-        <Field label="Ícono representativo">
+        <fieldset className="mb-4">
+          <legend className="font-ui text-xs uppercase tracking-wider text-[#a9bacb] mb-1.5">Ícono representativo</legend>
           <div className="grid grid-cols-7 gap-2">
             {ICON_KEYS.map((k) => {
               const I = ICONS[k];
               return (
-                <button key={k} onClick={() => setDraft({ ...draft, icon: k })} data-testid={`timeline-icon-${k}`}
+                <button key={k} type="button" aria-label={ICON_LABELS[k]} aria-pressed={draft.icon === k} onClick={() => setDraft({ ...draft, icon: k })} data-testid={`timeline-icon-${k}`}
                   className={`rounded-xl p-2.5 flex items-center justify-center border transition-all ${draft.icon === k ? "border-[#d4af37] bg-[#d4af37]/15 gold-text" : "border-[#d4af37]/20 text-[#a9bacb] hover:border-[#d4af37]/50"}`}>
                   <I className="w-5 h-5" />
                 </button>
               );
             })}
           </div>
-        </Field>
+        </fieldset>
         <Field label="Descripción"><TextArea rows={3} value={draft.description} onChange={(e) => setDraft({ ...draft, description: e.target.value })} data-testid="timeline-desc-input" /></Field>
         <Field label="Foto (opcional)">
           {draft.photo ? (
             <div className="relative inline-block">
               <img src={draft.photo} alt="" className="h-28 rounded-xl object-cover" />
-              <button className="icon-btn danger absolute -top-2 -right-2 bg-[#152438]" onClick={() => setDraft({ ...draft, photo: "" })}><Plus className="w-4 h-4 rotate-45" /></button>
+              <button className="icon-btn danger absolute -top-2 -right-2 bg-[#152438]" aria-label="Quitar foto del momento" onClick={() => setDraft({ ...draft, photo: "" })}><Plus className="w-4 h-4 rotate-45" /></button>
             </div>
           ) : (
             <label className="inline-flex items-center gap-2 ghost-gold rounded-full px-4 py-2 text-sm cursor-pointer">

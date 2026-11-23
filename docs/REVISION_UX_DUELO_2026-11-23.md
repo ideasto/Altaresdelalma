@@ -4,7 +4,20 @@
 
 La tarjeta de un único espacio tenía un ancho máximo en el contenedor, pero conservaba el ancho de una columna de tres en pantallas grandes. Por eso medía apenas unos 124 px en una ventana ancha y comprimía la foto, las fechas y el botón. Ahora ocupa un panel central de hasta 672 px; el botón usa todo el ancho disponible. Dos espacios ocupan dos columnas desde 640 px y tres o más pasan a tres columnas desde 1024 px. El enlace para crear otro espacio queda debajo y sin competir con el recuerdo principal.
 
-La compilación de producción pasó. Falta registrar aquí la comprobación visual final por tamaños y estados, que se realiza con contenido de ejemplo sin tocar recuerdos de usuarios.
+La compilación de producción pasó. Comprobé en el enlace principal, en un navegador de prueba separado y con nombres inventados:
+
+| Estado o recorrido | Resultado observado |
+| --- | --- |
+| Sin espacios | Una invitación central para crear el primero. |
+| Un espacio | Panel central ancho; foto, nombre y botón sin apretarse. |
+| Dos espacios | Dos tarjetas de ancho similar, sin tercera columna vacía. |
+| Tres espacios | Tres tarjetas de 347 px y botones de 281 px en una ventana de 1363 px, sin desplazamiento horizontal. |
+| Panel, galería, mazo, cartas y libro | Se abrieron y se creó contenido de ejemplo; la galería vacía mostró solo «Todas» y «Nueva carpeta». |
+| Línea de tiempo | Al cargar 1999 y luego 1988 se mostró primero 1988. |
+| Tapa, página y PDF | La frase de tapa y el texto de página conservaron saltos de línea; el PDF del libro se descargó. |
+| Compartir carta | Mostró una vista previa de la pieza elegida y la alternativa de descargar la imagen cuando el navegador no admite compartir archivos. |
+
+Al recorrer formularios detecté y corregí controles sin nombre accesible: la selección de íconos del momento, el cuerpo y la firma de una carta, y el botón para quitar la foto del momento. La comprobación visual se realizó en una ventana de escritorio; la vista móvil y la impresión física siguen requiriendo una comprobación con un dispositivo y papel reales.
 
 ## Investigación y decisiones de diseño
 

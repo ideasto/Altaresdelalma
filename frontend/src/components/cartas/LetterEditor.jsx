@@ -48,6 +48,7 @@ export default function LetterEditor({ open, onClose, editing, spaceId, spaceNam
           </label>
         </div>
         <textarea
+          aria-label="Cuerpo de la carta"
           rows={10}
           value={draft.body}
           onChange={(e) => setDraft({ ...draft, body: e.target.value })}
@@ -56,7 +57,7 @@ export default function LetterEditor({ open, onClose, editing, spaceId, spaceNam
           style={{ backgroundImage: "repeating-linear-gradient(transparent, transparent 35px, rgba(201,169,74,0.25) 36px)", lineHeight: "36px" }}
           data-testid="carta-body-input"
         />
-        <input value={draft.sign} onChange={(e) => setDraft({ ...draft, sign: e.target.value })} placeholder="Firma (opcional)" className="w-full text-right bg-transparent outline-none font-hand text-2xl text-[#2b2114] placeholder:text-[#b3a27f] mt-2" data-testid="carta-sign-input" />
+        <input aria-label="Firma (opcional)" value={draft.sign} onChange={(e) => setDraft({ ...draft, sign: e.target.value })} placeholder="Firma (opcional)" className="w-full text-right bg-transparent outline-none font-hand text-2xl text-[#2b2114] placeholder:text-[#b3a27f] mt-2" data-testid="carta-sign-input" />
       </div>
       <div className="flex justify-end gap-3 mt-5">
         <GhostButton onClick={onClose} testId="carta-form-cancel">Cancelar</GhostButton>
