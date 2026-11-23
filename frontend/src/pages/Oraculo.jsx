@@ -14,12 +14,12 @@ import { Sparkles, FileDown, Plus, Star, Copy, SkipForward, Share2 } from "lucid
 
 const HINTS = ["Una frase que decía", "Un chiste o expresión suya", "Su esencia", "Algo que dejó en vos", "Palabras que vos escribís hoy"];
 
-function CardFace({ card }) {
+function CardFace({ card, fixed = false }) {
   return (
-    <div className="w-full h-full paper-sheet rounded-xl flex flex-col items-center justify-center p-4 relative" style={{ backgroundImage: `url("${DECK_FRAME_URL}")`, backgroundSize: "100% 100%" }}>
-      <p className="font-heading italic text-center text-2xl sm:text-3xl leading-snug text-[#2b2114] px-2 break-words">{card.message}</p>
-      <div className="w-10 h-px bg-[#c9a94a] my-2.5" />
-      <p className="font-ui text-[11px] tracking-[0.2em] uppercase text-[#6b5a3e] text-center">{card.name}</p>
+    <div className={`w-full paper-sheet rounded-xl flex flex-col items-center p-5 relative ${fixed ? "h-full justify-center" : "min-h-full justify-center"}`} style={{ backgroundImage: `url("${DECK_FRAME_URL}")`, backgroundSize: "100% 100%" }}>
+      <p tabIndex={fixed ? 0 : undefined} className={`font-heading italic text-center text-2xl sm:text-3xl leading-snug text-[#2b2114] w-full whitespace-pre-wrap [overflow-wrap:anywhere] ${fixed ? "min-h-0 overflow-y-auto" : ""}`}>{card.message}</p>
+      <div className="w-10 h-px shrink-0 bg-[#c9a94a] my-2.5" />
+      <p className="font-ui text-[11px] tracking-[0.2em] uppercase text-[#6b5a3e] text-center max-w-full [overflow-wrap:anywhere]">{card.name}</p>
     </div>
   );
 }
@@ -70,13 +70,13 @@ function Consultation({ cards, autoFocus }) {
       <h2 className="font-heading text-3xl text-[#f8fafc] mb-1">Sacar una carta</h2>
       <p className="text-xs text-[#a9bacb] mb-4">Es un gesto simbólico: sale al azar una de las cartas que escribiste. La pregunta no cambia el resultado.</p>
       <div className="flex flex-col sm:flex-row gap-3">
-        <TextInput value={question} onChange={(e) => setQuestion(e.target.value)} placeholder="¿Qué frase quiero reencontrar hoy? (opcional)" maxLength={140} data-testid="oraculo-question-input" onKeyDown={(e) => e.key === "Enter" && consult()} />
+        <TextInput value={question} onChange={(e) => setQuestion(e.target.value)} aria-label="Pregunta opcional" placeholder="¿Qué frase quiero reencontrar hoy? (opcional)" maxLength={140} data-testid="oraculo-question-input" onKeyDown={(e) => e.key === "Enter" && consult()} />
         <GoldButton onClick={consult} disabled={phase === "shuffling"} testId="oraculo-consult" className="shrink-0"><Sparkles className="w-4 h-4" /> {phase === "reveal" ? "Sacar otra" : "Mezclar y sacar"}</GoldButton>
       </div>
       {phase !== "idle" && (
         <div className="mt-8 flex flex-col items-center">
           {question && <p className="font-hand text-3xl text-[#fde68a] mb-6 text-center" data-testid="oraculo-question-shown">“{question}”</p>}
-          <div className="flip-scene" style={{ width: 220, height: 314 }}>
+          <div className="flip-scene w-full max-w-[220px] aspect-[7/10]">
             {phase === "shuffling" ? (
               <div className="relative w-full h-full" data-testid="oraculo-shuffling">
                 {[0, 1, 2].map((i) => <div key={i} className="absolute inset-0 shuffling" style={{ animationDelay: `${i * 0.07}s` }}><CardBack logo={i === 2} /></div>)}
@@ -84,7 +84,7 @@ function Consultation({ cards, autoFocus }) {
             ) : (
               <div className={`flip-inner ${flipped ? "is-flipped" : ""}`} data-testid="oraculo-result-card">
                 <div className="flip-face"><CardBack /></div>
-                <div className="flip-face flip-back">{result && <CardFace card={result} />}</div>
+                <div className="flip-face flip-back">{result && <CardFace card={result} fixed />}</div>
               </div>
             )}
           </div>
@@ -158,10 +158,10 @@ export default function Oraculo() {
             <GoldButton onClick={openCreate} testId="oraculo-add-empty"><Plus className="w-4 h-4" /> Crear mi primera carta</GoldButton>
           </div>
         ) : (
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-5">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
             {cards.map((c) => (
-              <div key={c.id} data-testid={`oraculo-card-${c.id}`}>
-                <div className="aspect-[7/10]"><CardFace card={c} /></div>
+              <div key={c.id} className="min-w-0 w-full max-w-[19rem] mx-auto" data-testid={`oraculo-card-${c.id}`}>
+                <div className="grid min-h-[18rem] sm:min-h-[14rem]"><CardFace card={c} /></div>
                 <div className="flex justify-center gap-1 mt-2">
                   <button className="icon-btn" title="Copiar texto" aria-label="Copiar texto" onClick={async () => toast.success((await copyText(c.message)) ? "Frase copiada." : "No se pudo copiar.")} data-testid={`oraculo-copy-${c.id}`}><Copy className="w-4 h-4" /></button>
                   <button className="icon-btn" title="Compartir carta" aria-label="Compartir carta" onClick={() => setShareItems([{ kind: "card", title: c.name || avatar.name, text: c.message }])} data-testid={`oraculo-share-${c.id}`}><Share2 className="w-4 h-4" /></button>

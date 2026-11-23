@@ -37,3 +37,17 @@ Al recorrer formularios detecté y corregí controles sin nombre accesible: la s
 4. Evaluar compartir una selección de páginas o momentos con una vista previa y confirmación. Un enlace a un memorial privado no serviría sin una arquitectura de publicación y permisos.
 
 No se propone una puntuación de actividad, presión para volver ni una simulación de la voz de alguien fallecido. Son decisiones de producto que requieren investigación y consentimiento explícito, no un ajuste visual.
+
+## Segunda ronda · versión para celular
+
+- El panel interior usa filas que crecen con los recuerdos. Se verificó que las acciones queden dentro de cada tarjeta con los cinco módulos cargados.
+- Las cabeceras de las secciones se desplazan junto al contenido en celular. Los campos de fecha y título de momentos, y de fecha y destinatario de cartas, tienen su propia fila.
+- El libro aprovecha el ancho del celular. Los controles para pasar de página quedan debajo y el crédito editorial ocupa su propio espacio, para que no tape la frase. Los títulos largos se pueden leer completos.
+- Las cartas del mazo pasan a una columna en celular. La tarjeta crece si el texto lo pide, para que la frase no tape los botones. La carta que se revela puede desplazar el texto dentro del marco.
+- Matriz en Chromium con datos ficticios: 320, 390, 768, 1024 y 1440 px. Inicio, panel, galería, mazo, línea de tiempo, cartas, libro, privacidad y términos. Se verificaron también el orden de 1988/1999, los botones de momentos y el paso de tapa a página y contratapa.
+- A 390 px se comprobaron los archivos PDF de galería, mazo, línea de tiempo, cartas y libro, y las imágenes para compartir del mazo, un momento, una carta escrita y una página del libro. El archivo JSON de respaldo abrió la vista de restauración.
+- Estas pruebas son con anchos simulados. Quedan como comprobaciones separadas la impresión física y las hojas de compartir de Android e iOS.
+
+La [guía de reflujo de W3C](https://www.w3.org/WAI/WCAG22/Understanding/reflow) orientó la prueba a 320 px. La [técnica C34](https://www.w3.org/WAI/WCAG21/Techniques/css/C34.html) explica por qué una cabecera fija puede tapar contenido al reducir la altura disponible.
+
+El [estudio narrativo de Alba](https://doi.org/10.1080/02673843.2026.2681131) encontró entre adolescentes distintas preferencias sobre cómo usar las actividades de memoria. Como hipótesis de diseño para este público adulto, conviene probar si se puede guardar un recuerdo y salir en menos pasos. La primera prueba con personas sería pedirles guardar una foto o frase, y luego encontrar cómo guardarla para imprimir o recuperarla en otro navegador. La siguiente sería comparar una tapa con la frase en su posición actual frente a un selector de posiciones, incluyendo una prueba impresa.

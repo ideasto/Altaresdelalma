@@ -117,7 +117,7 @@ export default function Timeline() {
 
       {/* form */}
       <Modal open={formOpen} onClose={() => setFormOpen(false)} title={editing ? "Editar momento" : "Nuevo momento"} maxWidth="max-w-xl" testId="timeline-form-modal">
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <Field label="Fecha"><TextInput type="text" placeholder="AAAA, AAAA-MM o AAAA-MM-DD" value={draft.date} onChange={(e) => setDraft({ ...draft, date: e.target.value })} data-testid="timeline-date-input" /></Field>
           <Field label="Título"><TextInput value={draft.title} onChange={(e) => setDraft({ ...draft, title: e.target.value })} placeholder="Ej: Su casamiento" data-testid="timeline-title-input" /></Field>
         </div>

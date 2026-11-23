@@ -39,7 +39,7 @@ export default function LetterEditor({ open, onClose, editing, spaceId, spaceNam
       <SaveFailNotice show={fail} onCopy={copy} onDownload={download} />
       <WritingIdeas letter onChoose={idea => setDraft(prev => ({ ...prev, body: prev.body.trim() ? `${prev.body}\n\n${idea}` : idea }))} />
       <div className="paper-sheet rounded-2xl p-5 sm:p-7">
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <label className="block"><span className="text-xs uppercase tracking-wider text-[#6b5a3e]">Fecha</span>
             <input type="date" value={draft.date} onChange={(e) => setDraft({ ...draft, date: e.target.value })} className="w-full bg-transparent border-b border-[#c9a94a]/60 py-1 outline-none text-[#2b2114]" data-testid="carta-date-input" />
           </label>

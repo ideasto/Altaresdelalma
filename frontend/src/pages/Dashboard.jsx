@@ -45,7 +45,7 @@ function ModuleCard({ m, a, onFavorite }) {
         <button className="icon-btn" aria-label={`Personalizar vista de ${m.title}`} aria-expanded={personalizing} onClick={() => setPersonalizing(v => !v)}><Pencil className="w-3.5 h-3.5" /></button>
         {personalizing && <select autoFocus className="bg-[#234766] text-xs text-[#d5dfea] w-full mb-2" aria-label={`Vista favorita de ${m.title}`} value={a.favorites?.[m.key] || ""} onChange={async e => { if (await onFavorite(m.key, e.target.value)) setPersonalizing(false); }}><option value="">Más reciente</option>{items.map(x => <option key={x.id} value={x.id}>{(x.title || x.caption || x.message || x.body || "Foto").slice(0, 45)}</option>)}</select>}
       </div>}
-      <Link to={to + (m.query ? m.query(a) : "")} className="relative z-10 self-start inline-flex items-center gap-1 gold-text text-sm hover:text-[#fde68a]" data-testid={`portal-action-${m.key}`}>
+      <Link to={to + (m.query ? m.query(a) : "")} className="relative z-10 self-start min-h-8 inline-flex items-center gap-1 gold-text text-sm hover:text-[#fde68a]" data-testid={`portal-action-${m.key}`}>
         {m.action(a)} <ArrowRight className="w-4 h-4" />
       </Link>
     </div>
@@ -77,7 +77,7 @@ export default function Dashboard() {
           <SpacePhoto space={avatar} size={128} interactive onClick={() => setPhotoOpen(true)} testId="header-photo" />
           <div className="min-w-0">
             <div className="flex items-center gap-2 justify-center sm:justify-start">
-              <h1 className="font-heading text-4xl sm:text-5xl lg:text-6xl gold-gradient-text leading-tight break-words" data-testid="header-name">{avatar.name}</h1>
+              <h1 className="min-w-0 [overflow-wrap:anywhere] font-heading text-4xl sm:text-5xl lg:text-6xl gold-gradient-text leading-tight break-words" data-testid="header-name">{avatar.name}</h1>
               <EditPencil onClick={() => setEditOpen(true)} testId="header-name-edit" title="Editar nombre, símbolo y fechas" />
             </div>
             <HeaderPhrase phrase={avatar.phrase} onSave={(phrase) => updateAvatar(id, { phrase })} />
@@ -86,7 +86,7 @@ export default function Dashboard() {
       </div>
 
       <div className="max-w-6xl mx-auto px-4 sm:px-8 pb-6">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 lg:auto-rows-[240px] gap-5">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 lg:auto-rows-[minmax(240px,auto)] gap-5">
           {MODULES.map((m) => <ModuleCard key={m.key} m={m} a={avatar} onFavorite={(key, value) => updateAvatar(id, a => ({ favorites: { ...a.favorites, [key]: value } }))} />)}
         </div>
       </div>

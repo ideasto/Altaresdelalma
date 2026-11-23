@@ -23,7 +23,7 @@ export function Modal({ open, onClose, title, children, maxWidth = "max-w-lg", t
           <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={onClose} />
           <motion.div
             data-testid={testId}
-            className={`glass-strong relative z-10 w-full ${maxWidth} max-h-[88vh] overflow-y-auto fancy-scroll rounded-2xl p-6`}
+            className={`glass-strong relative z-10 w-full ${maxWidth} max-h-[88dvh] overflow-y-auto fancy-scroll rounded-2xl p-4 sm:p-6`}
             initial={{ scale: 0.92, y: 18, opacity: 0 }}
             animate={{ scale: 1, y: 0, opacity: 1 }}
             exit={{ scale: 0.95, y: 10, opacity: 0 }}
@@ -47,7 +47,7 @@ export function ConfirmDialog({ open, onClose, onConfirm, title, message, confir
   return (
     <Modal open={open} onClose={onClose} title={title} maxWidth="max-w-md" testId={testId}>
       <p className="text-[#cbd5e1] mb-6 leading-relaxed">{message}</p>
-      <div className="flex justify-end gap-3">
+      <div className="flex flex-wrap justify-end gap-3">
         <button className="ghost-gold rounded-full px-5 py-2.5 text-sm" onClick={onClose} data-testid="confirm-cancel">
           Cancelar
         </button>
@@ -123,9 +123,9 @@ export function GhostButton({ children, onClick, className = "", testId, type = 
 export function PageHeader({ title, subtitle, onBack, children, backTestId }) {
   const navigate = useNavigate();
   return (
-    <div className="sticky top-0 z-40 glass-strong border-b border-[#d4af37]/20 px-4 sm:px-8 py-4">
-      <div className="max-w-6xl mx-auto flex items-center justify-between gap-4 flex-wrap">
-        <div className="flex items-center gap-4 min-w-0">
+    <div className="md:sticky top-0 z-40 glass-strong border-b border-[#d4af37]/20 px-4 sm:px-8 py-4">
+      <div className="max-w-6xl mx-auto flex items-center justify-between gap-3 sm:gap-4 flex-wrap">
+        <div className="flex items-center gap-2 sm:gap-4 min-w-0">
           <button
             className="icon-btn shrink-0"
             onClick={() => (onBack ? onBack() : navigate(-1))}
@@ -135,11 +135,11 @@ export function PageHeader({ title, subtitle, onBack, children, backTestId }) {
             <ArrowLeft className="w-5 h-5" />
           </button>
           <div className="min-w-0">
-            <h1 className="font-heading text-2xl sm:text-4xl gold-gradient-text truncate">{title}</h1>
-            {subtitle && <p className="text-xs sm:text-sm text-[#a9bacb] truncate">{subtitle}</p>}
+            <h1 className="font-heading text-2xl sm:text-4xl gold-gradient-text [overflow-wrap:anywhere]">{title}</h1>
+            {subtitle && <p className="text-xs sm:text-sm text-[#a9bacb] [overflow-wrap:anywhere]">{subtitle}</p>}
           </div>
         </div>
-        <div className="flex items-center gap-2 flex-wrap">{children}</div>
+        <div className="flex items-center gap-2 flex-wrap max-sm:[&>button]:px-3 max-sm:[&>button]:py-2.5 max-sm:[&>button]:min-h-10">{children}</div>
       </div>
     </div>
   );

@@ -73,10 +73,10 @@ export default function Libro() {
         <GoldButton onClick={() => { setEditing(null); setPageOpen(true); }} disabled={isEditing} testId="libro-add" className="px-5 py-2.5"><Plus className="w-4 h-4" /> Agregar página</GoldButton>
       </PageHeader>
 
-      <div className="max-w-4xl mx-auto px-4 sm:px-8 pt-10">
-        <div className="flex items-center justify-center gap-3 sm:gap-6">
-          <button className="icon-btn shrink-0 disabled:opacity-30" style={{ display: isEditing ? "none" : undefined }} onClick={() => go(-1)} disabled={i === 0 || isEditing} aria-label="Página anterior" data-testid="libro-prev"><ChevronLeft className="w-7 h-7" /></button>
-          <div className="relative w-full max-w-md" style={{ perspective: 1800 }}>
+      <div className="max-w-4xl mx-auto px-4 sm:px-8 pt-5 sm:pt-10">
+        <div className="grid grid-cols-2 items-center justify-items-center gap-x-3 gap-y-4 sm:flex sm:justify-center sm:gap-6">
+          <button className="icon-btn shrink-0 row-start-2 disabled:opacity-30" style={{ display: isEditing ? "none" : undefined }} onClick={() => go(-1)} disabled={i === 0 || isEditing} aria-label="Página anterior" data-testid="libro-prev"><ChevronLeft className="w-7 h-7" /></button>
+          <div className="relative min-w-0 w-full max-w-md col-span-2 row-start-1" style={{ perspective: 1800 }}>
             <PageEditor inline open={pageOpen} onClose={() => setPageOpen(false)} editing={editing} spaceId={id} onSave={savePage} />
             <BookMetaEditor inline open={!!meta} part={meta} onClose={() => setMeta(null)} a={avatar} onSave={async (m) => { const ok = await updateAvatar(id, { bookMeta: m }); if (ok) toast.success("Libro actualizado."); return ok; }} />
             {!isEditing && <AnimatePresence mode="wait" custom={dir}>
@@ -89,10 +89,10 @@ export default function Libro() {
               </motion.div>
             </AnimatePresence>}
           </div>
-          <button className="icon-btn shrink-0 disabled:opacity-30" style={{ display: isEditing ? "none" : undefined }} onClick={() => go(1)} disabled={i >= total - 1 || isEditing} aria-label="Página siguiente" data-testid="libro-next"><ChevronRight className="w-7 h-7" /></button>
+          <button className="icon-btn shrink-0 row-start-2 disabled:opacity-30" style={{ display: isEditing ? "none" : undefined }} onClick={() => go(1)} disabled={i >= total - 1 || isEditing} aria-label="Página siguiente" data-testid="libro-next"><ChevronRight className="w-7 h-7" /></button>
         </div>
 
-        <div className="flex flex-col items-center gap-3 mt-6">
+        <div className="flex flex-col items-center text-center gap-3 mt-6">
           <p className="text-[#a9bacb] text-sm" data-testid="libro-position">{label}{pages.length === 0 && " · Todavía no hay páginas interiores."}</p>
           {!isEditing && typeof view === "object" && (
             <div className="flex items-center gap-1 glass rounded-full px-2 py-1" data-testid="libro-page-tools">
