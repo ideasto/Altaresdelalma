@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { X, Pencil, Trash2, ArrowLeft, Plus } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
-export function Modal({ open, onClose, title, children, maxWidth = "max-w-lg", testId }) {
+export function Modal({ open, onClose, title, children, maxWidth = "max-w-lg", surface = "panel", testId }) {
   useEffect(() => {
     const onKey = (e) => e.key === "Escape" && onClose?.();
     if (open) document.addEventListener("keydown", onKey);
@@ -20,10 +20,10 @@ export function Modal({ open, onClose, title, children, maxWidth = "max-w-lg", t
           exit={{ opacity: 0 }}
           transition={{ duration: 0.25 }}
         >
-          <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={onClose} />
+          <div className={`absolute inset-0 ${surface === "paper" ? "bg-[#071c33]/70 backdrop-blur-[2px]" : "bg-black/60 backdrop-blur-sm"}`} onClick={onClose} />
           <motion.div
             data-testid={testId}
-            className={`glass-strong relative z-10 w-full ${maxWidth} max-h-[88dvh] overflow-y-auto fancy-scroll rounded-2xl p-4 sm:p-6`}
+            className={`relative z-10 w-full ${maxWidth} max-h-[88dvh] overflow-auto fancy-scroll rounded-2xl p-4 sm:p-6 ${surface === "paper" ? "" : "glass-strong"}`}
             initial={{ scale: 0.92, y: 18, opacity: 0 }}
             animate={{ scale: 1, y: 0, opacity: 1 }}
             exit={{ scale: 0.95, y: 10, opacity: 0 }}

@@ -14,13 +14,22 @@ import { Sparkles, FileDown, Plus, Star, Copy, SkipForward, Share2 } from "lucid
 
 const HINTS = ["Una frase que decía", "Un chiste o expresión suya", "Su esencia", "Algo que dejó en vos", "Palabras que vos escribís hoy"];
 
+function DeckPaper({ children, className = "", testId }) {
+  return (
+    <div className={`paper-sheet relative rounded-xl ${className}`} data-testid={testId}>
+      <img src={DECK_FRAME_URL} alt="" aria-hidden="true" className="absolute inset-0 w-full h-full rounded-[inherit] pointer-events-none" />
+      {children}
+    </div>
+  );
+}
+
 function CardFace({ card, fixed = false }) {
   return (
-    <div className={`w-full paper-sheet rounded-xl flex flex-col items-center p-5 relative ${fixed ? "h-full justify-center" : "min-h-full justify-center"}`} style={{ backgroundImage: `url("${DECK_FRAME_URL}")`, backgroundSize: "100% 100%" }}>
-      <p tabIndex={fixed ? 0 : undefined} className={`font-heading italic text-center text-2xl sm:text-3xl leading-snug text-[#2b2114] w-full whitespace-pre-wrap [overflow-wrap:anywhere] ${fixed ? "min-h-0 overflow-y-auto" : ""}`}>{card.message}</p>
-      <div className="w-10 h-px shrink-0 bg-[#c9a94a] my-2.5" />
-      <p className="font-ui text-[11px] tracking-[0.2em] uppercase text-[#6b5a3e] text-center max-w-full [overflow-wrap:anywhere]">{card.name}</p>
-    </div>
+    <DeckPaper className={`w-full flex flex-col items-center justify-center gap-3 p-6 ${fixed ? "h-full" : "min-h-full"}`} testId="deck-paper-face">
+      <p tabIndex={fixed ? 0 : undefined} className={`relative font-heading italic text-center text-2xl sm:text-3xl leading-snug w-full whitespace-pre-wrap [overflow-wrap:anywhere] ${fixed ? "min-h-0 overflow-y-auto" : ""}`}>{card.message}</p>
+      <div className="relative w-10 h-px shrink-0 bg-[#c9a94a]" />
+      <p className="relative font-ui text-[11px] tracking-[0.2em] uppercase text-[var(--paper-muted)] text-center max-w-full [overflow-wrap:anywhere]">{card.name}</p>
+    </DeckPaper>
   );
 }
 
@@ -161,7 +170,7 @@ export default function Oraculo() {
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
             {cards.map((c) => (
               <div key={c.id} className="min-w-0 w-full max-w-[19rem] mx-auto" data-testid={`oraculo-card-${c.id}`}>
-                <div className="grid min-h-[18rem] sm:min-h-[14rem]"><CardFace card={c} /></div>
+                <div className="grid min-h-[18rem] sm:aspect-[7/10]"><CardFace card={c} /></div>
                 <div className="flex justify-center gap-1 mt-2">
                   <button className="icon-btn" title="Copiar texto" aria-label="Copiar texto" onClick={async () => toast.success((await copyText(c.message)) ? "Frase copiada." : "No se pudo copiar.")} data-testid={`oraculo-copy-${c.id}`}><Copy className="w-4 h-4" /></button>
                   <button className="icon-btn" title="Compartir carta" aria-label="Compartir carta" onClick={() => setShareItems([{ kind: "card", title: c.name || avatar.name, text: c.message }])} data-testid={`oraculo-share-${c.id}`}><Share2 className="w-4 h-4" /></button>
@@ -174,15 +183,16 @@ export default function Oraculo() {
         )}
       </div>
 
-      <Modal open={formOpen} onClose={() => setFormOpen(false)} title={editing ? "Editar carta" : "Nueva carta"} testId="oraculo-form-modal">
+      <Modal open={formOpen} onClose={() => setFormOpen(false)} title={editing ? "Editar carta" : "Nueva carta"} surface="paper" testId="oraculo-form-modal">
         <p className="text-sm text-[#d5dfea] mb-2">Escribí una frase para este mazo. Si necesitás una idea para empezar, puede ser:</p>
         <p className="text-xs text-[#e7d5a0] mb-4 leading-relaxed">{HINTS.join(" · ")}. Son ejemplos; escribí libremente en la carta.</p>
-        <div className="paper-sheet piece-editor rounded-xl border border-[#e2d9c8] p-7 max-w-xs mx-auto aspect-[7/10] flex flex-col justify-center mb-5">
-          <textarea aria-label="Frase sobre la carta" className="bg-transparent text-center font-heading italic text-2xl w-full resize-none" rows={6} value={draft.message} onChange={e => setDraft({ ...draft, message: e.target.value })} placeholder="Una frase breve…" data-testid="oraculo-message-input" />
-          <input maxLength={40} aria-label="Firma" className="bg-transparent text-center w-full" value={draft.name} onChange={e => setDraft({ ...draft, name: e.target.value })} data-testid="oraculo-name-input" />
-        </div>
+        <DeckPaper className="w-full max-w-[280px] mx-auto min-h-[330px] aspect-[7/10] p-7 sm:p-9 flex flex-col gap-4 justify-center mb-5" testId="deck-paper-editor">
+          <textarea aria-label="Frase sobre la carta" className="relative bg-transparent text-center font-heading italic text-2xl w-full resize-none" rows={5} value={draft.message} onChange={e => setDraft({ ...draft, message: e.target.value })} placeholder="Una frase breve…" data-testid="oraculo-message-input" />
+          <div className="relative w-10 h-px shrink-0 bg-[#c9a94a] mx-auto" />
+          <input maxLength={40} aria-label="Firma" className="relative bg-transparent text-center w-full text-sm" value={draft.name} onChange={e => setDraft({ ...draft, name: e.target.value })} data-testid="oraculo-name-input" />
+        </DeckPaper>
         {!deckFits(draft.message).fits && <p role="alert" className="text-amber-200 text-sm mb-4">Esta frase excede la carta física de 63 × 90 mm. Acortala antes de guardar.</p>}
-        <div className="flex justify-end gap-3">
+        <div className="flex flex-wrap justify-end gap-3">
           <GhostButton onClick={() => setFormOpen(false)} testId="oraculo-form-cancel">Cancelar</GhostButton>
           <GoldButton onClick={saveCard} testId="oraculo-form-save">{editing ? "Guardar" : "Sumar al mazo"}</GoldButton>
         </div>

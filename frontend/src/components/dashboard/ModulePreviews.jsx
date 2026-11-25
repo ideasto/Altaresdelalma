@@ -65,18 +65,15 @@ export function TimelinePreview({ a }) {
 export function LettersPreview({ a }) {
   const last = a.letters.find(x => x.id === a.favorites?.cartas) || a.letters[0];
   return (
-    <div className="envelope h-full max-h-[130px] w-full max-w-[240px] mx-auto" data-testid={last ? "preview-cartas-last" : "preview-cartas-empty"}>
-      <div className="envelope-inner" />
-      <div className="envelope-sheet px-3 pt-2 pb-6 h-full">
-        {last ? (
-          <>
-            <p className="text-[10px] text-[#6b5a3e] text-right">{fmtDate(last.date, "short")}</p>
-            <p className="font-hand text-lg ruled-letter ruled-letter--mini line-clamp-3 text-[#2b2114]">{last.body}</p>
-          </>
-        ) : (
-          <div className="space-y-2 pt-3">{[80, 65, 72].map((w) => <div key={w} className="h-px bg-[#c9a94a]/50" style={{ width: `${w}%` }} />)}</div>
-        )}
-      </div>
+    <div className="paper-sheet rounded-lg w-full max-w-[240px] mx-auto p-3" data-testid={last ? "preview-cartas-last" : "preview-cartas-empty"}>
+      {last ? (
+        <>
+          <p className="text-[10px] text-[var(--paper-muted)] text-right">{fmtDate(last.date, "short")}</p>
+          <p className="font-hand text-lg ruled-letter ruled-letter--mini line-clamp-3 whitespace-pre-line">{last.body}</p>
+        </>
+      ) : (
+        <div className="ruled-letter ruled-letter--mini h-[66px]" aria-hidden="true" />
+      )}
     </div>
   );
 }

@@ -34,7 +34,7 @@ export default function LetterEditor({ open, onClose, editing, spaceId, spaceNam
   };
 
   return (
-    <Modal open={open} onClose={onClose} title={editing ? "Editar carta" : "Nueva carta"} maxWidth="max-w-2xl" testId="cartas-form-modal">
+    <Modal open={open} onClose={onClose} title={editing ? "Editar carta" : "Nueva carta"} surface="paper" maxWidth="max-w-2xl" testId="cartas-form-modal">
       <DraftNotices draft={d} onApply={(r) => setDraft({ date: r.date, to: r.to, body: r.body, sign: r.sign })} onCopy={copy} onDownload={download} />
       <SaveFailNotice show={fail} onCopy={copy} onDownload={download} />
       <WritingIdeas letter onChoose={idea => setDraft(prev => ({ ...prev, body: prev.body.trim() ? `${prev.body}\n\n${idea}` : idea }))} />
@@ -58,7 +58,7 @@ export default function LetterEditor({ open, onClose, editing, spaceId, spaceNam
         />
         <input aria-label="Firma (opcional)" value={draft.sign} onChange={(e) => setDraft({ ...draft, sign: e.target.value })} placeholder="Firma (opcional)" className="w-full text-right bg-transparent outline-none font-hand text-2xl text-[#2b2114] placeholder:text-[#b3a27f] mt-2" data-testid="carta-sign-input" />
       </div>
-      <div className="flex justify-end gap-3 mt-5">
+      <div className="flex flex-wrap justify-end gap-3 mt-5">
         <GhostButton onClick={onClose} testId="carta-form-cancel">Cancelar</GhostButton>
         <GoldButton onClick={save} testId="carta-form-save">{editing ? "Guardar cambios" : "Guardar carta"}</GoldButton>
       </div>

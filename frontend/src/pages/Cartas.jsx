@@ -11,15 +11,12 @@ import { LIMITS } from "../config/brand";
 import { toast } from "sonner";
 import { FileDown, Plus, Copy, Share2, Pencil, Trash2, FileText } from "lucide-react";
 
-function Envelope({ letter, onOpen }) {
+function LetterPreview({ letter, onOpen }) {
   return (
-    <button onClick={onOpen} className="envelope selectable text-left w-full h-[210px]" data-testid={`carta-${letter.id}`}>
-      <div className="envelope-inner" />
-      <div className="envelope-sheet px-5 pt-3 pb-4 h-[170px] overflow-hidden">
-        <div className="flex justify-between text-xs text-[#6b5a3e]"><span>Para {letter.to}</span><span>{fmtDate(letter.date, "short")}</span></div>
-        <p className="font-hand text-[22px] ruled-letter ruled-letter--preview text-[#2b2114] mt-2 line-clamp-3 whitespace-pre-line">{letter.body}</p>
-        {letter.sign && <p className="font-hand text-lg text-right text-[#6b5a3e] mt-1 truncate">{letter.sign}</p>}
-      </div>
+    <button onClick={onOpen} className="paper-sheet selectable rounded-xl text-left w-full min-w-0 p-5" data-testid={`carta-${letter.id}`}>
+      <div className="flex flex-wrap justify-between gap-x-3 text-xs text-[var(--paper-muted)]"><span>Para {letter.to}</span><span>{fmtDate(letter.date, "short")}</span></div>
+      <p className="font-hand text-[22px] ruled-letter ruled-letter--preview text-[#2b2114] mt-2 line-clamp-3 whitespace-pre-line">{letter.body}</p>
+      {letter.sign && <p className="font-hand text-lg text-right text-[#6b5a3e] mt-1 truncate">{letter.sign}</p>}
     </button>
   );
 }
@@ -66,7 +63,7 @@ export default function Cartas() {
         <p className="text-[#d5dfea] mb-8 font-hand text-2xl">Algo que hoy quieras contarle, recordar o dejar escrito. Podés parar y volver cuando quieras.</p>
         {letters.length === 0 ? (
           <div className="glass rounded-3xl py-16 text-center">
-            <div className="envelope w-56 h-32 mx-auto mb-6"><div className="envelope-inner" /><div className="envelope-sheet h-24" /></div>
+            <div className="paper-sheet w-56 h-32 rounded-xl mx-auto mb-6 p-5" aria-hidden="true"><div className="ruled-letter h-full" /></div>
             <p className="text-[#d5dfea] mb-5">Todavía no escribiste ninguna carta.</p>
             <GoldButton onClick={openCreate} testId="cartas-add-empty"><Plus className="w-4 h-4" /> Escribir la primera</GoldButton>
           </div>
@@ -74,13 +71,13 @@ export default function Cartas() {
           <>
             <p className="text-sm text-[#a9bacb] mb-4" data-testid="cartas-count">{plural(letters.length, "carta", "cartas")}</p>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {letters.map((l) => <Envelope key={l.id} letter={l} onOpen={() => setReading(l)} />)}
+              {letters.map((l) => <LetterPreview key={l.id} letter={l} onOpen={() => setReading(l)} />)}
             </div>
           </>
         )}
       </div>
 
-      <Modal open={!!reading} onClose={() => setReading(null)} title="" maxWidth="max-w-2xl" testId="carta-reader">
+      <Modal open={!!reading && !editorOpen} onClose={() => setReading(null)} title="" surface="paper" maxWidth="max-w-2xl" testId="carta-reader">
         {reading && (
           <>
             <div className="paper-sheet rounded-2xl p-6 sm:p-9 select-text" data-testid="carta-reader-sheet">
