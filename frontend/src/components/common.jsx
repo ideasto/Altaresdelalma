@@ -30,7 +30,7 @@ export function Modal({ open, onClose, title, children, maxWidth = "max-w-lg", t
             transition={{ duration: 0.25, ease: "easeOut" }}
           >
             <div className="flex items-start justify-between gap-4 mb-4">
-              <h3 className="font-heading text-2xl sm:text-3xl gold-gradient-text">{title}</h3>
+              <h3 className="font-heading text-2xl sm:text-3xl gold-heading">{title}</h3>
               <button className="icon-btn" onClick={onClose} data-testid="modal-close" aria-label="Cerrar">
                 <X className="w-5 h-5" />
               </button>
@@ -135,7 +135,7 @@ export function PageHeader({ title, subtitle, onBack, children, backTestId }) {
             <ArrowLeft className="w-5 h-5" />
           </button>
           <div className="min-w-0">
-            <h1 className="font-heading text-2xl sm:text-4xl gold-gradient-text [overflow-wrap:anywhere]">{title}</h1>
+            <h1 className="font-heading text-2xl sm:text-4xl gold-heading [overflow-wrap:anywhere]">{title}</h1>
             {subtitle && <p className="text-xs sm:text-sm text-[#a9bacb] [overflow-wrap:anywhere]">{subtitle}</p>}
           </div>
         </div>

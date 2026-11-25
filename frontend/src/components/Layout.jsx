@@ -27,7 +27,7 @@ export default function Layout() {
   }, []);
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="isolate min-h-screen flex flex-col">
       <div className="celestial-bg" />
       <div className="star-field" />
 

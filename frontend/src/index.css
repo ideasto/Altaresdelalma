@@ -5,9 +5,15 @@
 /* Azul luminoso y vibrante, con contraste suficiente para marfil y dorado. */
 :root {
   color-scheme: only light;
-  --bg-deep: hsl(211 70% 33%);
-  --bg-soft: hsl(207 72% 40%);
-  --bg-lift: hsl(203 76% 48%);
+  /* Fondo luminoso aprobado y azul de las superficies del memorial. */
+  --memorial-sky-top: #1d90d7;
+  --memorial-sky-mid: #1d6daf;
+  --memorial-sky-base: #19528f;
+  --memorial-sky-solid: #1d7cc0;
+  --memorial-panel-blue: #144272;
+  --bg-deep: var(--memorial-sky-base);
+  --bg-soft: var(--memorial-sky-mid);
+  --bg-lift: var(--memorial-sky-top);
   --gold: hsl(46 65% 52%);
   --gold-soft: hsl(46 55% 62%);
   --gold-glow: hsl(46 80% 65%);
@@ -55,7 +61,7 @@ body {
   margin: 0;
   font-family: 'Plus Jakarta Sans', sans-serif;
   color: var(--text-body);
-  background-color: var(--bg-deep);
+  background-color: var(--memorial-sky-solid);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -69,7 +75,8 @@ h1, h2, h3, h4, .font-heading { font-family: 'Cormorant Garamond', Georgia, seri
   position: fixed;
   inset: 0;
   z-index: -2;
-  background:
+  background-color: var(--memorial-sky-solid);
+  background-image:
     radial-gradient(1100px 650px at 85% -5%, hsl(201 76% 55% / 0.36), transparent 60%),
     radial-gradient(900px 600px at 5% 105%, hsl(46 65% 52% / 0.10), transparent 60%),
     linear-gradient(170deg, var(--bg-lift) 0%, var(--bg-soft) 42%, var(--bg-deep) 100%);
@@ -93,14 +100,14 @@ h1, h2, h3, h4, .font-heading { font-family: 'Cormorant Garamond', Georgia, seri
 
 /* ---------- Superficies ---------- */
 .glass {
-  background: linear-gradient(145deg, hsl(207 58% 33% / 0.94), hsl(211 55% 28% / 0.97));
+  background: var(--memorial-panel-blue);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
-  border: 1px solid hsl(46 65% 52% / 0.25);
+  border: 1px solid hsl(207 70% 64% / 0.66);
   box-shadow: 0 8px 28px hsl(214 46% 8% / 0.35);
 }
 .glass-strong {
-  background: hsl(211 47% 25% / 0.96);
+  background: var(--memorial-panel-blue);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
   border: 1px solid hsl(46 65% 52% / 0.32);
@@ -131,11 +138,8 @@ h1, h2, h3, h4, .font-heading { font-family: 'Cormorant Garamond', Georgia, seri
 .ghost-gold:hover, .ghost-gold:focus-visible { background: hsl(46 65% 52% / 0.1); box-shadow: 0 0 14px hsl(46 65% 52% / 0.3); color: var(--gold-light); transform: scale(1.03); }
 
 .gold-text { color: var(--gold); }
-.gold-gradient-text {
-  background: linear-gradient(135deg, var(--gold-glow) 0%, var(--gold) 55%, hsl(44 62% 46%) 100%);
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
+.gold-heading {
+  color: #fff0b5;
 }
 
 .icon-btn {

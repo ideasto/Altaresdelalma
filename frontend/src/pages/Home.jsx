@@ -63,7 +63,7 @@ export default function Home() {
 
   return (
     <div className="max-w-6xl mx-auto px-4 sm:px-8 pt-8 sm:pt-12">
-      <div className="flex items-center justify-between gap-4 flex-wrap mb-10">
+      <div className="glass-strong section-header rounded-2xl flex items-center justify-between gap-4 flex-wrap mb-10 p-4 sm:px-5">
         <BrandLockup />
         <div className="flex items-center gap-2 flex-wrap">
           <button className={pill} onClick={backupAll} data-testid="backup-button"><Download className="w-4 h-4" /> Descargar respaldo</button>
@@ -77,7 +77,7 @@ export default function Home() {
 
       <div className="mb-10 fade-up max-w-3xl mx-auto text-center">
         <h1 className="font-heading text-4xl sm:text-5xl lg:text-6xl text-[#f8fafc] mb-4">
-          Un lugar para los recuerdos <span className="gold-gradient-text">que querés conservar</span>
+          Un lugar para los recuerdos <span className="gold-heading">que querés conservar</span>
         </h1>
         <p className="text-[#d5dfea] leading-relaxed text-base">
           Podés empezar con una foto, una frase o algo que hoy quieras escribir. Reuní tus recuerdos y dales forma en un libro para imprimir. Lo demás puede esperar.
@@ -98,7 +98,7 @@ export default function Home() {
                 <Pencil className="w-4 h-4" />
               </button>
             </div>
-            <h3 className="font-heading text-3xl gold-gradient-text mt-4 break-words">{a.name}</h3>
+            <h3 className="font-heading text-3xl text-[#f8fafc] mt-4 break-words">{a.name}</h3>
             <p className="text-[#a9bacb] text-sm flex items-center justify-center gap-2 mt-1 min-h-5">
               {a.symbol && <SpaceSymbol symbol={a.symbol} className="w-4 h-4 gold-text" />}
               {yearsOf(a)}
