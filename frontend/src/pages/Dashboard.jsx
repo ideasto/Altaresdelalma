@@ -77,7 +77,7 @@ export default function Dashboard() {
           <SpacePhoto space={avatar} size={128} interactive onClick={() => setPhotoOpen(true)} testId="header-photo" />
           <div className="min-w-0">
             <div className="flex items-center gap-2 justify-center sm:justify-start">
-              <h1 className="min-w-0 [overflow-wrap:anywhere] font-heading text-4xl sm:text-5xl lg:text-6xl gold-gradient-text leading-tight break-words" data-testid="header-name">{avatar.name}</h1>
+              <h1 className="min-w-0 [overflow-wrap:anywhere] font-heading text-4xl sm:text-5xl lg:text-6xl text-[#f8fafc] leading-tight break-words" data-testid="header-name">{avatar.name}</h1>
               <EditPencil onClick={() => setEditOpen(true)} testId="header-name-edit" title="Editar nombre, símbolo y fechas" />
             </div>
             <HeaderPhrase phrase={avatar.phrase} onSave={(phrase) => updateAvatar(id, { phrase })} />

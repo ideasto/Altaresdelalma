@@ -71,7 +71,7 @@ export function LettersPreview({ a }) {
         {last ? (
           <>
             <p className="text-[10px] text-[#6b5a3e] text-right">{fmtDate(last.date, "short")}</p>
-            <p className="font-hand text-lg leading-tight line-clamp-3 text-[#2b2114]">{last.body}</p>
+            <p className="font-hand text-lg ruled-letter ruled-letter--mini line-clamp-3 text-[#2b2114]">{last.body}</p>
           </>
         ) : (
           <div className="space-y-2 pt-3">{[80, 65, 72].map((w) => <div key={w} className="h-px bg-[#c9a94a]/50" style={{ width: `${w}%` }} />)}</div>

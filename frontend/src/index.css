@@ -4,6 +4,7 @@
 
 /* Azul luminoso y vibrante, con contraste suficiente para marfil y dorado. */
 :root {
+  color-scheme: only light;
   --bg-deep: hsl(211 70% 33%);
   --bg-soft: hsl(207 72% 40%);
   --bg-lift: hsl(203 76% 48%);
@@ -106,7 +107,7 @@ h1, h2, h3, h4, .font-heading { font-family: 'Cormorant Garamond', Georgia, seri
 }
 
 .section-header {
-  background: linear-gradient(110deg, hsl(209 61% 32%), hsl(206 62% 34%));
+  border-bottom-color: hsl(207 70% 54% / 0.58);
 }
 
 /* ---------- Botones ---------- */
@@ -249,6 +250,9 @@ h1, h2, h3, h4, .font-heading { font-family: 'Cormorant Garamond', Georgia, seri
     transparent 0 calc(var(--letter-line-height) - 1px),
     hsl(42 55% 38% / 0.27) calc(var(--letter-line-height) - 1px) var(--letter-line-height)
   );
+}
+.ruled-letter--mini {
+  --letter-line-height: 22px;
 }
 .ruled-letter--preview {
   --letter-line-height: 29px;
