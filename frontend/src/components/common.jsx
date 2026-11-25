@@ -123,7 +123,7 @@ export function GhostButton({ children, onClick, className = "", testId, type = 
 export function PageHeader({ title, subtitle, onBack, children, backTestId }) {
   const navigate = useNavigate();
   return (
-    <div className="md:sticky top-0 z-40 glass-strong border-b border-[#d4af37]/20 px-4 sm:px-8 py-4">
+    <div className="md:sticky top-0 z-40 glass-strong section-header border-b border-[#d4af37]/20 px-4 sm:px-8 py-4">
       <div className="max-w-6xl mx-auto flex items-center justify-between gap-3 sm:gap-4 flex-wrap">
         <div className="flex items-center gap-2 sm:gap-4 min-w-0">
           <button
@@ -136,7 +136,7 @@ export function PageHeader({ title, subtitle, onBack, children, backTestId }) {
           </button>
           <div className="min-w-0">
             <h1 className="font-heading text-2xl sm:text-4xl gold-gradient-text [overflow-wrap:anywhere]">{title}</h1>
-            {subtitle && <p className="text-xs sm:text-sm text-[#a9bacb] [overflow-wrap:anywhere]">{subtitle}</p>}
+            {subtitle && <p className="text-xs sm:text-sm text-[#d5e4f0] [overflow-wrap:anywhere]">{subtitle}</p>}
           </div>
         </div>
         <div className="flex items-center gap-2 flex-wrap max-sm:[&>button]:px-3 max-sm:[&>button]:py-2.5 max-sm:[&>button]:min-h-10">{children}</div>

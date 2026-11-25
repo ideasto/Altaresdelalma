@@ -105,6 +105,10 @@ h1, h2, h3, h4, .font-heading { font-family: 'Cormorant Garamond', Georgia, seri
   border: 1px solid hsl(46 65% 52% / 0.32);
 }
 
+.section-header {
+  background: linear-gradient(110deg, hsl(209 61% 32%), hsl(206 62% 34%));
+}
+
 /* ---------- Botones ---------- */
 .gold-btn {
   background: linear-gradient(135deg, var(--gold-glow) 0%, var(--gold) 50%, hsl(44 62% 44%) 100%);
@@ -237,4 +241,16 @@ h1, h2, h3, h4, .font-heading { font-family: 'Cormorant Garamond', Georgia, seri
 .envelope-inner { background: linear-gradient(180deg, #fffdf8, #e9dcc1); }
 .piece-editor input, .piece-editor textarea { color: #2b2114; background: transparent; border: 0; box-shadow: none; border-radius: 0; }
 .piece-editor textarea { text-align: left; }
-.ruled-letter { background-image: repeating-linear-gradient(transparent, transparent 35px, #c9a94a25 36px); line-height: 36px; }
+.ruled-letter {
+  --letter-line-height: 36px;
+  line-height: var(--letter-line-height);
+  background-image: repeating-linear-gradient(
+    to bottom,
+    transparent 0 calc(var(--letter-line-height) - 1px),
+    hsl(42 55% 38% / 0.27) calc(var(--letter-line-height) - 1px) var(--letter-line-height)
+  );
+}
+.ruled-letter--preview {
+  --letter-line-height: 29px;
+  min-height: calc(3 * var(--letter-line-height));
+}

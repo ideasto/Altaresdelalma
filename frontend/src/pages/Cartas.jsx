@@ -17,7 +17,7 @@ function Envelope({ letter, onOpen }) {
       <div className="envelope-inner" />
       <div className="envelope-sheet px-5 pt-3 pb-4 h-[170px] overflow-hidden">
         <div className="flex justify-between text-xs text-[#6b5a3e]"><span>Para {letter.to}</span><span>{fmtDate(letter.date, "short")}</span></div>
-        <p className="font-hand text-[22px] leading-snug text-[#2b2114] mt-2 line-clamp-3 whitespace-pre-line">{letter.body}</p>
+        <p className="font-hand text-[22px] ruled-letter ruled-letter--preview text-[#2b2114] mt-2 line-clamp-3 whitespace-pre-line">{letter.body}</p>
         {letter.sign && <p className="font-hand text-lg text-right text-[#6b5a3e] mt-1 truncate">{letter.sign}</p>}
       </div>
     </button>

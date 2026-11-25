@@ -53,8 +53,7 @@ export default function LetterEditor({ open, onClose, editing, spaceId, spaceNam
           value={draft.body}
           onChange={(e) => setDraft({ ...draft, body: e.target.value })}
           placeholder="Querido/a…"
-          className="w-full mt-4 bg-transparent outline-none resize-y font-hand text-2xl leading-relaxed text-[#2b2114] placeholder:text-[#b3a27f]"
-          style={{ backgroundImage: "repeating-linear-gradient(transparent, transparent 35px, rgba(201,169,74,0.25) 36px)", lineHeight: "36px" }}
+          className="w-full mt-4 bg-transparent outline-none resize-y font-hand text-2xl ruled-letter text-[#2b2114] placeholder:text-[#b3a27f]"
           data-testid="carta-body-input"
         />
         <input aria-label="Firma (opcional)" value={draft.sign} onChange={(e) => setDraft({ ...draft, sign: e.target.value })} placeholder="Firma (opcional)" className="w-full text-right bg-transparent outline-none font-hand text-2xl text-[#2b2114] placeholder:text-[#b3a27f] mt-2" data-testid="carta-sign-input" />
