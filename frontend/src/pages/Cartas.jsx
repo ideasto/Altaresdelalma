@@ -15,8 +15,8 @@ function LetterPreview({ letter, onOpen }) {
   return (
     <button onClick={onOpen} className="paper-sheet selectable rounded-xl text-left w-full min-w-0 p-5" data-testid={`carta-${letter.id}`}>
       <div className="flex flex-wrap justify-between gap-x-3 text-xs text-[var(--paper-muted)]"><span>Para {letter.to}</span><span>{fmtDate(letter.date, "short")}</span></div>
-      <p className="font-hand text-[22px] ruled-letter ruled-letter--preview text-[#2b2114] mt-2 line-clamp-3 whitespace-pre-line">{letter.body}</p>
-      {letter.sign && <p className="font-hand text-lg text-right text-[#6b5a3e] mt-1 truncate">{letter.sign}</p>}
+      <p className="font-hand text-[22px] ruled-letter ruled-letter--preview text-[var(--paper-ink)] mt-2 line-clamp-3 whitespace-pre-line">{letter.body}</p>
+      {letter.sign && <p className="font-hand text-lg text-right text-[var(--paper-muted)] mt-1 truncate">{letter.sign}</p>}
     </button>
   );
 }
@@ -81,10 +81,10 @@ export default function Cartas() {
         {reading && (
           <>
             <div className="paper-sheet rounded-2xl p-6 sm:p-9 select-text" data-testid="carta-reader-sheet">
-              <p className="text-right text-sm text-[#6b5a3e] mb-4">{fmtDate(reading.date)}</p>
-              <p className="font-heading text-3xl text-center text-[#2b2114] mb-5">Para {reading.to}</p>
-              <p className="font-hand text-[26px] ruled-letter text-[#2b2114] whitespace-pre-wrap">{reading.body}</p>
-              {reading.sign && <p className="font-hand text-[26px] text-right text-[#2b2114] mt-6">{reading.sign}</p>}
+              <p className="text-right text-sm text-[var(--paper-muted)] mb-4">{fmtDate(reading.date)}</p>
+              <p className="font-heading text-3xl text-center text-[var(--paper-ink)] mb-5">Para {reading.to}</p>
+              <p className="font-hand text-[26px] ruled-letter text-[var(--paper-ink)] whitespace-pre-wrap">{reading.body}</p>
+              {reading.sign && <p className="font-hand text-[26px] text-right text-[var(--paper-ink)] mt-6">{reading.sign}</p>}
             </div>
             <div className="flex flex-wrap gap-2 mt-5 justify-end">
               <GhostButton className="py-2" onClick={async () => toast.success((await copyText(letterText(reading))) ? "Texto copiado." : "No se pudo copiar.")} testId="carta-copy"><Copy className="w-4 h-4" /> Copiar</GhostButton>

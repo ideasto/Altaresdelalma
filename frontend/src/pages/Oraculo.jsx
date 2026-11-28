@@ -3,7 +3,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { useParams, Link, useSearchParams } from "react-router-dom";
 import { useStore } from "../store/StoreContext";
 import { PageHeader, Modal, ConfirmDialog, GoldButton, GhostButton, EditPencil, TrashButton, TextInput, TextArea } from "../components/common";
-import { DECK_FRAME_URL } from "../lib/deckFrame";
+import { CardFace, DeckPaper } from "../components/DeckCard";
 import CardBack from "../components/CardBack";
 import { deckPdf, deckFits, initDeckProbe } from "../lib/pdf/deck";
 import { copyText } from "../lib/drafts";
@@ -13,25 +13,6 @@ import { toast } from "sonner";
 import { Sparkles, FileDown, Plus, Star, Copy, SkipForward, Share2 } from "lucide-react";
 
 const HINTS = ["Una frase que decía", "Un chiste o expresión suya", "Su esencia", "Algo que dejó en vos", "Palabras que vos escribís hoy"];
-
-function DeckPaper({ children, className = "", testId }) {
-  return (
-    <div className={`paper-sheet relative rounded-xl ${className}`} data-testid={testId}>
-      <img src={DECK_FRAME_URL} alt="" aria-hidden="true" className="absolute inset-0 w-full h-full rounded-[inherit] pointer-events-none" />
-      {children}
-    </div>
-  );
-}
-
-function CardFace({ card, fixed = false }) {
-  return (
-    <DeckPaper className={`w-full flex flex-col items-center justify-center gap-3 p-6 ${fixed ? "h-full" : "min-h-full"}`} testId="deck-paper-face">
-      <p tabIndex={fixed ? 0 : undefined} className={`relative font-heading italic text-center text-2xl sm:text-3xl leading-snug w-full whitespace-pre-wrap [overflow-wrap:anywhere] ${fixed ? "min-h-0 overflow-y-auto" : ""}`}>{card.message}</p>
-      <div className="relative w-10 h-px shrink-0 bg-[#c9a94a]" />
-      <p className="relative font-ui text-[11px] tracking-[0.2em] uppercase text-[var(--paper-muted)] text-center max-w-full [overflow-wrap:anywhere]">{card.name}</p>
-    </DeckPaper>
-  );
-}
 
 const reducedMotion = () => window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
@@ -187,7 +168,7 @@ export default function Oraculo() {
         <p className="text-sm text-[#d5dfea] mb-2">Escribí una frase para este mazo. Si necesitás una idea para empezar, puede ser:</p>
         <p className="text-xs text-[#e7d5a0] mb-4 leading-relaxed">{HINTS.join(" · ")}. Son ejemplos; escribí libremente en la carta.</p>
         <DeckPaper className="w-full max-w-[280px] mx-auto min-h-[330px] aspect-[7/10] p-7 sm:p-9 flex flex-col gap-4 justify-center mb-5" testId="deck-paper-editor">
-          <textarea aria-label="Frase sobre la carta" className="relative bg-transparent text-center font-heading italic text-2xl w-full resize-none" rows={5} value={draft.message} onChange={e => setDraft({ ...draft, message: e.target.value })} placeholder="Una frase breve…" data-testid="oraculo-message-input" />
+          <textarea aria-label="Frase sobre la carta" className="relative bg-transparent text-center font-heading font-semibold text-2xl w-full resize-none rounded-sm" rows={5} value={draft.message} onChange={e => setDraft({ ...draft, message: e.target.value })} placeholder="Una frase breve…" data-testid="oraculo-message-input" />
           <div className="relative w-10 h-px shrink-0 bg-[#c9a94a] mx-auto" />
           <input maxLength={40} aria-label="Firma" className="relative bg-transparent text-center w-full text-sm" value={draft.name} onChange={e => setDraft({ ...draft, name: e.target.value })} data-testid="oraculo-name-input" />
         </DeckPaper>

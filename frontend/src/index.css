@@ -10,8 +10,7 @@
   --memorial-sky-mid: #1d6daf;
   --memorial-sky-base: #19528f;
   --memorial-sky-solid: #1d7cc0;
-  --memorial-panel-blue: #144272;
-  --memorial-header-blue: #1c537f;
+  --memorial-panel-blue: #1e5682;
   --bg-deep: var(--memorial-sky-base);
   --bg-soft: var(--memorial-sky-mid);
   --bg-lift: var(--memorial-sky-top);
@@ -22,7 +21,7 @@
   --gold-light: hsl(46 80% 72%);
   --paper-cream: #fdfbf5;
   --paper-border: #e2d9c8;
-  --paper-ink: #28231b;
+  --paper-ink: #142c42;
   --paper-muted: #65563c;
   --text-heading: #f8fafc;
   --text-body: #d5dfea;
@@ -117,7 +116,6 @@ h1, h2, h3, h4, .font-heading { font-family: 'Cormorant Garamond', Georgia, seri
 }
 
 .section-header {
-  background-color: var(--memorial-header-blue);
   border-bottom-color: hsl(207 70% 54% / 0.58);
 }
 
@@ -205,6 +203,10 @@ h1, h2, h3, h4, .font-heading { font-family: 'Cormorant Garamond', Georgia, seri
   caret-color: var(--paper-ink);
 }
 .paper-sheet input::placeholder, .paper-sheet textarea::placeholder { color: var(--paper-muted); }
+
+.memory-photo-frame {
+  border: 1px solid hsl(205 60% 80% / 0.65);
+}
 
 ::selection { background: hsl(46 65% 52% / 0.38); color: #fff; }
 .paper-sheet ::selection, .paper-sheet::selection { color: var(--paper-ink); }

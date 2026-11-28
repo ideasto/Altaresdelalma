@@ -1,11 +1,12 @@
 import React from "react";
 import CardBack from "../CardBack";
+import { CardFace } from "../DeckCard";
 import { fmtDate, bookTitle } from "../../lib/format";
 import { ImageIcon } from "lucide-react";
 
 const Frame = ({ src, className = "" }) => (
-  <div className={`bg-[#fdfbf5] p-1.5 rounded-md shadow-lg ${className}`}>
-    <img src={src} alt="" className="w-full h-full object-cover rounded-sm" />
+  <div className={`memory-photo-frame overflow-hidden rounded-md shadow-md ${className}`}>
+    <img src={src} alt="" className="w-full h-full object-cover" />
   </div>
 );
 
@@ -34,12 +35,13 @@ export function OraclePreview({ a }) {
   const favorite = a.cards.find(x => x.id === a.favorites?.oraculo) || a.cards[n - 1];
   return (
     <div className="relative h-full flex items-center justify-center" data-testid={n ? "preview-oraculo-deck" : "preview-oraculo-empty"}>
-      {favorite && <p className="absolute bottom-0 z-10 paper-sheet rounded p-1 text-xs text-center max-w-full line-clamp-2">{favorite.message}</p>}
-      {[0, 1, 2].slice(0, n ? Math.min(3, n) : 3).map((i) => (
-        <div key={i} className="absolute w-16 h-[92px]" style={{ transform: `translateX(${(i - 1) * 18}px) rotate(${(i - 1) * 8}deg)`, opacity: n ? 1 : 0.75 }}>
-          <CardBack logo={i === 1 || n === 1} />
-        </div>
-      ))}
+      {favorite ? <CardFace card={favorite} compact /> : (
+        [-1, 0, 1].map((offset) => (
+          <div key={offset} className="absolute w-16 h-[92px] opacity-75" style={{ transform: `translateX(${offset * 18}px) rotate(${offset * 8}deg)` }}>
+            <CardBack logo={offset === 0} />
+          </div>
+        ))
+      )}
     </div>
   );
 }
@@ -84,7 +86,7 @@ export function BookPreview({ a }) {
   const cover = page?.photo || a.bookMeta.coverPhoto || a.photoCropped;
   return (
     <div className="h-full flex items-center justify-center" data-testid={has ? "preview-libro-cover" : "preview-libro-empty"}>
-      <div className="book-depth rounded-r-md rounded-l-sm w-[70px] h-[94px] p-1.5 flex flex-col items-center justify-center gap-1.5" style={{ background: "linear-gradient(145deg, hsl(205 42% 30%), hsl(214 46% 17%))", border: "1px solid hsl(46 65% 52% / 0.6)" }}>
+      <div className="book-depth rounded-r-md rounded-l-sm w-[70px] h-[94px] p-1.5 flex flex-col items-center justify-center gap-1.5" style={{ backgroundColor: "var(--memorial-panel-blue)", border: "1px solid hsl(46 65% 52% / 0.6)" }}>
         {has && cover ? <img src={cover} alt="" className="w-10 h-10 object-cover rounded-sm border border-[#d4af37]" /> : <div className="w-10 h-10 rounded-sm border border-dashed border-[#d4af37]/60" />}
         <p className="font-heading text-[10px] leading-tight text-center gold-text line-clamp-2">{page?.title || (has ? bookTitle(a) : "Tu libro")}</p>
       </div>

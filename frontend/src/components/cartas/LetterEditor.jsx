@@ -40,11 +40,11 @@ export default function LetterEditor({ open, onClose, editing, spaceId, spaceNam
       <WritingIdeas letter onChoose={idea => setDraft(prev => ({ ...prev, body: prev.body.trim() ? `${prev.body}\n\n${idea}` : idea }))} />
       <div className="paper-sheet rounded-2xl p-5 sm:p-7">
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <label className="block"><span className="text-xs uppercase tracking-wider text-[#6b5a3e]">Fecha</span>
-            <input type="date" value={draft.date} onChange={(e) => setDraft({ ...draft, date: e.target.value })} className="w-full bg-transparent border-b border-[#c9a94a]/60 py-1 outline-none text-[#2b2114]" data-testid="carta-date-input" />
+          <label className="block"><span className="text-xs uppercase tracking-wider text-[var(--paper-muted)]">Fecha</span>
+            <input type="date" value={draft.date} onChange={(e) => setDraft({ ...draft, date: e.target.value })} className="w-full bg-transparent border-b border-[#c9a94a]/60 py-1 outline-none text-[var(--paper-ink)]" data-testid="carta-date-input" />
           </label>
-          <label className="block"><span className="text-xs uppercase tracking-wider text-[#6b5a3e]">Para</span>
-            <input value={draft.to} onChange={(e) => setDraft({ ...draft, to: e.target.value })} className="w-full bg-transparent border-b border-[#c9a94a]/60 py-1 outline-none text-[#2b2114] font-heading text-xl" data-testid="carta-to-input" />
+          <label className="block"><span className="text-xs uppercase tracking-wider text-[var(--paper-muted)]">Para</span>
+            <input value={draft.to} onChange={(e) => setDraft({ ...draft, to: e.target.value })} className="w-full bg-transparent border-b border-[#c9a94a]/60 py-1 outline-none text-[var(--paper-ink)] font-heading text-xl" data-testid="carta-to-input" />
           </label>
         </div>
         <textarea
@@ -53,10 +53,10 @@ export default function LetterEditor({ open, onClose, editing, spaceId, spaceNam
           value={draft.body}
           onChange={(e) => setDraft({ ...draft, body: e.target.value })}
           placeholder="Querido/a…"
-          className="w-full mt-4 bg-transparent outline-none resize-y font-hand text-2xl ruled-letter text-[#2b2114] placeholder:text-[#b3a27f]"
+          className="w-full mt-4 bg-transparent outline-none resize-y font-hand text-2xl ruled-letter text-[var(--paper-ink)] placeholder:text-[#b3a27f]"
           data-testid="carta-body-input"
         />
-        <input aria-label="Firma (opcional)" value={draft.sign} onChange={(e) => setDraft({ ...draft, sign: e.target.value })} placeholder="Firma (opcional)" className="w-full text-right bg-transparent outline-none font-hand text-2xl text-[#2b2114] placeholder:text-[#b3a27f] mt-2" data-testid="carta-sign-input" />
+        <input aria-label="Firma (opcional)" value={draft.sign} onChange={(e) => setDraft({ ...draft, sign: e.target.value })} placeholder="Firma (opcional)" className="w-full text-right bg-transparent outline-none font-hand text-2xl text-[var(--paper-ink)] placeholder:text-[#b3a27f] mt-2" data-testid="carta-sign-input" />
       </div>
       <div className="flex flex-wrap justify-end gap-3 mt-5">
         <GhostButton onClick={onClose} testId="carta-form-cancel">Cancelar</GhostButton>
