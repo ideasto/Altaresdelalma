@@ -7,7 +7,13 @@ const painted = [];
 const ctx = { measureText: s => ({ width: [...s].length * 21 }), fillRect() {}, strokeRect() {}, drawImage() {}, fillText: s => painted.push(s) };
 const canvas = { getContext: () => ctx, toBlob: cb => cb(new Blob(['png'], { type: 'image/png' })) };
 const appUrl = 'https://ejemplo.test';
-const sandbox = { BRAND: { brandName: 'Marca de prueba', appUrl }, DECK_FRAME_URL: 'data:image/svg+xml,test', Image: class { naturalWidth = 400; naturalHeight = 300; set src(value) { this.onload(); } }, document: { fonts: { ready: Promise.resolve() }, createElement: () => canvas }, File, Blob, Intl, setTimeout, clearTimeout };
+const loadedFonts = new Set();
+const fonts = { load: async font => { await Promise.resolve(); loadedFonts.add(font); } };
+const document = { fonts, createElement: () => {
+  assert(loadedFonts.has('italic 400 56px "Cormorant Garamond"'));
+  return canvas;
+} };
+const sandbox = { BRAND: { brandName: 'Marca de prueba', appUrl }, DECK_FRAME_URL: 'data:image/svg+xml,test', Image: class { naturalWidth = 400; naturalHeight = 300; set src(value) { this.onload(); } }, document, File, Blob, Intl, setTimeout, clearTimeout };
 vm.createContext(sandbox);
 vm.runInContext(fs.readFileSync(path.join(__dirname, '../../frontend/src/lib/shareImages.js'), 'utf8').replace(/^import .*;\n/gm, '').replace(/export /g, ''), sandbox);
 (async () => {
