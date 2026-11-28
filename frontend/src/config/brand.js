@@ -1,15 +1,14 @@
 // Configuración central de marca, enlaces e interruptores.
 export const BRAND = {
-  appName: "Ecos del Alma",
+  appName: "Espacio para la Memoria",
   formerAppName: "Mensajes Ancestrales",
-  formerNames: ["Mensajes Ancestrales", "Altares del Alma"],
+  formerNames: ["Ecos del Alma", "Mensajes Ancestrales", "Altares del Alma"],
   brandName: "La Gata y la Magia",
   editorialCredit: "Editado por La Gata y la Magia",
   email: "lagataylamagia@gmail.com",
   instagram: "lagataylamagia",
   instagramUrl: "https://www.instagram.com/lagataylamagia",
-  // PENDIENTE: completar la URL pública definitiva antes de publicar.
-  appUrl: "",
+  appUrl: "https://mensajesansestrales.vercel.app",
   logos: {
     goldFull: "/brand/logo-gold-full.png",
     goldHorizontal: "/brand/logo-gold-horizontal.png",
@@ -27,10 +26,10 @@ export const FEATURES = {
 export const CONTACT = {
   // Vacío = los contactos quedan pendientes en el navegador (no llegan a ninguna planilla).
   endpoint: process.env.REACT_APP_CONTACT_ENDPOINT || "",
-  consentVersion: "2026-06-v1",
+  consentVersion: "2026-11-v1",
   consentScope: "novedades, propuestas y otras herramientas de La Gata y la Magia por email",
   consentText:
-    "Acepto que La Gata y la Magia use mi nombre y email para enviarme novedades, propuestas y otras herramientas del proyecto. Puedo pedir la baja cuando quiera.",
+    "Quiero recibir por email novedades, propuestas y otras herramientas de La Gata y la Magia (opcional). Puedo pedir la baja cuando quiera.",
 };
 
 // Límites técnicos de seguridad/capacidad (no comerciales).

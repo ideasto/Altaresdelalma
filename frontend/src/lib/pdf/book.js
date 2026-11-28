@@ -3,8 +3,6 @@ import { bookTitle, BOOK_FONTS } from "../format";
 import { BRAND } from "../../config/brand";
 
 const W = 210, H = 297;
-const CREAM = [236, 228, 205];
-
 async function cover(doc, a) {
   fillPage(doc, BLUE);
   doubleBorder(doc, 10);
@@ -14,8 +12,8 @@ async function cover(doc, a) {
   let y = 34;
   t.forEach((l) => { doc.text(l, W / 2, y, { align: "center" }); y += lh(30, 1.15); });
   const photo = m.coverPhoto || a.photoCropped;
-  const subLines = m.subtitle ? (setFont(doc, "Caveat", "normal", 20), lines(doc, m.subtitle, 150)) : [];
-  const bottom = 232 - subLines.length * lh(20, 1.2);
+  const subLines = m.subtitle ? (setFont(doc, "Caveat", "normal", 22), lines(doc, m.subtitle, 150)) : [];
+  const bottom = 232 - subLines.length * lh(22, 1.2);
   if (photo) {
     const box = await drawContain(doc, photo, 32, y + 4, W - 64, bottom - y - 8);
     if (box) {
@@ -25,8 +23,8 @@ async function cover(doc, a) {
     }
   } else y += 10;
   if (subLines.length) {
-    setFont(doc, "Caveat", "normal", 20, CREAM);
-    subLines.forEach((l) => { doc.text(l, W / 2, y, { align: "center" }); y += lh(20, 1.2); });
+    setFont(doc, "Caveat", "normal", 22, GOLD);
+    subLines.forEach((l) => { doc.text(l, W / 2, y, { align: "center" }); y += lh(22, 1.2); });
   }
   await drawContain(doc, logoUrl(), W / 2 - 13, 242, 26, 30, "logo");
   setFont(doc, "helvetica", "normal", 9, GOLD);
@@ -35,7 +33,7 @@ async function cover(doc, a) {
   doc.setCharSpace(0);
 }
 
-async function interior(doc, p, pageNo) {
+async function interior(doc, p) {
   const f = BOOK_FONTS[p.font] || BOOK_FONTS.serif;
   const size = f.pt[p.size] || f.pt.m;
   const frame = () => { doc.setDrawColor(...GOLD); doc.setLineWidth(0.3); doc.rect(12, 12, W - 24, H - 24); };
@@ -59,6 +57,7 @@ async function interior(doc, p, pageNo) {
       if (y > H - 28) {
         setFont(doc, "helvetica", "italic", 9, MUTED);
         doc.text("continúa en la página siguiente", W - 25, H - 18, { align: "right" });
+        footer(doc, String(doc.getNumberOfPages() - 1));
         doc.addPage(); frame(); y = 30;
         setFont(doc, f.family, f.style, size);
       }
@@ -66,7 +65,7 @@ async function interior(doc, p, pageNo) {
       y += step;
     });
   }
-  footer(doc, String(pageNo));
+  footer(doc, String(doc.getNumberOfPages() - 1));
 }
 
 async function back(doc, a) {
@@ -80,16 +79,18 @@ async function back(doc, a) {
   doc.setDrawColor(...GOLD); doc.setLineWidth(0.4); doc.line(W / 2 - 15, y, W / 2 + 15, y);
   y += 12;
   if (m.backText) {
-    let size = 14;
+    const size = 14;
     setFont(doc, "Cormorant", "normal", size, [231, 238, 246]);
-    let ls = lines(doc, m.backText, 140);
-    while (ls.length * lh(size, 1.4) > 150 && size > 10) { size -= 0.5; setFont(doc, "Cormorant", "normal", size, [231, 238, 246]); ls = lines(doc, m.backText, 140); }
-    ls.forEach((l) => { doc.text(l, 35, y); y += lh(size, 1.4); });
+    const ls = lines(doc, m.backText, 140);
+    ls.forEach(l => {
+      if (y > 225) { doc.addPage(); fillPage(doc, BLUE); doubleBorder(doc, 10); y = 35; setFont(doc, "Cormorant", "normal", size, [231, 238, 246]); }
+      doc.text(l, 35, y); y += lh(size, 1.4);
+    });
     y += 8;
   }
   if (m.closing) {
     setFont(doc, "Caveat", "normal", 20, [253, 230, 138]);
-    lines(doc, m.closing, 140).forEach((l) => { doc.text(l, W / 2, y, { align: "center" }); y += lh(20, 1.2); });
+    lines(doc, m.closing, 140).forEach((l) => { if (y > 230) { doc.addPage(); fillPage(doc, BLUE); doubleBorder(doc, 10); y = 35; setFont(doc, "Caveat", "normal", 20, [253, 230, 138]); } doc.text(l, W / 2, y, { align: "center" }); y += lh(20, 1.2); });
   }
   await drawContain(doc, logoUrl(), W / 2 - 11, 244, 22, 26, "logo");
   setFont(doc, "helvetica", "normal", 9, GOLD);

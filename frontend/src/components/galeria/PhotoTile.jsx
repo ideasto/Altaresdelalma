@@ -5,9 +5,9 @@ import { FolderInput, MessageSquareText, Check } from "lucide-react";
 export default function PhotoTile({ p, folderName, selected, onToggle, onOpen, onMove, onCaption, onDelete }) {
   return (
     <figure className={`mb-4 break-inside-avoid rounded-xl overflow-hidden glass ${selected ? "ring-2 ring-[#d4af37]" : ""}`} data-testid={`galeria-photo-${p.id}`}>
-      <div className="relative bg-[#fdfbf5] p-1.5">
+      <div className="relative">
         <button className="block w-full" onClick={onOpen} aria-label="Ampliar foto" data-testid={`galeria-open-${p.id}`}>
-          <img src={p.src} alt={p.caption || ""} className="w-full rounded-sm" />
+          <img src={p.src} alt={p.caption || ""} className="w-full" />
         </button>
         <button
           onClick={onToggle}

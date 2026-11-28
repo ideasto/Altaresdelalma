@@ -24,11 +24,12 @@ function writeContact(c) {
   }
 }
 
-const fingerprint = (c) => `${c.email.trim().toLowerCase()}|${c.name.trim()}|${c.unsubscribeRequested ? "baja" : "alta"}`;
+const fingerprint = (c) => `${c.email.trim().toLowerCase()}|${c.name.trim()}|${c.unsubscribeRequested ? "baja" : c.consent ? "alta" : "registro"}`;
 
 export function saveContact({ name, email, accepted }) {
   const prev = getContact();
   const now = new Date().toISOString();
+  const sameEmail = prev?.email === email.trim().toLowerCase();
   const c = {
     ...(prev || {}),
     name: name.trim(),
@@ -37,7 +38,9 @@ export function saveContact({ name, email, accepted }) {
       ? prev?.consent && prev.email === email.trim().toLowerCase()
         ? prev.consent
         : { acceptedAt: now, version: CONTACT.consentVersion, scope: CONTACT.consentScope, text: CONTACT.consentText }
-      : prev?.consent || null,
+      : sameEmail ? prev?.consent || null : null,
+    registeredAt: prev?.registeredAt || now,
+    unsubscribeRequested: accepted ? null : sameEmail && prev?.consent ? prev.unsubscribeRequested || { at: now } : null,
     updatedAt: now,
   };
   const fp = fingerprint(c);
@@ -71,7 +74,7 @@ let inFlight = false;
 export async function syncContact() {
   if (!FEATURES.contactCapture || inFlight) return getContact();
   const c = getContact();
-  if (!c || c.status === "sent" || !c.consent) return c;
+  if (!c || c.status === "sent") return c;
   if (!CONTACT.endpoint) {
     if (c.status !== "pending-no-endpoint") writeContact({ ...c, status: "pending-no-endpoint" });
     return getContact();
@@ -81,12 +84,13 @@ export async function syncContact() {
   inFlight = true;
   try {
     const body = {
-      action: c.unsubscribeRequested ? "unsubscribe" : "subscribe",
+      action: c.unsubscribeRequested ? "unsubscribe" : c.consent ? "subscribe" : "register",
+      registeredAt: c.registeredAt || c.updatedAt,
       name: safeCell(c.name),
       email: safeCell(c.email),
-      consentAt: c.consent.acceptedAt,
-      consentVersion: c.consent.version,
-      consentScope: c.consent.scope,
+      consentAt: c.consent?.acceptedAt || "",
+      consentVersion: c.consent?.version || "",
+      consentScope: c.consent?.scope || "",
       source: "ecos-del-alma",
     };
     const res = await fetch(CONTACT.endpoint, {

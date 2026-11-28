@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { X, Pencil, Trash2, ArrowLeft, Plus } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
-export function Modal({ open, onClose, title, children, maxWidth = "max-w-lg", testId }) {
+export function Modal({ open, onClose, title, children, maxWidth = "max-w-lg", surface = "panel", testId }) {
   useEffect(() => {
     const onKey = (e) => e.key === "Escape" && onClose?.();
     if (open) document.addEventListener("keydown", onKey);
@@ -20,17 +20,17 @@ export function Modal({ open, onClose, title, children, maxWidth = "max-w-lg", t
           exit={{ opacity: 0 }}
           transition={{ duration: 0.25 }}
         >
-          <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={onClose} />
+          <div className={`absolute inset-0 ${surface === "paper" ? "bg-[#071c33]/70 backdrop-blur-[2px]" : "bg-black/60 backdrop-blur-sm"}`} onClick={onClose} />
           <motion.div
             data-testid={testId}
-            className={`glass-strong relative z-10 w-full ${maxWidth} max-h-[88vh] overflow-y-auto fancy-scroll rounded-2xl p-6`}
+            className={`relative z-10 w-full ${maxWidth} max-h-[88dvh] overflow-auto fancy-scroll rounded-2xl p-4 sm:p-6 ${surface === "paper" ? "" : "glass-strong"}`}
             initial={{ scale: 0.92, y: 18, opacity: 0 }}
             animate={{ scale: 1, y: 0, opacity: 1 }}
             exit={{ scale: 0.95, y: 10, opacity: 0 }}
             transition={{ duration: 0.25, ease: "easeOut" }}
           >
             <div className="flex items-start justify-between gap-4 mb-4">
-              <h3 className="font-heading text-2xl sm:text-3xl gold-gradient-text">{title}</h3>
+              <h3 className="font-heading text-2xl sm:text-3xl gold-heading">{title}</h3>
               <button className="icon-btn" onClick={onClose} data-testid="modal-close" aria-label="Cerrar">
                 <X className="w-5 h-5" />
               </button>
@@ -47,7 +47,7 @@ export function ConfirmDialog({ open, onClose, onConfirm, title, message, confir
   return (
     <Modal open={open} onClose={onClose} title={title} maxWidth="max-w-md" testId={testId}>
       <p className="text-[#cbd5e1] mb-6 leading-relaxed">{message}</p>
-      <div className="flex justify-end gap-3">
+      <div className="flex flex-wrap justify-end gap-3">
         <button className="ghost-gold rounded-full px-5 py-2.5 text-sm" onClick={onClose} data-testid="confirm-cancel">
           Cancelar
         </button>
@@ -84,11 +84,20 @@ export function TrashButton({ onClick, testId, title = "Eliminar" }) {
 }
 
 export function GoldButton({ children, onClick, className = "", testId, type = "button", disabled }) {
+  const [busy, setBusy] = React.useState(false);
+  const locked = React.useRef(false);
+  const click = async (event) => {
+    if (locked.current) return;
+    locked.current = true; setBusy(true);
+    try { await onClick?.(event); }
+    finally { locked.current = false; setBusy(false); }
+  };
   return (
     <button
       type={type}
-      onClick={onClick}
-      disabled={disabled}
+      onClick={click}
+      aria-busy={busy}
+      disabled={disabled || busy}
       data-testid={testId}
       className={`gold-btn rounded-full px-6 py-3 text-sm sm:text-base inline-flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed ${className}`}
     >
@@ -97,13 +106,14 @@ export function GoldButton({ children, onClick, className = "", testId, type = "
   );
 }
 
-export function GhostButton({ children, onClick, className = "", testId, type = "button" }) {
+export function GhostButton({ children, onClick, className = "", testId, type = "button", disabled = false }) {
   return (
     <button
       type={type}
       onClick={onClick}
+      disabled={disabled}
       data-testid={testId}
-      className={`ghost-gold rounded-full px-6 py-3 text-sm inline-flex items-center justify-center gap-2 ${className}`}
+      className={`ghost-gold rounded-full px-6 py-3 text-sm inline-flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed ${className}`}
     >
       {children}
     </button>
@@ -113,9 +123,9 @@ export function GhostButton({ children, onClick, className = "", testId, type = 
 export function PageHeader({ title, subtitle, onBack, children, backTestId }) {
   const navigate = useNavigate();
   return (
-    <div className="sticky top-0 z-40 glass-strong border-b border-[#d4af37]/20 px-4 sm:px-8 py-4">
-      <div className="max-w-6xl mx-auto flex items-center justify-between gap-4 flex-wrap">
-        <div className="flex items-center gap-4 min-w-0">
+    <div className="md:sticky top-0 z-40 glass-strong section-header px-4 sm:px-8 py-4">
+      <div className="max-w-6xl mx-auto flex items-center justify-between gap-3 sm:gap-4 flex-wrap">
+        <div className="flex items-center gap-2 sm:gap-4 min-w-0">
           <button
             className="icon-btn shrink-0"
             onClick={() => (onBack ? onBack() : navigate(-1))}
@@ -125,11 +135,11 @@ export function PageHeader({ title, subtitle, onBack, children, backTestId }) {
             <ArrowLeft className="w-5 h-5" />
           </button>
           <div className="min-w-0">
-            <h1 className="font-heading text-2xl sm:text-4xl gold-gradient-text truncate">{title}</h1>
-            {subtitle && <p className="text-xs sm:text-sm text-[#a9bacb] truncate">{subtitle}</p>}
+            <h1 className="font-heading text-2xl sm:text-4xl gold-heading [overflow-wrap:anywhere]">{title}</h1>
+            {subtitle && <p className="text-xs sm:text-sm text-[#a9bacb] [overflow-wrap:anywhere]">{subtitle}</p>}
           </div>
         </div>
-        <div className="flex items-center gap-2 flex-wrap">{children}</div>
+        <div className="flex items-center gap-2 flex-wrap max-sm:[&>button]:px-3 max-sm:[&>button]:py-2.5 max-sm:[&>button]:min-h-10">{children}</div>
       </div>
     </div>
   );

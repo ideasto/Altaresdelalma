@@ -1,0 +1,47 @@
+[
+  {
+    "file": "libro-ejemplo.pdf",
+    "pages": 13,
+    "selectable_characters": 18024,
+    "size_mm": [
+      210,
+      297
+    ]
+  },
+  {
+    "file": "mazo-ejemplo.pdf",
+    "pages": 4,
+    "selectable_characters": 1183,
+    "size_mm": [
+      210,
+      297
+    ]
+  },
+  {
+    "file": "cartas-ejemplo.pdf",
+    "pages": 5,
+    "selectable_characters": 6958,
+    "size_mm": [
+      210,
+      297
+    ]
+  },
+  {
+    "file": "cronologia-ejemplo.pdf",
+    "pages": 6,
+    "selectable_characters": 3719,
+    "size_mm": [
+      297,
+      210
+    ]
+  },
+  {
+    "file": "galeria-ejemplo.pdf",
+    "pages": 3,
+    "selectable_characters": 353,
+    "size_mm": [
+      210,
+      297
+    ]
+  }
+]

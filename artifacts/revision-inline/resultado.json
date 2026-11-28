@@ -1,0 +1,17 @@
+{
+  "inlineEditing": true,
+  "typingFocus": true,
+  "autoGrowingText": true,
+  "failedSavePreserved": true,
+  "recoveredTwice": true,
+  "reload": true,
+  "mobileNoOverflow": true,
+  "bookPdf": true,
+  "errors": [],
+  "pdfNumbering": [
+    1,
+    2,
+    3
+  ],
+  "pdfLongTextComplete": true
+}

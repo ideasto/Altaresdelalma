@@ -21,7 +21,7 @@ export default function TrashDialog({ open, onClose }) {
                 <p className="text-xs text-[#a9bacb]">Borrado el {new Date(t.deletedAt).toLocaleDateString("es-AR")}</p>
               </div>
               <div className="flex gap-1">
-                <button className="icon-btn" title="Recuperar" onClick={() => restoreFromTrash(t.space.id) && toast.success("Espacio recuperado.")} data-testid={`trash-restore-${t.space.id}`}><RotateCcw className="w-4 h-4" /></button>
+                <button className="icon-btn" title="Recuperar" onClick={async () => { if (await restoreFromTrash(t.space.id)) toast.success("Espacio recuperado."); }} data-testid={`trash-restore-${t.space.id}`}><RotateCcw className="w-4 h-4" /></button>
                 <button className="icon-btn danger" title="Eliminar definitivamente" onClick={() => setPurge(t.space)} data-testid={`trash-purge-${t.space.id}`}><Trash2 className="w-4 h-4" /></button>
               </div>
             </li>
@@ -31,7 +31,7 @@ export default function TrashDialog({ open, onClose }) {
       <ConfirmDialog
         open={!!purge}
         onClose={() => setPurge(null)}
-        onConfirm={() => { purgeTrash(purge.id) && toast.success("Eliminado definitivamente."); setPurge(null); }}
+        onConfirm={async () => { if (await purgeTrash(purge.id)) { toast.success("Eliminado definitivamente."); setPurge(null); } }}
         title="¿Eliminar definitivamente?"
         message={`El espacio de ${purge?.name} se borrará para siempre de este navegador. No se puede deshacer.`}
         confirmLabel="Eliminar definitivamente"

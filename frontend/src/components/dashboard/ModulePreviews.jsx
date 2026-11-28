@@ -1,16 +1,17 @@
 import React from "react";
 import CardBack from "../CardBack";
-import { fmtDate, sortMoments, bookTitle } from "../../lib/format";
+import { CardFace } from "../DeckCard";
+import { fmtDate, bookTitle } from "../../lib/format";
 import { ImageIcon } from "lucide-react";
 
 const Frame = ({ src, className = "" }) => (
-  <div className={`bg-[#fdfbf5] p-1.5 rounded-md shadow-lg ${className}`}>
-    <img src={src} alt="" className="w-full h-full object-cover rounded-sm" />
+  <div className={`memory-photo-frame overflow-hidden rounded-md shadow-md ${className}`}>
+    <img src={src} alt="" className="w-full h-full object-cover" />
   </div>
 );
 
 export function GalleryPreview({ a }) {
-  const photos = a.gallery.photos.slice(0, 3);
+  const photos = [...a.gallery.photos].reverse().sort((x, y) => Number(y.id === a.favorites?.galeria) - Number(x.id === a.favorites?.galeria)).slice(0, 3);
   if (!photos.length) {
     return (
       <div className="flex items-center justify-center gap-3 h-full" data-testid="preview-galeria-empty">
@@ -31,19 +32,22 @@ export function GalleryPreview({ a }) {
 
 export function OraclePreview({ a }) {
   const n = a.cards.length;
+  const favorite = a.cards.find(x => x.id === a.favorites?.oraculo) || a.cards[n - 1];
   return (
     <div className="relative h-full flex items-center justify-center" data-testid={n ? "preview-oraculo-deck" : "preview-oraculo-empty"}>
-      {[0, 1, 2].slice(0, n ? Math.min(3, n) : 3).map((i) => (
-        <div key={i} className="absolute w-16 h-[92px]" style={{ transform: `translateX(${(i - 1) * 18}px) rotate(${(i - 1) * 8}deg)`, opacity: n ? 1 : 0.75 }}>
-          <CardBack logo={i === 1 || n === 1} />
-        </div>
-      ))}
+      {favorite ? <CardFace card={favorite} compact /> : (
+        [-1, 0, 1].map((offset) => (
+          <div key={offset} className="absolute w-16 h-[92px] opacity-75" style={{ transform: `translateX(${offset * 18}px) rotate(${offset * 8}deg)` }}>
+            <CardBack logo={offset === 0} />
+          </div>
+        ))
+      )}
     </div>
   );
 }
 
 export function TimelinePreview({ a }) {
-  const moments = sortMoments(a.timeline).slice(-2);
+  const moments = [...a.timeline].reverse().sort((x, y) => Number(y.id === a.favorites?.linea) - Number(x.id === a.favorites?.linea)).slice(0, 2);
   return (
     <div className="relative h-full flex flex-col justify-center" data-testid={moments.length ? "preview-linea-moments" : "preview-linea-empty"}>
       <svg viewBox="0 0 200 40" className="w-full h-8" preserveAspectRatio="none" aria-hidden="true">
@@ -61,32 +65,30 @@ export function TimelinePreview({ a }) {
 }
 
 export function LettersPreview({ a }) {
-  const last = a.letters[0];
+  const last = a.letters.find(x => x.id === a.favorites?.cartas) || a.letters[0];
   return (
-    <div className="envelope h-full max-h-[130px] w-full max-w-[240px] mx-auto" data-testid={last ? "preview-cartas-last" : "preview-cartas-empty"}>
-      <div className="envelope-inner" />
-      <div className="envelope-sheet px-3 pt-2 pb-6 h-full">
-        {last ? (
-          <>
-            <p className="text-[10px] text-[#6b5a3e] text-right">{fmtDate(last.date, "short")}</p>
-            <p className="font-hand text-lg leading-tight line-clamp-3 text-[#2b2114]">{last.body}</p>
-          </>
-        ) : (
-          <div className="space-y-2 pt-3">{[80, 65, 72].map((w) => <div key={w} className="h-px bg-[#c9a94a]/50" style={{ width: `${w}%` }} />)}</div>
-        )}
-      </div>
+    <div className="paper-sheet rounded-lg w-full max-w-[240px] mx-auto p-3" data-testid={last ? "preview-cartas-last" : "preview-cartas-empty"}>
+      {last ? (
+        <>
+          <p className="text-[10px] text-[var(--paper-muted)] text-right">{fmtDate(last.date, "short")}</p>
+          <p className="font-hand text-lg ruled-letter ruled-letter--mini line-clamp-3 whitespace-pre-line">{last.body}</p>
+        </>
+      ) : (
+        <div className="ruled-letter ruled-letter--mini h-[66px]" aria-hidden="true" />
+      )}
     </div>
   );
 }
 
 export function BookPreview({ a }) {
   const has = a.book.length > 0 || a.bookMeta.title || a.bookMeta.coverPhoto;
-  const cover = a.bookMeta.coverPhoto || a.photoCropped;
+  const page = a.book.find(x => x.id === a.favorites?.libro) || a.book[a.book.length - 1];
+  const cover = page?.photo || a.bookMeta.coverPhoto || a.photoCropped;
   return (
     <div className="h-full flex items-center justify-center" data-testid={has ? "preview-libro-cover" : "preview-libro-empty"}>
-      <div className="book-depth rounded-r-md rounded-l-sm w-[70px] h-[94px] p-1.5 flex flex-col items-center justify-center gap-1.5" style={{ background: "linear-gradient(145deg, hsl(205 42% 30%), hsl(214 46% 17%))", border: "1px solid hsl(46 65% 52% / 0.6)" }}>
+      <div className="book-depth rounded-r-md rounded-l-sm w-[70px] h-[94px] p-1.5 flex flex-col items-center justify-center gap-1.5" style={{ backgroundColor: "var(--memorial-panel-blue)", border: "1px solid hsl(46 65% 52% / 0.6)" }}>
         {has && cover ? <img src={cover} alt="" className="w-10 h-10 object-cover rounded-sm border border-[#d4af37]" /> : <div className="w-10 h-10 rounded-sm border border-dashed border-[#d4af37]/60" />}
-        <p className="font-heading text-[10px] leading-tight text-center gold-text line-clamp-2">{has ? bookTitle(a) : "Tu libro"}</p>
+        <p className="font-heading text-[10px] leading-tight text-center gold-text line-clamp-2">{page?.title || (has ? bookTitle(a) : "Tu libro")}</p>
       </div>
     </div>
   );

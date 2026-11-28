@@ -1,0 +1,53 @@
+{
+  "config": {
+    "network": {
+      "allowed_domains": [
+        "*.vercel.app",
+        "api.vercel.com",
+        "assets.emergent.sh",
+        "vercel.com",
+        "duckduckgo.com",
+        "html.duckduckgo.com",
+        "www.bing.com",
+        "pubmed.ncbi.nlm.nih.gov",
+        "pmc.ncbi.nlm.nih.gov",
+        "doi.org",
+        "api.crossref.org",
+        "www.nhs.uk",
+        "www.cruse.org.uk",
+        "www.sueryder.org",
+        "whatsyourgrief.com",
+        "refugeingrief.com",
+        "www.fundacionmlc.org",
+        "fundacionmlc.org",
+        "untanglegrief.com",
+        "www.untanglegrief.com",
+        "illumeapps.com",
+        "www.illumeapps.com",
+        "griefworks.com",
+        "www.griefworks.com",
+        "www.apartofme.app",
+        "apartofme.app",
+        "www.mygrief.ca",
+        "mygrief.ca",
+        "www.goodgriefapp.com",
+        "goodgriefapp.com",
+        "www.muchloved.com",
+        "muchloved.com",
+        "www.forevermissed.com",
+        "forevermissed.com",
+        "everloved.com",
+        "www.storyworth.com",
+        "storyworth.com",
+        "www.remento.co",
+        "remento.co",
+        "hereafter.ai",
+        "www.hereafter.ai",
+        "www.futureme.org",
+        "futureme.org",
+        "apps.apple.com",
+        "play.google.com"
+      ]
+    }
+  }
+}

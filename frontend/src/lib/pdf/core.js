@@ -4,7 +4,7 @@ import { BRAND } from "../../config/brand";
 export const INK = [43, 33, 20];
 export const GOLD = [196, 160, 64];
 export const GOLD_SOFT = [228, 214, 176];
-export const BLUE = [33, 60, 86];
+export const BLUE = [31, 85, 142];
 export const MUTED = [120, 105, 80];
 export const PT = 0.3528; // mm por punto
 
@@ -65,7 +65,7 @@ const fmt = (src) => (src.startsWith("data:image/png") ? "PNG" : "JPEG");
 export async function drawContain(doc, src, x, y, w, h, alias) {
   const data = await asDataUrl(src);
   const s = await imgSize(data);
-  if (!s) return null;
+  if (!s) throw new Error("No se pudo leer una imagen del documento; no se exportó un PDF incompleto.");
   const r = Math.min(w / s.w, h / s.h);
   const dw = s.w * r, dh = s.h * r;
   const dx = x + (w - dw) / 2, dy = y + (h - dh) / 2;

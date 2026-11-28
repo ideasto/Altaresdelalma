@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Modal, GoldButton, GhostButton } from "./common";
 import { useStore } from "../store/StoreContext";
 import { applyRestore, exportBackup } from "../lib/storage";
@@ -22,19 +22,20 @@ export function SummaryList({ s }) {
 
 // Vista previa antes de restaurar: cancelar, combinar (con duplicados explícitos) o reemplazar.
 export default function RestoreDialog({ data, onClose }) {
-  const { avatars, replaceAll } = useStore();
+  const { avatars, trash, commit } = useStore();
   const [mode, setMode] = useState("merge");
   const [dup, setDup] = useState("copy");
   const [ack, setAck] = useState(false);
+  useEffect(() => { setMode("merge"); setDup("copy"); setAck(false); }, [data]);
   if (!data) return null;
 
   const existing = new Set(avatars.map((a) => a.id));
   const dups = data.list.filter((a) => existing.has(a.id));
 
-  const apply = () => {
+  const apply = async () => {
     if (mode === "replace" && !ack) return toast.error("Confirmá que entendés que se reemplaza todo.");
     const next = applyRestore(avatars, data.list, mode, dup);
-    if (!replaceAll(next)) return toast.error("No se pudo restaurar sin pasar la capacidad del navegador. Tu estado anterior quedó intacto.");
+    if (!await commit(s => ({ avatars: next, trash: [...s.trash, ...(data.trash || []).filter(t => !s.trash.some(x => x.space.id === t.space.id))] }))) return toast.error("No se pudo restaurar sin pasar la capacidad del navegador. Tu estado anterior quedó intacto.");
     toast.success("Respaldo restaurado.");
     onClose();
   };
@@ -69,7 +70,7 @@ export default function RestoreDialog({ data, onClose }) {
         <Opt value="replace" cur={mode} set={setMode} label="Reemplazar todo" desc="Se eliminan los cambios que no estén en este respaldo." testId="restore-mode-replace" />
         {mode === "replace" && (
           <div className="ml-5 mt-2 space-y-2">
-            <GhostButton onClick={() => exportBackup(avatars)} testId="restore-download-current" className="py-2"><Download className="w-4 h-4" /> Descargar mi estado actual primero</GhostButton>
+            <GhostButton onClick={() => exportBackup(avatars, null, trash)} testId="restore-download-current" className="py-2"><Download className="w-4 h-4" /> Descargar mi estado actual primero</GhostButton>
             <label className="flex items-center gap-2 text-sm text-[#d5dfea]">
               <input type="checkbox" checked={ack} onChange={(e) => setAck(e.target.checked)} className="accent-[#d4af37]" data-testid="restore-replace-ack" />
               Entiendo que reemplazar borra lo que no esté en el respaldo.

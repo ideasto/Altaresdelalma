@@ -5,7 +5,6 @@ import { DECK_FRAME_URL } from "../deckFrame";
 const CW = 63, CH = 90, COLS = 3, ROWS = 3;
 const X0 = (210 - CW * COLS) / 2, Y0 = (297 - CH * ROWS) / 2;
 const TEXT_W = 45, TEXT_H = 52, MAX_PT = 16, MIN_PT = 9;
-const ORIGIN = { recordada: "Palabras suyas", escrita: "Escrita por mí" };
 
 // Busca el tamaño más grande (entre 16 y 9 pt) en el que la frase entra en la carta.
 export function fitMessage(doc, message) {
@@ -22,7 +21,7 @@ let probe = null;
 export async function initDeckProbe() { if (!probe) probe = await newDoc(); }
 // Para avisar durante la edición: misma medición y fuente que el PDF.
 export function deckFits(message) {
-  if (!probe) { probe = new jsPDF({ unit: "mm" }); initDeckProbe(); }
+  if (!probe) { initDeckProbe(); return { fits: true, pending: true }; }
   return fitMessage(probe, message || "");
 }
 
@@ -50,8 +49,7 @@ async function front(doc, c, x, y, frame) {
   const h = f.lines.length * lh(f.size, 1.25);
   let ty = y + CH / 2 - h / 2 + lh(f.size, 1.25) * 0.75 - 3;
   f.lines.forEach((l) => { doc.text(l, x + CW / 2, ty, { align: "center" }); ty += lh(f.size, 1.25); });
-  if (c.name) { setFont(doc, "Cormorant", "bold", 9.5, [110, 90, 55]); doc.text(c.name, x + CW / 2, y + CH - 15, { align: "center" }); }
-  if (c.origin) { setFont(doc, "helvetica", "normal", 8.5, [150, 130, 95]); doc.text(ORIGIN[c.origin], x + CW / 2, y + CH - 9.5, { align: "center" }); }
+  if (c.name) { setFont(doc, "Cormorant", "bold", 9.5, [110, 90, 55]); lines(doc, c.name, TEXT_W).forEach((l, i) => doc.text(l, x + CW / 2, y + CH - 19 + i * lh(9.5), { align: "center" })); }
 }
 
 async function back(doc, x, y) {
@@ -64,6 +62,7 @@ async function back(doc, x, y) {
 // Frentes y dorsos alineados para doble faz (volteo por el borde largo: columnas espejadas).
 export async function deckPdf(cards, filename) {
   const doc = await newDoc();
+  if (cards.some(c => !fitMessage(doc, c.message).fits)) throw new Error("Una frase excede la carta física.");
   const frame = await asDataUrl(DECK_FRAME_URL);
   const per = COLS * ROWS;
   const sheets = Math.ceil(cards.length / per);
