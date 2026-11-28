@@ -16,7 +16,7 @@ const HINTS = ["Una frase que decía", "Un chiste o expresión suya", "Su esenci
 
 const reducedMotion = () => window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-function Consultation({ cards, autoFocus }) {
+function Consultation({ cards, autoFocus, onShare }) {
   const [sound, setSound] = useState(() => { try { return localStorage.getItem("ecos_sound") === "on"; } catch { return false; } });
   const audio = useRef(null);
   const tone = (hz) => {
@@ -78,6 +78,11 @@ function Consultation({ cards, autoFocus }) {
               </div>
             )}
           </div>
+          {phase === "reveal" && flipped && result && (
+            <GhostButton onClick={() => onShare(result)} testId="oraculo-share-result" className="mt-5">
+              <Share2 className="w-4 h-4" /> Compartir esta carta
+            </GhostButton>
+          )}
           {phase === "shuffling" && (
             <button className="mt-5 text-sm text-[#a9bacb] hover:text-white inline-flex items-center gap-1.5" onClick={() => reveal(result)} data-testid="oraculo-skip">
               <SkipForward className="w-4 h-4" /> Saltear la mezcla
@@ -111,6 +116,7 @@ export default function Oraculo() {
 
   if (!avatar) return <Link to="/" className="gold-text underline block p-10">Volver</Link>;
   const cards = avatar.cards;
+  const shareCard = (card) => setShareItems([{ kind: "card", title: card.name || avatar.name, text: card.message }]);
 
   const openEdit = (c) => { setEditing(c); setDraft({ message: c.message, name: c.name }); setFormOpen(true); };
 
@@ -138,7 +144,7 @@ export default function Oraculo() {
       </PageHeader>
 
       <div className="max-w-6xl mx-auto px-4 sm:px-8 pt-8">
-        <Consultation cards={cards} autoFocus={params.get("consultar") === "1"} />
+        <Consultation cards={cards} autoFocus={params.get("consultar") === "1"} onShare={shareCard} />
 
         <h2 className="font-heading text-2xl text-[#f8fafc] mb-5">Tu mazo <span className="text-[#a9bacb] text-lg" data-testid="oraculo-count">({plural(cards.length, "carta", "cartas")} · máx. {LIMITS.oracleCards})</span></h2>
         {cards.length === 0 ? (
@@ -152,9 +158,11 @@ export default function Oraculo() {
             {cards.map((c) => (
               <div key={c.id} className="min-w-0 w-full max-w-[19rem] mx-auto" data-testid={`oraculo-card-${c.id}`}>
                 <div className="grid min-h-[18rem] sm:aspect-[7/10]"><CardFace card={c} /></div>
+                <GhostButton onClick={() => shareCard(c)} testId={`oraculo-share-${c.id}`} className="mt-3 w-full py-2">
+                  <Share2 className="w-4 h-4" /> Compartir carta
+                </GhostButton>
                 <div className="flex justify-center gap-1 mt-2">
                   <button className="icon-btn" title="Copiar texto" aria-label="Copiar texto" onClick={async () => toast.success((await copyText(c.message)) ? "Frase copiada." : "No se pudo copiar.")} data-testid={`oraculo-copy-${c.id}`}><Copy className="w-4 h-4" /></button>
-                  <button className="icon-btn" title="Compartir carta" aria-label="Compartir carta" onClick={() => setShareItems([{ kind: "card", title: c.name || avatar.name, text: c.message }])} data-testid={`oraculo-share-${c.id}`}><Share2 className="w-4 h-4" /></button>
                   <EditPencil onClick={() => openEdit(c)} testId={`oraculo-edit-${c.id}`} />
                   <TrashButton onClick={() => setDelCard(c)} testId={`oraculo-delete-${c.id}`} />
                 </div>

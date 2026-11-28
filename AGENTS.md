@@ -4,6 +4,10 @@
 
 Hablar directamente a la persona usuaria, sin emplear su nombre como vocativo. No usar fórmulas «sí, [nombre]», «bueno, [nombre]» o equivalentes. Esta preferencia es aplicable a todas las tareas que lean este repositorio; no implica que el archivo se cargue en chats ajenos al proyecto.
 
+## Verificación de cambios
+
+- Usar [el registro de errores y pruebas](docs/REGISTRO_DE_ERRORES_Y_PRUEBAS.md) para revisar el recorrido completo de una corrección visual o de exportación antes de darla por terminada.
+
 ## Repositorio y despliegues
 
 - Usar el checkout existente. Cada tarea en nube ya está aislada; no crear worktrees salvo solicitud explícita.

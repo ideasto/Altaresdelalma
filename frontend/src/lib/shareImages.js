@@ -36,7 +36,15 @@ function loadPhoto(src) {
 }
 
 export async function prepareShareImages(items, signal) {
-  await document.fonts.ready;
+  // Canvas can request a face the current page has not rendered yet.
+  // Wait for those faces before measuring and drawing the text.
+  await Promise.allSettled([
+    '400 24px "Plus Jakarta Sans"',
+    '400 40px "Cormorant Garamond"',
+    'italic 400 56px "Cormorant Garamond"',
+    '700 52px "Cormorant Garamond"',
+    "400 46px Caveat",
+  ].map(font => document.fonts.load(font)));
   const canvas = document.createElement("canvas");
   canvas.width = 1080; canvas.height = 1350;
   const ctx = canvas.getContext("2d");

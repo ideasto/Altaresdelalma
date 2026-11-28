@@ -3,7 +3,7 @@
 La aplicación prepara archivos; no publica contenido automáticamente ni convierte un espacio privado en una página pública.
 
 - Galería: seleccionar una o varias fotos y pulsar Compartir. Desde la foto ampliada también se comparte esa foto. La imagen respeta la foto guardada dentro de un lienzo con el enlace de la app, sin fotografiar los controles de pantalla.
-- Mazo de recuerdos: botón Compartir carta debajo de cada pieza. Se genera una imagen con marco y frase.
+- Mazo de recuerdos: botón Compartir carta debajo de cada pieza y Compartir esta carta al terminar de sacar una. Se genera una imagen con marco y frase.
 - Cartas: al abrir una carta, Compartir prepara imágenes del texto. Permanecen Copiar, Texto y PDF.
 - Libro: Compartir tapa, página o contratapa actúa sobre lo que se está viendo. Se desactiva mientras se edita para no confundir un borrador con el contenido guardado.
 - Línea de tiempo: Compartir historia prepara los momentos en su orden; cada momento tiene además su propio botón para compartir solo ese contenido.
@@ -24,8 +24,5 @@ El PDF y el respaldo cumplen otras funciones: el primero es para leer/imprimir; 
 - Regresión de rutas, recargas, imágenes, edición, guardado de carta y cinco PDF con Chromium y contenido sintético. Cero solicitudes externas y errores JavaScript en esas pruebas locales.
 - No se envió contenido a redes sociales reales ni se usaron recuerdos personales en las pruebas.
 
-## Estado de publicación
 
-Código funcional: revisión 0d8f66a, en la rama y PR existentes. Vista previa de Vercel READY dpl_FdFT2Ww2iPAW2kvDaGUFbm44w6UE. Las mismas pruebas de compartir pasaron contra ese despliegue, con acceso temporal de automatización revocado al terminar.
-
-La actualización de producción no se ejecutó: la revisión automática de permisos la rechazó y, tras una reevaluación con las pruebas remotas, volvió a exigir aprobación directa para esta revisión. No se intentaron rutas alternativas de publicación. El enlace principal sigue con la versión anterior hasta recibir esa aprobación. No presentar los nuevos controles como ya disponibles en producción.
+El [registro de errores y pruebas](REGISTRO_DE_ERRORES_Y_PRUEBAS.md) explica cómo comprobar estas acciones en una compilación local y en el enlace principal.
